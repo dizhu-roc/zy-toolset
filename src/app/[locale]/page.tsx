@@ -27,7 +27,7 @@ export default async function HomePage({ params }: Props) {
           {t.home.ctaSoon}
         </span>
         <Link
-          href={hrefForLocale(locale, "tools/template")}
+          href={hrefForLocale(locale, "tools/base64")}
           className="inline-flex items-center rounded-md bg-accent px-4 py-2 text-sm font-medium text-surface-raised no-underline shadow-sm transition-colors hover:bg-accent-hover"
         >
           {t.home.ctaBrowse}
@@ -48,6 +48,41 @@ export default async function HomePage({ params }: Props) {
         <p className="mt-3 max-w-prose text-text-muted leading-relaxed">
           {t.home.toolsPlaceholder}
         </p>
+
+        <section
+          aria-labelledby="base64-heading"
+          className="mt-10 rounded-xl border border-border bg-surface p-6 shadow-sm"
+        >
+          <h3
+            id="base64-heading"
+            className="text-base font-semibold tracking-tight text-text"
+          >
+            {t.home.base64SectionTitle}
+          </h3>
+          <p className="mt-2 text-sm text-text-secondary leading-relaxed">
+            {t.home.base64SectionBody}
+          </p>
+          <Link
+            href={hrefForLocale(locale, "tools/base64")}
+            className="mt-4 inline-flex items-center rounded-md bg-accent px-4 py-2 text-sm font-medium text-surface-raised no-underline shadow-sm transition-colors hover:bg-accent-hover"
+          >
+            {t.home.base64Cta}
+          </Link>
+          <ul className="mt-6 space-y-2 border-t border-border pt-4 text-sm text-text-muted">
+            <li>
+              <span className="mr-2 inline-block rounded bg-surface-raised px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-text-secondary">
+                {t.home.soonBadge}
+              </span>
+              {t.home.soonHex}
+            </li>
+            <li>
+              <span className="mr-2 inline-block rounded bg-surface-raised px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-text-secondary">
+                {t.home.soonBadge}
+              </span>
+              {t.home.soonUrl}
+            </li>
+          </ul>
+        </section>
       </section>
     </article>
   );

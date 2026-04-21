@@ -4,6 +4,7 @@ import type { Messages } from "@/i18n/dictionaries";
 import type { Locale } from "@/i18n/config";
 import { hrefForLocale } from "@/lib/localized-path";
 import { LocaleSwitcher } from "./locale-switcher";
+import { NavToolCategories } from "./nav-tool-categories";
 
 type Props = {
   locale: Locale;
@@ -13,6 +14,7 @@ type Props = {
 
 export function SiteShell({ locale, messages, children }: Props) {
   const homeHref = hrefForLocale(locale, "");
+  const base64Href = hrefForLocale(locale, "tools/base64");
 
   return (
     <div className="flex min-h-dvh flex-col">
@@ -22,7 +24,7 @@ export function SiteShell({ locale, messages, children }: Props) {
             <SiteLogo href={homeHref} />
             <nav
               aria-label="Primary"
-              className="hidden items-center text-sm sm:flex"
+              className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm"
             >
               <Link
                 href={homeHref}
@@ -30,6 +32,18 @@ export function SiteShell({ locale, messages, children }: Props) {
               >
                 {messages.nav.home}
               </Link>
+              <NavToolCategories
+                workbenchHref={base64Href}
+                labels={{
+                  category: messages.nav.categoryBase64,
+                  categoryAria: messages.nav.categoryBase64MenuAria,
+                  workbenchTitle: messages.tools.base64.navEntryTitle,
+                  workbenchDesc: messages.tools.base64.navEntryDescription,
+                  soonHex: messages.nav.soonHex,
+                  soonUrl: messages.nav.soonUrl,
+                  soonBadge: messages.nav.soonBadge,
+                }}
+              />
             </nav>
           </div>
           <LocaleSwitcher locale={locale} labels={messages.locale} />

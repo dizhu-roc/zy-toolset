@@ -4,7 +4,14 @@ import { locales } from "@/i18n/config";
 import { localePathnames } from "@/lib/localized-path";
 
 /** 各语言下需要入站的静态「站点路径」（不含语言前缀段） */
-const STATIC_REST = ["", "privacy", "terms", "cookies", "tools/template"];
+const STATIC_REST = [
+  "",
+  "privacy",
+  "terms",
+  "cookies",
+  "tools/template",
+  "tools/base64",
+];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date();
