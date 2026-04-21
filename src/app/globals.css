@@ -7,10 +7,12 @@
   --font-mono: var(--palette-mono);
 
   --color-canvas: var(--palette-canvas);
+  --color-main-bg: var(--palette-main-bg);
   --color-surface: var(--palette-surface);
   --color-surface-raised: var(--palette-surface-raised);
   --color-border: var(--palette-border);
   --color-border-strong: var(--palette-border-strong);
+  --color-tool-card-border: var(--palette-tool-card-border);
 
   --color-text: var(--palette-text);
   --color-text-secondary: var(--palette-text-secondary);
@@ -24,6 +26,11 @@
   --color-danger-surface: var(--palette-danger-surface);
   --color-success: var(--palette-success);
   --color-warning: var(--palette-warning);
+
+  --color-footer-bg: var(--palette-footer-bg);
+  --color-footer-border: var(--palette-footer-border);
+  --color-footer-text: var(--palette-footer-text);
+  --color-footer-text-muted: var(--palette-footer-text-muted);
 
   --radius-sm: var(--radius-sm);
   --radius-md: var(--radius-md);

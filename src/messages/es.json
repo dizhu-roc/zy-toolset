@@ -8,23 +8,21 @@
     "docs": "Documentación",
     "categoryBase64": "Base64",
     "categoryBase64MenuAria": "Herramientas Base64",
+    "categoryGenerators": "Generadores",
+    "categoryGeneratorsMenuAria": "Menú de herramientas generadoras",
+    "categoryImages": "Imágenes",
+    "categoryImagesMenuAria": "Menú de herramientas de imagen",
     "soonBadge": "Pronto",
     "soonHex": "Hex ↔ Base64",
     "soonUrl": "URL → Base64 (fetch)"
   },
   "home": {
-    "introTitle": "Un espacio sereno para herramientas pequeñas",
-    "introBody": "Cada herramienta se ejecuta en tu navegador. Por defecto no subimos tus entradas a nuestros servidores; revisa cada página para los detalles.",
-    "ctaBrowse": "Abrir banco de trabajo Base64",
-    "ctaSoon": "Las herramientas se irán publicando; el avance está en /docs del repositorio.",
+    "introTitle": "Colección de herramientas prácticas en línea",
     "toolsSectionTitle": "Directorio de herramientas",
-    "toolsPlaceholder": "Habrá más herramientas por categoría. También puedes usar el bloque Base64 abajo o el menú «Base64» en la cabecera.",
-    "base64SectionTitle": "Base64",
-    "base64SectionBody": "Codifica texto UTF-8 o archivos a Base64 y Data URL, o decodifica Base64 y Data URL, todo en tu navegador.",
-    "base64Cta": "Abrir banco de trabajo Base64",
-    "soonHex": "Hex ↔ Base64",
-    "soonUrl": "URL → Base64 (fetch)",
-    "soonBadge": "Pronto"
+    "base64TextCardTitle": "Texto y Base64",
+    "base64TextCardDesc": "UTF-8 en el navegador; cambia a la pestaña de decodificación cuando necesites pasar Base64 o Data URL a texto.",
+    "base64FileCardTitle": "Archivo y Base64",
+    "base64FileCardDesc": "Convierte subidas en Base64 o Data URL en local; usa la pestaña de decodificación para recuperar los bytes."
   },
   "footer": {
     "legalNavLabel": "Legal",
@@ -51,12 +49,12 @@
       "pageTitle": "Banco de trabajo Base64",
       "pageDescription": "Cambia entre texto, archivo y decodificación. El contenido permanece en esta pestaña salvo que copies o descargues.",
       "navEntryTitle": "Banco de trabajo Base64",
-      "navEntryDescription": "Texto y archivos → Base64; decodifica Base64 / Data URL.",
+      "navEntryDescription": "Texto y archivos con Base64; decodifica Base64 y Data URL.",
       "localNotice": "No se sube nada a nuestros servidores: el procesamiento ocurre en tu navegador.",
       "privacyLink": "Resumen de privacidad",
       "tabsAria": "Modos Base64",
-      "tabText": "Texto → Base64",
-      "tabFile": "Archivo → Base64",
+      "tabText": "Texto y Base64",
+      "tabFile": "Archivo y Base64",
       "tabDecode": "Decodificar",
       "textInputLabel": "Texto plano (UTF-8)",
       "textOutputLabel": "Salida",
@@ -82,6 +80,41 @@
       "decodeBinaryHint": "Los bytes decodificados no son UTF-8 válido. Descarga el binario en su lugar.",
       "decodeUtf8Ok": "Mostrado como texto UTF-8.",
       "downloadDecoded": "Descargar archivo decodificado"
+    },
+    "passwordGenerator": {
+      "metaTitle": "Generador de contraseñas",
+      "metaDescription": "Genera contraseñas aleatorias seguras en el navegador. Por defecto no las enviamos a nuestros servidores.",
+      "pageTitle": "Generador de contraseñas",
+      "pageDescription": "Elige longitud y tipos de caracteres; el procesamiento se queda en tu pestaña.",
+      "body": "Esta página es un marcador de posición. La interfaz interactiva llegará en una actualización posterior."
+    },
+    "icoGenerator": {
+      "metaTitle": "Generador ICO",
+      "metaDescription": "Crea archivos .ico de Windows a partir de tus imágenes en el navegador. Procesamiento local por defecto.",
+      "pageTitle": "Generador ICO",
+      "pageDescription": "Combina varios tamaños en un solo icono para apps y accesos directos.",
+      "body": "Esta página es un marcador de posición. El constructor ICO interactivo llegará en una actualización posterior."
+    },
+    "imageCompressor": {
+      "metaTitle": "Compresor de imágenes",
+      "metaDescription": "Reduce el peso de las imágenes en el navegador sin subir tus archivos a nuestros servidores.",
+      "pageTitle": "Compresor de imágenes",
+      "pageDescription": "Aligera JPG, PNG, WebP y más; la vista previa y la exportación son locales.",
+      "body": "Esta página es un marcador de posición. El compresor interactivo llegará en una actualización posterior."
+    },
+    "imageCropper": {
+      "metaTitle": "Recortar imagen",
+      "metaDescription": "Recorta imágenes a la región que necesitas directamente en el navegador.",
+      "pageTitle": "Recortar imagen",
+      "pageDescription": "Selecciona el área, previsualiza y exporta sin salir de tu dispositivo.",
+      "body": "Esta página es un marcador de posición. La herramienta de recorte interactiva llegará en una actualización posterior."
+    },
+    "imageResizer": {
+      "metaTitle": "Redimensionar imagen",
+      "metaDescription": "Cambia el ancho y alto de las imágenes en el navegador con procesamiento local.",
+      "pageTitle": "Redimensionar imagen",
+      "pageDescription": "Define píxeles objetivo o escala por porcentaje antes de descargar.",
+      "body": "Esta página es un marcador de posición. El redimensionador interactivo llegará en una actualización posterior."
     }
   },
   "privacy": {

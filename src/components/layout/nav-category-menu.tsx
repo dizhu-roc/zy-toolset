@@ -12,19 +12,15 @@ import { cn } from "@/lib/utils";
 
 const CLOSE_DELAY_MS = 140;
 
-type Labels = {
-  category: string;
-  categoryAria: string;
-  workbenchTitle: string;
-  /** P1 row — no link */
-  soonHex: string;
-  soonUrl: string;
-  soonBadge: string;
+export type NavCategoryMenuItem = {
+  href: string;
+  title: string;
 };
 
 type Props = {
-  workbenchHref: string;
-  labels: Labels;
+  category: string;
+  categoryAria: string;
+  items: NavCategoryMenuItem[];
 };
 
 function Chevron({ className }: { className?: string }) {
@@ -44,10 +40,7 @@ function Chevron({ className }: { className?: string }) {
   );
 }
 
-export function NavToolCategories({
-  workbenchHref,
-  labels,
-}: Props) {
+export function NavCategoryMenu({ category, categoryAria, items }: Props) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -124,10 +117,10 @@ export function NavToolCategories({
         aria-expanded={open}
         aria-haspopup="menu"
         aria-controls={menuId}
-        aria-label={labels.categoryAria}
+        aria-label={categoryAria}
         onClick={() => setOpen((v) => !v)}
       >
-        <span>{labels.category}</span>
+        <span>{category}</span>
         <Chevron className={open ? "rotate-180" : undefined} />
       </button>
 
@@ -135,48 +128,26 @@ export function NavToolCategories({
         <div
           id={menuId}
           role="menu"
-          aria-label={labels.categoryAria}
+          aria-label={categoryAria}
           className={cn(
             "absolute left-0 top-full z-50 mt-1 min-w-[16rem] rounded-xl border border-border bg-surface-raised py-2 shadow-xl",
             "ring-1 ring-text/8",
           )}
         >
-          <Link
-            role="menuitem"
-            href={workbenchHref}
-            className="block px-4 py-2 font-normal text-text no-underline hover:bg-text/[0.04]"
-            onClick={() => {
-              clearCloseTimer();
-              setOpen(false);
-            }}
-          >
-            {labels.workbenchTitle}
-          </Link>
-          <div
-            className="mx-3 my-1 border-t border-border"
-            role="separator"
-            aria-hidden
-          />
-          <div
-            className="px-4 py-2 text-xs text-text-muted"
-            role="menuitem"
-            aria-disabled
-          >
-            <span className="mr-2 inline-block rounded bg-surface px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-text-secondary">
-              {labels.soonBadge}
-            </span>
-            {labels.soonHex}
-          </div>
-          <div
-            className="px-4 py-2 text-xs text-text-muted"
-            role="menuitem"
-            aria-disabled
-          >
-            <span className="mr-2 inline-block rounded bg-surface px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-text-secondary">
-              {labels.soonBadge}
-            </span>
-            {labels.soonUrl}
-          </div>
+          {items.map((item) => (
+            <Link
+              key={item.href}
+              role="menuitem"
+              href={item.href}
+              className="block px-4 py-2 font-normal text-text no-underline hover:bg-text/[0.04]"
+              onClick={() => {
+                clearCloseTimer();
+                setOpen(false);
+              }}
+            >
+              {item.title}
+            </Link>
+          ))}
         </div>
       ) : null}
     </div>

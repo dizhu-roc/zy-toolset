@@ -8,23 +8,21 @@
     "docs": "Docs",
     "categoryBase64": "Base64",
     "categoryBase64MenuAria": "Base64-related tools",
+    "categoryGenerators": "Generators",
+    "categoryGeneratorsMenuAria": "Generator tools menu",
+    "categoryImages": "Images",
+    "categoryImagesMenuAria": "Image tools menu",
     "soonBadge": "Soon",
     "soonHex": "Hex ↔ Base64",
     "soonUrl": "URL → Base64 (fetch)"
   },
   "home": {
-    "introTitle": "A calm workspace for small tools",
-    "introBody": "Each tool runs in your browser. We do not upload your inputs to our servers by default — check each page for specifics.",
-    "ctaBrowse": "Open Base64 workbench",
-    "ctaSoon": "Tools ship incrementally; the repo tracks progress in /docs.",
+    "introTitle": "A collection of practical online tools",
     "toolsSectionTitle": "Tool directory",
-    "toolsPlaceholder": "More tools will appear here by category. Use the Base64 section below or the header menu.",
-    "base64SectionTitle": "Base64",
-    "base64SectionBody": "Encode UTF-8 text or files, decode Base64 strings and Data URLs — all in your browser.",
-    "base64Cta": "Open Base64 workbench",
-    "soonHex": "Hex ↔ Base64",
-    "soonUrl": "URL → Base64 (fetch)",
-    "soonBadge": "Soon"
+    "base64TextCardTitle": "Text & Base64",
+    "base64TextCardDesc": "UTF-8 in the browser; switch to the decode tab whenever you need to turn Base64 or Data URLs back into text.",
+    "base64FileCardTitle": "File & Base64",
+    "base64FileCardDesc": "Turn uploads into Base64 or Data URLs locally; use the decode tab when you need the bytes back."
   },
   "footer": {
     "legalNavLabel": "Legal",
@@ -51,12 +49,12 @@
       "pageTitle": "Base64 workbench",
       "pageDescription": "Switch between text encoding, file encoding, and decoding. Inputs stay in this tab unless you choose to copy or download.",
       "navEntryTitle": "Base64 workbench",
-      "navEntryDescription": "Text & files → Base64; decode Base64 / Data URLs.",
+      "navEntryDescription": "Text and files with Base64; decode Base64 and Data URLs.",
       "localNotice": "Nothing is uploaded to our servers — processing happens locally in your browser.",
       "privacyLink": "Privacy overview",
       "tabsAria": "Base64 modes",
-      "tabText": "Text → Base64",
-      "tabFile": "File → Base64",
+      "tabText": "Text & Base64",
+      "tabFile": "File & Base64",
       "tabDecode": "Decode",
       "textInputLabel": "Plain text (UTF-8)",
       "textOutputLabel": "Output",
@@ -82,6 +80,41 @@
       "decodeBinaryHint": "Decoded bytes are not valid UTF-8. Download the raw file instead.",
       "decodeUtf8Ok": "Shown as UTF-8 text.",
       "downloadDecoded": "Download decoded file"
+    },
+    "passwordGenerator": {
+      "metaTitle": "Password generator",
+      "metaDescription": "Generate strong random passwords in your browser. Nothing is sent to our servers by default.",
+      "pageTitle": "Password generator",
+      "pageDescription": "Create random passwords with length and character options — processing stays in your tab.",
+      "body": "This page is a placeholder. The interactive generator will ship in a later update."
+    },
+    "icoGenerator": {
+      "metaTitle": "ICO generator",
+      "metaDescription": "Build Windows .ico files from your images in the browser. Local processing by default.",
+      "pageTitle": "ICO generator",
+      "pageDescription": "Combine multiple sizes into a single icon file for apps and shortcuts.",
+      "body": "This page is a placeholder. The interactive ICO builder will ship in a later update."
+    },
+    "imageCompressor": {
+      "metaTitle": "Image compressor",
+      "metaDescription": "Shrink image file size in the browser without uploading your files to our servers.",
+      "pageTitle": "Image compressor",
+      "pageDescription": "Reduce weight for JPG, PNG, WebP, and more while keeping previews local.",
+      "body": "This page is a placeholder. The interactive compressor will ship in a later update."
+    },
+    "imageCropper": {
+      "metaTitle": "Image cropper",
+      "metaDescription": "Crop images to the region you need directly in the browser.",
+      "pageTitle": "Image cropper",
+      "pageDescription": "Select an area, preview the result, and export without leaving your device.",
+      "body": "This page is a placeholder. The interactive crop tool will ship in a later update."
+    },
+    "imageResizer": {
+      "metaTitle": "Image resizer",
+      "metaDescription": "Change image width and height in the browser with local processing.",
+      "pageTitle": "Image resizer",
+      "pageDescription": "Set target dimensions or scale by percentage before download.",
+      "body": "This page is a placeholder. The interactive resizer will ship in a later update."
     }
   },
   "privacy": {

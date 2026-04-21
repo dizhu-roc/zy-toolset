@@ -1,9 +1,35 @@
 import Link from "next/link";
-import { getMessages } from "@/i18n/dictionaries";
+import {
+  HomeToolIcon,
+  type HomeToolIconId,
+} from "@/components/icons/home-tool-icons";
+import { getMessages, type Messages } from "@/i18n/dictionaries";
 import { isLocale, type Locale } from "@/i18n/config";
 import { hrefForLocale } from "@/lib/localized-path";
 
 type Props = { params: Promise<{ locale: string }> };
+
+const HOME_TOOL_ENTRIES: {
+  rest: string;
+  key: keyof Pick<
+    Messages["tools"],
+    | "passwordGenerator"
+    | "icoGenerator"
+    | "imageCompressor"
+    | "imageCropper"
+    | "imageResizer"
+  >;
+  icon: HomeToolIconId;
+}[] = [
+  { rest: "tools/password-generator", key: "passwordGenerator", icon: "passwordGenerator" },
+  { rest: "tools/ico-generator", key: "icoGenerator", icon: "icoGenerator" },
+  { rest: "tools/image-compressor", key: "imageCompressor", icon: "imageCompressor" },
+  { rest: "tools/image-cropper", key: "imageCropper", icon: "imageCropper" },
+  { rest: "tools/image-resizer", key: "imageResizer", icon: "imageResizer" },
+];
+
+const cardClassName =
+  "group flex gap-3.5 rounded-xl border border-tool-card-border bg-white p-5 text-text shadow-sm no-underline hover:text-text motion-safe:transition-[transform,box-shadow] motion-safe:duration-500 motion-safe:ease-in-out motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-md";
 
 export default async function HomePage({ params }: Props) {
   const { locale: raw } = await params;
@@ -12,77 +38,63 @@ export default async function HomePage({ params }: Props) {
   }
   const locale: Locale = raw;
   const t = await getMessages(locale);
+  const base64Href = hrefForLocale(locale, "tools/base64");
 
   return (
-    <article className="mx-auto max-w-prose py-10">
-      <h1 className="font-semibold tracking-tight text-text text-3xl leading-tight sm:text-4xl">
-        {t.home.introTitle}
-      </h1>
-      <p className="mt-6 text-lg text-text-secondary leading-relaxed">
-        {t.home.introBody}
-      </p>
-      <p className="mt-4 text-text-muted leading-relaxed">{t.site.tagline}</p>
-      <div className="mt-10 flex flex-wrap gap-3">
-        <span className="inline-flex items-center rounded-md border border-border bg-surface-raised px-4 py-2 text-sm text-text-secondary shadow-sm">
-          {t.home.ctaSoon}
-        </span>
-        <Link
-          href={hrefForLocale(locale, "tools/base64")}
-          className="inline-flex items-center rounded-md bg-accent px-4 py-2 text-sm font-medium text-surface-raised no-underline shadow-sm transition-colors hover:bg-accent-hover"
-        >
-          {t.home.ctaBrowse}
-        </Link>
-      </div>
+    <article className="w-full py-10">
+      <header className="mx-auto max-w-3xl text-center">
+        <h1 className="font-semibold tracking-tight text-text text-3xl leading-tight sm:text-4xl">
+          {t.home.introTitle}
+        </h1>
+        <p className="mt-6 text-text-muted leading-relaxed">{t.site.tagline}</p>
+      </header>
 
-      <section
-        id="tools"
-        aria-labelledby="tools-heading"
-        className="mt-20 border-t border-border pt-12"
-      >
-        <h2
-          id="tools-heading"
-          className="text-lg font-semibold tracking-tight text-text"
-        >
-          {t.home.toolsSectionTitle}
-        </h2>
-        <p className="mt-3 max-w-prose text-text-muted leading-relaxed">
-          {t.home.toolsPlaceholder}
-        </p>
-
-        <section
-          aria-labelledby="base64-heading"
-          className="mt-10 rounded-xl border border-border bg-surface p-6 shadow-sm"
-        >
-          <h3
-            id="base64-heading"
-            className="text-base font-semibold tracking-tight text-text"
-          >
-            {t.home.base64SectionTitle}
-          </h3>
-          <p className="mt-2 text-sm text-text-secondary leading-relaxed">
-            {t.home.base64SectionBody}
-          </p>
-          <Link
-            href={hrefForLocale(locale, "tools/base64")}
-            className="mt-4 inline-flex items-center rounded-md bg-accent px-4 py-2 text-sm font-medium text-surface-raised no-underline shadow-sm transition-colors hover:bg-accent-hover"
-          >
-            {t.home.base64Cta}
+      <section id="tools" className="mt-8">
+        <h2 className="sr-only">{t.home.toolsSectionTitle}</h2>
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          <Link href={`${base64Href}#text`} className={cardClassName}>
+            <HomeToolIcon id="base64Text" className="text-text-secondary" />
+            <div className="min-w-0 flex-1">
+              <h3 className="text-base font-semibold tracking-tight text-text">
+                {t.home.base64TextCardTitle}
+              </h3>
+              <p className="mt-1.5 text-sm text-text-secondary leading-snug">
+                {t.home.base64TextCardDesc}
+              </p>
+            </div>
           </Link>
-          <ul className="mt-6 space-y-2 border-t border-border pt-4 text-sm text-text-muted">
-            <li>
-              <span className="mr-2 inline-block rounded bg-surface-raised px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-text-secondary">
-                {t.home.soonBadge}
-              </span>
-              {t.home.soonHex}
-            </li>
-            <li>
-              <span className="mr-2 inline-block rounded bg-surface-raised px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-text-secondary">
-                {t.home.soonBadge}
-              </span>
-              {t.home.soonUrl}
-            </li>
-          </ul>
-        </section>
+          <Link href={`${base64Href}#file`} className={cardClassName}>
+            <HomeToolIcon id="base64File" className="text-text-secondary" />
+            <div className="min-w-0 flex-1">
+              <h3 className="text-base font-semibold tracking-tight text-text">
+                {t.home.base64FileCardTitle}
+              </h3>
+              <p className="mt-1.5 text-sm text-text-secondary leading-snug">
+                {t.home.base64FileCardDesc}
+              </p>
+            </div>
+          </Link>
+          {HOME_TOOL_ENTRIES.map(({ rest, key, icon }) => {
+            const tc = t.tools[key];
+            return (
+              <Link
+                key={rest}
+                href={hrefForLocale(locale, rest)}
+                className={cardClassName}
+              >
+                <HomeToolIcon id={icon} className="text-text-secondary" />
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-base font-semibold tracking-tight text-text">
+                    {tc.pageTitle}
+                  </h3>
+                  <p className="mt-1.5 text-sm text-text-secondary leading-snug">
+                    {tc.pageDescription}
+                  </p>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
       </section>
     </article>
   );

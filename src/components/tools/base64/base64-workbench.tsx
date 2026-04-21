@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useId, useState } from "react";
+import { useCallback, useEffect, useId, useState } from "react";
 import type { Messages } from "@/i18n/dictionaries";
 import {
   base64ToBytes,
@@ -18,6 +18,13 @@ type Copy = Messages["tools"]["base64"];
 const MAX_FILE_BYTES = 8 * 1024 * 1024;
 
 type TabId = "text" | "file" | "decode";
+
+function tabFromHash(): TabId | null {
+  if (typeof window === "undefined") return null;
+  const raw = window.location.hash.replace(/^#/, "").toLowerCase();
+  if (raw === "text" || raw === "file" || raw === "decode") return raw;
+  return null;
+}
 
 export function Base64Workbench({
   copy,
@@ -46,6 +53,26 @@ export function Base64Workbench({
   const [decodeMime, setDecodeMime] = useState("application/octet-stream");
 
   const [copyHint, setCopyHint] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fromHash = tabFromHash();
+    if (fromHash) setTab(fromHash);
+  }, []);
+
+  useEffect(() => {
+    const onHashChange = () => {
+      const next = tabFromHash();
+      if (next) setTab(next);
+    };
+    window.addEventListener("hashchange", onHashChange);
+    return () => window.removeEventListener("hashchange", onHashChange);
+  }, []);
+
+  const selectTab = useCallback((id: TabId) => {
+    setTab(id);
+    const url = `${window.location.pathname}${window.location.search}#${id}`;
+    window.history.replaceState(null, "", url);
+  }, []);
 
   const flashCopy = useCallback(() => {
     setCopyHint(copy.copied);
@@ -192,7 +219,7 @@ export function Base64Workbench({
                 : "text-text-secondary hover:text-text",
               "focus-visible:ring-2 focus-visible:ring-accent/25",
             )}
-            onClick={() => setTab(t.id)}
+            onClick={() => selectTab(t.id)}
           >
             {t.label}
           </button>

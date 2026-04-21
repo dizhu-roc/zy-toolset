@@ -8,23 +8,21 @@
     "docs": "ドキュメント",
     "categoryBase64": "Base64",
     "categoryBase64MenuAria": "Base64 関連ツール",
+    "categoryGenerators": "ジェネレーター",
+    "categoryGeneratorsMenuAria": "ジェネレーター系ツールのメニュー",
+    "categoryImages": "画像",
+    "categoryImagesMenuAria": "画像ツールのメニュー",
     "soonBadge": "近日",
     "soonHex": "Hex ↔ Base64",
     "soonUrl": "URL → Base64（取得）"
   },
   "home": {
-    "introTitle": "小さなツールのための落ち着いた作業台",
-    "introBody": "各ツールはブラウザ内で動作します。既定では入力をサーバーにアップロードしません。詳細は各ページをご確認ください。",
-    "ctaBrowse": "Base64 ワークベンチを開く",
-    "ctaSoon": "ツールは順次追加予定です。進捗はリポジトリの /docs を参照してください。",
+    "introTitle": "オンラインの実用ツール集",
     "toolsSectionTitle": "ツール一覧",
-    "toolsPlaceholder": "他のツールはカテゴリ別に追加予定です。下の Base64 ブロックまたはヘッダーの「Base64」メニューからもどうぞ。",
-    "base64SectionTitle": "Base64",
-    "base64SectionBody": "UTF-8 テキストやファイルを Base64 / Data URL にエンコードしたり、Base64 と Data URL をデコードします（すべてブラウザ内）。",
-    "base64Cta": "Base64 ワークベンチを開く",
-    "soonHex": "Hex ↔ Base64",
-    "soonUrl": "URL → Base64（フェッチ）",
-    "soonBadge": "近日"
+    "base64TextCardTitle": "テキストと Base64",
+    "base64TextCardDesc": "UTF-8 をブラウザ内で扱います。Base64 や Data URL を元のテキストに戻すときは「デコード」タブに切り替えてください。",
+    "base64FileCardTitle": "ファイルと Base64",
+    "base64FileCardDesc": "アップロードを Base64 または Data URL にします。バイト列が必要なときは「デコード」タブを使います。"
   },
   "footer": {
     "legalNavLabel": "法的情報",
@@ -51,12 +49,12 @@
       "pageTitle": "Base64 ワークベンチ",
       "pageDescription": "「テキスト」「ファイル」「デコード」を切り替えます。コピーやダウンロードをしない限り、このタブ内だけで処理されます。",
       "navEntryTitle": "Base64 ワークベンチ",
-      "navEntryDescription": "テキスト・ファイル → Base64；Base64 / Data URL をデコード。",
+      "navEntryDescription": "テキスト・ファイルと Base64。Base64 と Data URL をデコード。",
       "localNotice": "当社サーバーにはアップロードされず、このブラウザ内で処理されます。",
       "privacyLink": "プライバシー概要",
       "tabsAria": "Base64 モード",
-      "tabText": "テキスト → Base64",
-      "tabFile": "ファイル → Base64",
+      "tabText": "テキストと Base64",
+      "tabFile": "ファイルと Base64",
       "tabDecode": "デコード",
       "textInputLabel": "プレーンテキスト（UTF-8）",
       "textOutputLabel": "出力",
@@ -82,6 +80,41 @@
       "decodeBinaryHint": "デコード結果は UTF-8 として無効です。生バイナリをダウンロードしてください。",
       "decodeUtf8Ok": "UTF-8 テキストとして表示しています。",
       "downloadDecoded": "デコードしたファイルをダウンロード"
+    },
+    "passwordGenerator": {
+      "metaTitle": "パスワード生成",
+      "metaDescription": "ブラウザ内で長さや文字種を選べるランダムな強力なパスワードを生成します。既定ではサーバーに送信しません。",
+      "pageTitle": "パスワード生成",
+      "pageDescription": "タブ内だけで文字種と長さを指定し、登録やローテーションに使えます。",
+      "body": "このページはプレースホルダーです。対話型の生成 UI は今後の更新で追加予定です。"
+    },
+    "icoGenerator": {
+      "metaTitle": "ICO 生成",
+      "metaDescription": "ブラウザ内で画像から複数サイズの Windows アイコン（.ico）を組み立てます。既定はローカル処理です。",
+      "pageTitle": "ICO 生成",
+      "pageDescription": "複数解像度を 1 つの .ico にまとめ、アプリやショートカット向けに使えます。",
+      "body": "このページはプレースホルダーです。対話型の ICO ビルダーは今後の更新で追加予定です。"
+    },
+    "imageCompressor": {
+      "metaTitle": "画像圧縮",
+      "metaDescription": "ブラウザ内で画像ファイルのサイズを小さくします。既定では当社サーバーにアップロードしません。",
+      "pageTitle": "画像圧縮",
+      "pageDescription": "JPG / PNG / WebP などの容量を抑え、プレビューと書き出しはローカルで行います。",
+      "body": "このページはプレースホルダーです。対話型の圧縮は今後の更新で追加予定です。"
+    },
+    "imageCropper": {
+      "metaTitle": "画像トリミング",
+      "metaDescription": "ブラウザ内で必要な領域だけに画像を切り抜きます。",
+      "pageTitle": "画像トリミング",
+      "pageDescription": "範囲を選んでプレビューし、端末から離れずに書き出せます。",
+      "body": "このページはプレースホルダーです。対話型のトリミングは今後の更新で追加予定です。"
+    },
+    "imageResizer": {
+      "metaTitle": "画像リサイズ",
+      "metaDescription": "ブラウザ内で画像の幅と高さを変更します。ローカル処理です。",
+      "pageTitle": "画像リサイズ",
+      "pageDescription": "目標ピクセルや割合で拡大縮小してからダウンロードできます。",
+      "body": "このページはプレースホルダーです。対話型のリサイズは今後の更新で追加予定です。"
     }
   },
   "privacy": {

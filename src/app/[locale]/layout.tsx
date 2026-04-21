@@ -87,6 +87,13 @@ export default async function LocaleLayout({ children, params }: Props) {
   const homePath = localePathnames("")[locale];
   const homeUrl = absoluteUrl(homePath);
 
+  const headerStore = await headers();
+  const publicPathname =
+    headerStore.get("x-public-pathname") ??
+    (locale === "en" ? "/" : `/${locale}`);
+  const { rest } = parsePublicPathname(publicPathname);
+  const homeMain = rest === "";
+
   return (
     <>
       <WebSiteJsonLd
@@ -95,7 +102,7 @@ export default async function LocaleLayout({ children, params }: Props) {
         description={messages.site.tagline}
         homeUrl={homeUrl}
       />
-      <SiteShell locale={locale} messages={messages}>
+      <SiteShell locale={locale} messages={messages} homeMain={homeMain}>
         {children}
       </SiteShell>
     </>

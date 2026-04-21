@@ -3,7 +3,11 @@
  */
 
 :root {
-  --palette-canvas: #f6f4ef;
+  /* 页面与主内容区：更浅的雾蓝灰衬底 */
+  --palette-canvas: #eef2f7;
+  --palette-main-bg: #eef2f7;
+  /* 首页工具卡片边框（雾蓝灰系，略浅） */
+  --palette-tool-card-border: #c5ced9;
   --palette-surface: #fffcf7;
   --palette-surface-raised: #ffffff;
   --palette-border: #d9d3c7;
@@ -38,11 +42,20 @@
   --measure-prose: 42rem;
   /* 顶栏 / main / 页脚统一最大内容宽（1280px @ 16px root） */
   --measure-content: 80rem;
+
+  /* 全站公共底栏：偏暖的灰黑（非纯黑） */
+  --palette-footer-bg: #262524;
+  --palette-footer-border: #3d3c39;
+  --palette-footer-text: #f2f0eb;
+  --palette-footer-text-muted: #b0aca3;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --palette-canvas: #141312;
+    /* 深色雾蓝灰底（略浅一档） */
+    --palette-canvas: #181e27;
+    --palette-main-bg: #181e27;
+    --palette-tool-card-border: #455364;
     --palette-surface: #1c1b19;
     --palette-surface-raised: #242220;
     --palette-border: #3d3935;
@@ -64,5 +77,10 @@
 
     --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.35);
     --shadow-md: 0 4px 16px rgb(0 0 0 / 0.45);
+
+    --palette-footer-bg: #141413;
+    --palette-footer-border: #2c2b29;
+    --palette-footer-text: #f0eee8;
+    --palette-footer-text-muted: #9e9a92;
   }
 }

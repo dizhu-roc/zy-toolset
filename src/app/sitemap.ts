@@ -11,6 +11,11 @@ const STATIC_REST = [
   "cookies",
   "tools/template",
   "tools/base64",
+  "tools/password-generator",
+  "tools/ico-generator",
+  "tools/image-compressor",
+  "tools/image-cropper",
+  "tools/image-resizer",
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

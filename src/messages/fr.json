@@ -8,23 +8,21 @@
     "docs": "Documentation",
     "categoryBase64": "Base64",
     "categoryBase64MenuAria": "Outils Base64",
+    "categoryGenerators": "Générateurs",
+    "categoryGeneratorsMenuAria": "Menu des outils générateurs",
+    "categoryImages": "Images",
+    "categoryImagesMenuAria": "Menu des outils image",
     "soonBadge": "Bientôt",
     "soonHex": "Hex ↔ Base64",
     "soonUrl": "URL → Base64 (fetch)"
   },
   "home": {
-    "introTitle": "Un espace posé pour de petits outils",
-    "introBody": "Chaque outil s’exécute dans votre navigateur. Par défaut nous n’envoyons pas vos saisies sur nos serveurs — voir chaque page pour le détail.",
-    "ctaBrowse": "Ouvrir l’atelier Base64",
-    "ctaSoon": "Les outils seront ajoutés progressivement ; l’avancement est suivi dans /docs du dépôt.",
+    "introTitle": "Une collection d’outils pratiques en ligne",
     "toolsSectionTitle": "Répertoire des outils",
-    "toolsPlaceholder": "D’autres outils apparaîtront ici par catégorie. Utilisez aussi le bloc Base64 ci-dessous ou le menu « Base64 » dans l’en-tête.",
-    "base64SectionTitle": "Base64",
-    "base64SectionBody": "Encodez du texte UTF-8 ou des fichiers en Base64 et Data URL, ou décodez Base64 et Data URL — le tout dans votre navigateur.",
-    "base64Cta": "Ouvrir l’atelier Base64",
-    "soonHex": "Hex ↔ Base64",
-    "soonUrl": "URL → Base64 (fetch)",
-    "soonBadge": "Bientôt"
+    "base64TextCardTitle": "Texte et Base64",
+    "base64TextCardDesc": "UTF-8 dans le navigateur ; passez à l’onglet décodage pour repasser Base64 ou Data URL en texte.",
+    "base64FileCardTitle": "Fichier et Base64",
+    "base64FileCardDesc": "Transformez les envois en Base64 ou Data URL en local ; l’onglet décodage sert à récupérer les octets."
   },
   "footer": {
     "legalNavLabel": "Mentions légales",
@@ -51,12 +49,12 @@
       "pageTitle": "Atelier Base64",
       "pageDescription": "Basculez entre texte, fichier et décodage. Le contenu reste dans cet onglet sauf si vous copiez ou téléchargez.",
       "navEntryTitle": "Atelier Base64",
-      "navEntryDescription": "Texte et fichiers → Base64 ; décodage Base64 / Data URL.",
+      "navEntryDescription": "Texte et fichiers avec Base64 ; décodage Base64 et Data URL.",
       "localNotice": "Rien n’est envoyé sur nos serveurs — le traitement se fait localement dans votre navigateur.",
       "privacyLink": "Aperçu confidentialité",
       "tabsAria": "Modes Base64",
-      "tabText": "Texte → Base64",
-      "tabFile": "Fichier → Base64",
+      "tabText": "Texte et Base64",
+      "tabFile": "Fichier et Base64",
       "tabDecode": "Décoder",
       "textInputLabel": "Texte brut (UTF-8)",
       "textOutputLabel": "Sortie",
@@ -82,6 +80,41 @@
       "decodeBinaryHint": "Les octets décodés ne sont pas de l’UTF-8 valide. Téléchargez le binaire brut.",
       "decodeUtf8Ok": "Affiché en texte UTF-8.",
       "downloadDecoded": "Télécharger le fichier décodé"
+    },
+    "passwordGenerator": {
+      "metaTitle": "Générateur de mots de passe",
+      "metaDescription": "Générez des mots de passe aléatoires robustes dans le navigateur. Rien n’est envoyé sur nos serveurs par défaut.",
+      "pageTitle": "Générateur de mots de passe",
+      "pageDescription": "Choisissez la longueur et les jeux de caractères — le traitement reste dans votre onglet.",
+      "body": "Cette page est un placeholder. L’interface interactive arrivera dans une prochaine mise à jour."
+    },
+    "icoGenerator": {
+      "metaTitle": "Générateur ICO",
+      "metaDescription": "Assemblez des fichiers .ico Windows à partir de vos images dans le navigateur. Traitement local par défaut.",
+      "pageTitle": "Générateur ICO",
+      "pageDescription": "Regroupez plusieurs tailles dans une seule icône pour applications et raccourcis.",
+      "body": "Cette page est un placeholder. Le créateur ICO interactif arrivera dans une prochaine mise à jour."
+    },
+    "imageCompressor": {
+      "metaTitle": "Compression d’images",
+      "metaDescription": "Réduisez le poids des images dans le navigateur sans envoyer vos fichiers sur nos serveurs.",
+      "pageTitle": "Compression d’images",
+      "pageDescription": "Allégez JPG, PNG, WebP et plus ; aperçu et export restent locaux.",
+      "body": "Cette page est un placeholder. Le compresseur interactif arrivera dans une prochaine mise à jour."
+    },
+    "imageCropper": {
+      "metaTitle": "Recadrage d’image",
+      "metaDescription": "Recadrez vos images sur la zone voulue directement dans le navigateur.",
+      "pageTitle": "Recadrage d’image",
+      "pageDescription": "Sélectionnez la zone, prévisualisez et exportez sans quitter votre appareil.",
+      "body": "Cette page est un placeholder. L’outil de recadrage interactif arrivera dans une prochaine mise à jour."
+    },
+    "imageResizer": {
+      "metaTitle": "Redimensionnement d’image",
+      "metaDescription": "Modifiez largeur et hauteur des images dans le navigateur, en local.",
+      "pageTitle": "Redimensionnement d’image",
+      "pageDescription": "Définissez la taille cible ou un pourcentage avant téléchargement.",
+      "body": "Cette page est un placeholder. Le redimensionneur interactif arrivera dans une prochaine mise à jour."
     }
   },
   "privacy": {
