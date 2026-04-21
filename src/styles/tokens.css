@@ -36,7 +36,8 @@
   --shadow-md: 0 4px 12px rgb(28 27 24 / 0.08);
 
   --measure-prose: 42rem;
-  --measure-content: 68rem;
+  /* 顶栏 / main / 页脚统一最大内容宽（1280px @ 16px root） */
+  --measure-content: 80rem;
 }
 
 @media (prefers-color-scheme: dark) {

@@ -27,7 +27,7 @@ export default async function HomePage({ params }: Props) {
           {t.home.ctaSoon}
         </span>
         <Link
-          href={`${hrefForLocale(locale, "")}#tools`}
+          href={hrefForLocale(locale, "tools/template")}
           className="inline-flex items-center rounded-md bg-accent px-4 py-2 text-sm font-medium text-surface-raised no-underline shadow-sm transition-colors hover:bg-accent-hover"
         >
           {t.home.ctaBrowse}

@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { SiteShell } from "@/components/layout/site-shell";
-import { siteUrl } from "@/config/site";
+import { WebSiteJsonLd } from "@/components/seo/web-site-json-ld";
+import { brandLogoSrc, siteUrl } from "@/config/site";
 import { getMessages } from "@/i18n/dictionaries";
 import { isLocale, locales, type Locale } from "@/i18n/config";
+import { openGraphLocaleTag } from "@/lib/og-locale";
 import { localePathnames, parsePublicPathname } from "@/lib/localized-path";
 
 type Props = {
@@ -43,13 +45,35 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     languages[l] = absoluteUrl(paths[l]);
   }
 
+  const canonical = absoluteUrl(publicPathname);
+  const ogLocales = locales
+    .filter((l) => l !== locale)
+    .map((l) => openGraphLocaleTag(l));
+
   return {
     title: messages.site.name,
     description: messages.site.tagline,
     alternates: {
-      canonical: absoluteUrl(publicPathname),
+      canonical,
       languages,
     },
+    openGraph: {
+      type: "website",
+      url: canonical,
+      siteName: messages.site.name,
+      title: messages.site.name,
+      description: messages.site.tagline,
+      locale: openGraphLocaleTag(locale),
+      alternateLocale: ogLocales.length ? ogLocales : undefined,
+      images: [{ url: brandLogoSrc, alt: messages.site.name }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: messages.site.name,
+      description: messages.site.tagline,
+      images: [brandLogoSrc],
+    },
+    robots: { index: true, follow: true },
   };
 }
 
@@ -60,10 +84,20 @@ export default async function LocaleLayout({ children, params }: Props) {
   }
   const locale: Locale = raw;
   const messages = await getMessages(locale);
+  const homePath = localePathnames("")[locale];
+  const homeUrl = absoluteUrl(homePath);
 
   return (
-    <SiteShell locale={locale} messages={messages}>
-      {children}
-    </SiteShell>
+    <>
+      <WebSiteJsonLd
+        locale={locale}
+        name={messages.site.name}
+        description={messages.site.tagline}
+        homeUrl={homeUrl}
+      />
+      <SiteShell locale={locale} messages={messages}>
+        {children}
+      </SiteShell>
+    </>
   );
 }

@@ -13,13 +13,56 @@
     "ctaBrowse": "Explorar herramientas",
     "ctaSoon": "Las herramientas se irán publicando; el avance está en /docs del repositorio.",
     "toolsSectionTitle": "Directorio de herramientas",
-    "toolsPlaceholder": "Aún no hay herramientas enlazadas: añade rutas bajo src/app/[locale] según vayan estando listas."
+    "toolsPlaceholder": "Ejemplo: /tools/template (p. ej. /es/tools/template). Las herramientas reales van en src/app/[locale]/tools/{slug}."
   },
   "footer": {
+    "legalNavLabel": "Legal",
     "privacy": "Privacidad",
+    "terms": "Términos",
+    "cookies": "Cookies",
     "local": "Por defecto, procesamiento local"
   },
   "locale": {
     "label": "Idioma"
+  },
+  "toolLayout": {
+    "privacyHint": "Privacidad y procesamiento local del sitio →"
+  },
+  "tools": {
+    "template": {
+      "title": "Plantilla de página de herramienta",
+      "description": "Ruta vacía con ToolPageLayout; copia esta carpeta como tools/{slug} para una herramienta real.",
+      "body": "Mantén este contenedor como Server Component; editores, pestañas y archivos van en componentes cliente hijos."
+    }
+  },
+  "privacy": {
+    "title": "Privacidad y procesamiento local",
+    "description": "Cómo tratamos tus datos por defecto en este sitio.",
+    "lead": "Vale para todo el sitio. Cada herramienta podrá añadir avisos propios más adelante.",
+    "paragraphs": [
+      "Por defecto, lo que pegas o subes en las herramientas del navegador se procesa en tu pestaña. No recibimos tu contenido en bruto salvo que una herramienta lo indique explícitamente.",
+      "Pueden generarse registros típicos del servidor (p. ej. solicitudes de página) necesarios para operar el sitio. Retención y bases legales se documentarán aquí a medida que el producto madure.",
+      "Los canales de contacto se publicarán en esta página cuando existan."
+    ]
+  },
+  "terms": {
+    "title": "Términos del servicio",
+    "description": "Términos del servicio (borrador) de Toolsset.",
+    "lead": "Página legal provisional. Sustituye por términos revisados por asesoría antes de marketing público o cobros.",
+    "paragraphs": [
+      "No se garantiza la exactitud de las herramientas en el navegador; los resultados pueden variar según dispositivo o navegador.",
+      "Aceptas no abusar del servicio (incluidos intentos de interrumpir la infraestructura o infringir la ley aplicable).",
+      "Podremos actualizar estos términos; la fecha de revisión figurará aquí cuando exista un proceso formal."
+    ]
+  },
+  "cookies": {
+    "title": "Política de cookies",
+    "description": "Cómo Toolsset usa cookies y almacenamiento similar.",
+    "lead": "Texto provisional. Complétalo antes de analítica, inicio de sesión o incrustaciones de terceros.",
+    "paragraphs": [
+      "Las cookies esenciales (si las hay) solo sirven para operar el sitio, p. ej. preferencias de UI que guardes explícitamente.",
+      "Esta línea base no incluye cookies publicitarias de terceros. Revísalo antes de activar anuncios o rastreadores.",
+      "Puedes bloquear o borrar cookies desde el navegador; algunas funciones podrían dejar de funcionar."
+    ]
   }
 }

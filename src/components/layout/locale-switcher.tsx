@@ -122,8 +122,11 @@ export function LocaleSwitcher({ locale, labels }: Props) {
   );
 
   useEffect(() => {
-    setOpen(false);
-    clearCloseTimer();
+    const id = requestAnimationFrame(() => {
+      setOpen(false);
+      clearCloseTimer();
+    });
+    return () => cancelAnimationFrame(id);
   }, [clearCloseTimer, pathname]);
 
   useEffect(() => {
@@ -185,7 +188,7 @@ export function LocaleSwitcher({ locale, labels }: Props) {
         }}
         className={cn(
           "grid w-max min-w-0 max-w-[8.75rem] grid-cols-[auto_1fr_auto] items-center gap-1.5 rounded-md px-2 py-1.5 text-sm font-normal",
-          "border border-accent/55 bg-surface text-text outline-none",
+          "cursor-pointer border border-accent/55 bg-surface text-text outline-none",
           "transition-[border-color]",
           open && "border-accent",
           "focus-visible:ring-2 focus-visible:ring-accent/25 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas",
@@ -222,7 +225,7 @@ export function LocaleSwitcher({ locale, labels }: Props) {
                   role="option"
                   aria-selected={selected}
                   className={cn(
-                    "flex items-center gap-2 rounded-md py-2.5 pl-1 pr-2 text-left text-sm font-normal text-text transition-colors",
+                    "flex cursor-pointer items-center gap-2 rounded-md py-2.5 pl-1 pr-2 text-left text-sm font-normal text-text transition-colors",
                     "hover:bg-text/[0.04]",
                     selected && "text-accent",
                   )}

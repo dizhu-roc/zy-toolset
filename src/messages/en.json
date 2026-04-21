@@ -13,13 +13,56 @@
     "ctaBrowse": "Browse tools",
     "ctaSoon": "Tools ship incrementally; the repo tracks progress in /docs.",
     "toolsSectionTitle": "Tool directory",
-    "toolsPlaceholder": "No tools wired yet — add routes under src/app/[locale] as each ships."
+    "toolsPlaceholder": "Sample tool shell: /tools/template (localized under /{locale}/tools/template). Add real slugs under src/app/[locale]/tools/ as each ships."
   },
   "footer": {
+    "legalNavLabel": "Legal",
     "privacy": "Privacy",
+    "terms": "Terms",
+    "cookies": "Cookies",
     "local": "Local-first by default"
   },
   "locale": {
     "label": "Language"
+  },
+  "toolLayout": {
+    "privacyHint": "Site-wide privacy & local processing →"
+  },
+  "tools": {
+    "template": {
+      "title": "Tool page template",
+      "description": "Blank route using ToolPageLayout — copy this folder when adding a real tool at tools/{slug}.",
+      "body": "Keep this layout as a Server Component shell; put editors, tabs, and file handling in child Client components."
+    }
+  },
+  "privacy": {
+    "title": "Privacy & local processing",
+    "description": "How this site handles your data by default.",
+    "lead": "This overview applies across the site. Individual tools may add tool-specific notices later.",
+    "paragraphs": [
+      "By default, inputs you paste or upload in our browser-side tools are processed in your tab. We do not receive your raw content unless a tool explicitly states otherwise.",
+      "We may collect typical server logs (such as page requests) needed to operate the site. Retention and legal bases will be documented here as the product matures.",
+      "Contact channels will be listed on this page when available."
+    ]
+  },
+  "terms": {
+    "title": "Terms of service",
+    "description": "Placeholder terms of service for Toolsset.",
+    "lead": "This page is a legal placeholder. Replace with counsel-reviewed terms before public marketing or payments.",
+    "paragraphs": [
+      "No warranties are granted for the accuracy of browser-side tools; outputs may differ by browser or device.",
+      "You agree not to misuse the service (including attempting to disrupt infrastructure or violate applicable law).",
+      "We may update these terms; the revision date will appear here once a formal process exists."
+    ]
+  },
+  "cookies": {
+    "title": "Cookie policy",
+    "description": "How Toolsset uses cookies and similar storage.",
+    "lead": "Placeholder policy. Expand when analytics, auth, or cross-site embeds are introduced.",
+    "paragraphs": [
+      "Essential cookies (if any) are used only to operate the site, such as remembering UI preferences you explicitly save.",
+      "We do not run third-party advertising cookies in this baseline. Revisit this page before enabling ads or trackers.",
+      "Use your browser settings to block or delete cookies; some features may stop working if you do."
+    ]
   }
 }

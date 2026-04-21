@@ -13,13 +13,56 @@
     "ctaBrowse": "浏览工具",
     "ctaSoon": "工具会逐步上线；进度见仓库 /docs。",
     "toolsSectionTitle": "工具目录",
-    "toolsPlaceholder": "尚未接入具体工具页；随开发进度在 src/app/[locale] 下增加路由即可。"
+    "toolsPlaceholder": "示例工具壳：/tools/template（中文等为 /{locale}/tools/template）。正式工具按 slug 放在 src/app/[locale]/tools/ 下。"
   },
   "footer": {
+    "legalNavLabel": "法律信息",
     "privacy": "隐私",
+    "terms": "条款",
+    "cookies": "Cookie",
     "local": "默认本地处理"
   },
   "locale": {
     "label": "语言"
+  },
+  "toolLayout": {
+    "privacyHint": "全站隐私与本地处理说明 →"
+  },
+  "tools": {
+    "template": {
+      "title": "工具页模板",
+      "description": "使用 ToolPageLayout 的空白路由；上线真实工具时复制本目录为 tools/{slug}。",
+      "body": "此壳层保持为 Server Component；编辑器、Tab、文件读写等请放在子级 Client 组件中。"
+    }
+  },
+  "privacy": {
+    "title": "隐私与本地处理",
+    "description": "本站在默认情况下如何处理你的数据。",
+    "lead": "以下为全站层面的说明；各工具可在后续补充工具专属提示。",
+    "paragraphs": [
+      "默认情况下，你在浏览器内工具中粘贴或上传的内容在本地标签页中处理；除非某工具另有声明，我们不会接收你的原始内容。",
+      "站点可能产生常规服务器访问日志等运维所需数据；留存周期与法律依据将随产品完善在此补充。",
+      "联系方式将在可用后刊登于本页。"
+    ]
+  },
+  "terms": {
+    "title": "服务条款",
+    "description": "Toolsset 服务条款占位页。",
+    "lead": "本页为法务占位，对外营销或收款前请替换为经审核的正式条款。",
+    "paragraphs": [
+      "浏览器内工具的输出可能因浏览器或设备而异，不对其准确性作担保。",
+      "你同意不滥用本服务（包括破坏基础设施或违反适用法律的行为）。",
+      "我们可能更新条款；若有正式流程，将在此标注修订日期。"
+    ]
+  },
+  "cookies": {
+    "title": "Cookie 政策",
+    "description": "Toolsset 如何使用 Cookie 及类似存储。",
+    "lead": "占位说明；在接入统计、登录或第三方嵌入前请补充正式文案。",
+    "paragraphs": [
+      "若有必要 Cookie，仅用于维持站点运行，例如你明确保存的界面偏好。",
+      "当前基线不包含第三方广告 Cookie；若启用广告或追踪，请先更新本页。",
+      "可通过浏览器设置阻止或删除 Cookie；部分功能可能因此不可用。"
+    ]
   }
 }

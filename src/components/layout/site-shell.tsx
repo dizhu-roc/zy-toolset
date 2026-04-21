@@ -41,9 +41,31 @@ export function SiteShell({ locale, messages, children }: Props) {
       </main>
 
       <footer className="border-t border-border bg-surface py-8 text-sm text-text-muted">
-        <div className="mx-auto flex max-w-content flex-col gap-2 px-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+        <div className="mx-auto flex max-w-content flex-col gap-3 px-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <p>{messages.footer.local}</p>
-          <p className="text-text-secondary">{messages.footer.privacy}</p>
+          <nav
+            aria-label={messages.footer.legalNavLabel}
+            className="flex flex-wrap gap-x-4 gap-y-1 text-text-secondary"
+          >
+            <Link
+              href={hrefForLocale(locale, "privacy")}
+              className="no-underline hover:text-text"
+            >
+              {messages.footer.privacy}
+            </Link>
+            <Link
+              href={hrefForLocale(locale, "terms")}
+              className="no-underline hover:text-text"
+            >
+              {messages.footer.terms}
+            </Link>
+            <Link
+              href={hrefForLocale(locale, "cookies")}
+              className="no-underline hover:text-text"
+            >
+              {messages.footer.cookies}
+            </Link>
+          </nav>
         </div>
       </footer>
     </div>

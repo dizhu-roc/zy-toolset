@@ -13,13 +13,56 @@
     "ctaBrowse": "Parcourir les outils",
     "ctaSoon": "Les outils seront ajoutés progressivement ; l’avancement est suivi dans /docs du dépôt.",
     "toolsSectionTitle": "Répertoire des outils",
-    "toolsPlaceholder": "Aucun outil n’est encore branché : ajoutez des routes sous src/app/[locale] au fil des mises en ligne."
+    "toolsPlaceholder": "Exemple : /tools/template (ex. /fr/tools/template). Les vrais outils vont dans src/app/[locale]/tools/{slug}."
   },
   "footer": {
+    "legalNavLabel": "Mentions légales",
     "privacy": "Confidentialité",
+    "terms": "Conditions",
+    "cookies": "Cookies",
     "local": "Traitement local par défaut"
   },
   "locale": {
     "label": "Langue"
+  },
+  "toolLayout": {
+    "privacyHint": "Confidentialité et traitement local du site →"
+  },
+  "tools": {
+    "template": {
+      "title": "Modèle de page d’outil",
+      "description": "Route vide avec ToolPageLayout — dupliquez ce dossier en tools/{slug} pour un vrai outil.",
+      "body": "Gardez cette coque en Server Component ; éditeurs, onglets et fichiers vont dans des composants client enfants."
+    }
+  },
+  "privacy": {
+    "title": "Confidentialité et traitement local",
+    "description": "Comment ce site traite vos données par défaut.",
+    "lead": "S’applique à tout le site. Chaque outil pourra ajouter des mentions spécifiques plus tard.",
+    "paragraphs": [
+      "Par défaut, ce que vous collez ou téléversez dans les outils côté navigateur est traité dans votre onglet. Nous ne recevons pas votre contenu brut sauf indication contraire explicite d’un outil.",
+      "Des journaux serveur classiques (p. ex. requêtes de pages) peuvent être nécessaires au fonctionnement du site. Durées de conservation et bases légales seront précisées ici au fil du produit.",
+      "Les moyens de contact seront indiqués sur cette page lorsqu’ils seront disponibles."
+    ]
+  },
+  "terms": {
+    "title": "Conditions d’utilisation",
+    "description": "Conditions d’utilisation (placeholder) de Toolsset.",
+    "lead": "Page juridique provisoire. Remplacez par des conditions validées par un conseil avant marketing public ou paiement.",
+    "paragraphs": [
+      "Aucune garantie d’exactitude des outils navigateur ; les résultats peuvent varier selon l’appareil ou le navigateur.",
+      "Vous acceptez de ne pas abuser du service (y compris toute tentative de perturber l’infrastructure ou violer la loi).",
+      "Ces conditions peuvent être mises à jour ; la date de révision apparaîtra ici lorsqu’un processus formel existera."
+    ]
+  },
+  "cookies": {
+    "title": "Politique de cookies",
+    "description": "Comment Toolsset utilise les cookies et stockages similaires.",
+    "lead": "Texte provisoire. Complétez-le avant d’activer l’analytique, l’authentification ou les intégrations tierces.",
+    "paragraphs": [
+      "Les cookies essentiels (le cas échéant) servent uniquement au fonctionnement du site, par ex. préférences d’interface que vous enregistrez explicitement.",
+      "Cette base ne comprend pas de cookies publicitaires tiers. Mettez à jour cette page avant d’activer pubs ou traceurs.",
+      "Vous pouvez bloquer ou supprimer les cookies dans le navigateur ; certaines fonctions peuvent cesser de fonctionner."
+    ]
   }
 }
