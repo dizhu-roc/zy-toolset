@@ -1,6 +1,6 @@
 {
   "site": {
-    "name": "Toolsset",
+    "name": "MiniToolset",
     "tagline": "Browser-side utilities for text, data, and media. Nothing leaves your device unless you choose to."
   },
   "nav": {
@@ -129,7 +129,7 @@
   },
   "terms": {
     "title": "Terms of service",
-    "description": "Placeholder terms of service for Toolsset.",
+    "description": "Placeholder terms of service for MiniToolset.",
     "lead": "This page is a legal placeholder. Replace with counsel-reviewed terms before public marketing or payments.",
     "paragraphs": [
       "No warranties are granted for the accuracy of browser-side tools; outputs may differ by browser or device.",
@@ -139,7 +139,7 @@
   },
   "cookies": {
     "title": "Cookie policy",
-    "description": "How Toolsset uses cookies and similar storage.",
+    "description": "How MiniToolset uses cookies and similar storage.",
     "lead": "Placeholder policy. Expand when analytics, auth, or cross-site embeds are introduced.",
     "paragraphs": [
       "Essential cookies (if any) are used only to operate the site, such as remembering UI preferences you explicitly save.",

@@ -3,11 +3,11 @@
  */
 
 :root {
-  /* 页面与主内容区：更浅的雾蓝灰衬底 */
-  --palette-canvas: #eef2f7;
-  --palette-main-bg: #eef2f7;
-  /* 首页工具卡片边框（雾蓝灰系，略浅） */
-  --palette-tool-card-border: #c5ced9;
+  /* 页面与主内容区：更淡的雾蓝灰（近白、微冷灰） */
+  --palette-canvas: #f6f8fc;
+  --palette-main-bg: #f6f8fc;
+  /* 首页工具卡片边框（同步略淡） */
+  --palette-tool-card-border: #d8dfe8;
   --palette-surface: #fffcf7;
   --palette-surface-raised: #ffffff;
   --palette-border: #d9d3c7;
@@ -52,10 +52,10 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    /* 深色雾蓝灰底（略浅一档） */
-    --palette-canvas: #181e27;
-    --palette-main-bg: #181e27;
-    --palette-tool-card-border: #455364;
+    /* 深色雾蓝灰底（略提亮一档） */
+    --palette-canvas: #1c232e;
+    --palette-main-bg: #1c232e;
+    --palette-tool-card-border: #4a5a6e;
     --palette-surface: #1c1b19;
     --palette-surface-raised: #242220;
     --palette-border: #3d3935;

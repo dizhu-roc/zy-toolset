@@ -1,6 +1,6 @@
 {
   "site": {
-    "name": "Toolsset",
+    "name": "MiniToolset",
     "tagline": "Utilidades en el navegador para texto, datos y medios. Por defecto nada sale de tu dispositivo salvo que tú lo decidas."
   },
   "nav": {
@@ -129,7 +129,7 @@
   },
   "terms": {
     "title": "Términos del servicio",
-    "description": "Términos del servicio (borrador) de Toolsset.",
+    "description": "Términos del servicio (borrador) de MiniToolset.",
     "lead": "Página legal provisional. Sustituye por términos revisados por asesoría antes de marketing público o cobros.",
     "paragraphs": [
       "No se garantiza la exactitud de las herramientas en el navegador; los resultados pueden variar según dispositivo o navegador.",
@@ -139,7 +139,7 @@
   },
   "cookies": {
     "title": "Política de cookies",
-    "description": "Cómo Toolsset usa cookies y almacenamiento similar.",
+    "description": "Cómo MiniToolset usa cookies y almacenamiento similar.",
     "lead": "Texto provisional. Complétalo antes de analítica, inicio de sesión o incrustaciones de terceros.",
     "paragraphs": [
       "Las cookies esenciales (si las hay) solo sirven para operar el sitio, p. ej. preferencias de UI que guardes explícitamente.",

@@ -1,6 +1,6 @@
 {
   "site": {
-    "name": "Toolsset",
+    "name": "MiniToolset",
     "tagline": "テキスト・データ・メディア向けのブラウザ完結型ユーティリティ。既定では入力内容をサーバーに送信しません。"
   },
   "nav": {
@@ -129,7 +129,7 @@
   },
   "terms": {
     "title": "利用規約",
-    "description": "Toolsset の利用規約（プレースホルダー）。",
+    "description": "MiniToolset の利用規約（プレースホルダー）。",
     "lead": "法務上の仮ページです。公開マーケティングや決済の前に監査済みの本文へ差し替えてください。",
     "paragraphs": [
       "ブラウザ内ツールの結果は環境により異なる場合があり、正確性について保証しません。",
@@ -139,7 +139,7 @@
   },
   "cookies": {
     "title": "Cookie ポリシー",
-    "description": "Toolsset における Cookie 等の利用方針。",
+    "description": "MiniToolset における Cookie 等の利用方針。",
     "lead": "プレースホルダーです。解析・認証・第三者埋め込みを導入する前に本文を整備してください。",
     "paragraphs": [
       "必要な Cookie はサイト運用のみに使用し、ユーザーが明示的に保存した UI 設定などに限ります。",

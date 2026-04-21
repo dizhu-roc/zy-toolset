@@ -2,7 +2,7 @@
 export const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
-export const siteName = "Toolsset";
+export const siteName = "MiniToolset";
 
 /** 顶栏品牌图（public 下文件名，UUID 避免缓存与误链） */
 export const brandLogoSrc =

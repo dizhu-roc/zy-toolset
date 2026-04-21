@@ -1,6 +1,6 @@
 {
   "site": {
-    "name": "Toolsset",
+    "name": "MiniToolset",
     "tagline": "在浏览器内处理文本、数据与媒体的实用工具。默认情况下内容不会上传到服务器。"
   },
   "nav": {
@@ -129,7 +129,7 @@
   },
   "terms": {
     "title": "服务条款",
-    "description": "Toolsset 服务条款占位页。",
+    "description": "MiniToolset 服务条款占位页。",
     "lead": "本页为法务占位，对外营销或收款前请替换为经审核的正式条款。",
     "paragraphs": [
       "浏览器内工具的输出可能因浏览器或设备而异，不对其准确性作担保。",
@@ -139,7 +139,7 @@
   },
   "cookies": {
     "title": "Cookie 政策",
-    "description": "Toolsset 如何使用 Cookie 及类似存储。",
+    "description": "MiniToolset 如何使用 Cookie 及类似存储。",
     "lead": "占位说明；在接入统计、登录或第三方嵌入前请补充正式文案。",
     "paragraphs": [
       "若有必要 Cookie，仅用于维持站点运行，例如你明确保存的界面偏好。",

@@ -1,6 +1,6 @@
 {
   "site": {
-    "name": "Toolsset",
+    "name": "MiniToolset",
     "tagline": "Utilitaires côté navigateur pour le texte, les données et les médias. Rien ne quitte votre appareil par défaut, sauf si vous le choisissez."
   },
   "nav": {
@@ -129,7 +129,7 @@
   },
   "terms": {
     "title": "Conditions d’utilisation",
-    "description": "Conditions d’utilisation (placeholder) de Toolsset.",
+    "description": "Conditions d’utilisation (placeholder) de MiniToolset.",
     "lead": "Page juridique provisoire. Remplacez par des conditions validées par un conseil avant marketing public ou paiement.",
     "paragraphs": [
       "Aucune garantie d’exactitude des outils navigateur ; les résultats peuvent varier selon l’appareil ou le navigateur.",
@@ -139,7 +139,7 @@
   },
   "cookies": {
     "title": "Politique de cookies",
-    "description": "Comment Toolsset utilise les cookies et stockages similaires.",
+    "description": "Comment MiniToolset utilise les cookies et stockages similaires.",
     "lead": "Texte provisoire. Complétez-le avant d’activer l’analytique, l’authentification ou les intégrations tierces.",
     "paragraphs": [
       "Les cookies essentiels (le cas échéant) servent uniquement au fonctionnement du site, par ex. préférences d’interface que vous enregistrez explicitement.",

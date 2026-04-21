@@ -1,4 +1,4 @@
-# Toolsset
+# MiniToolset
 
 在线工具集（Next.js App Router）。默认在浏览器内处理数据；产品说明见 `docs/`。
 
