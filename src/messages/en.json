@@ -1,0 +1,25 @@
+{
+  "site": {
+    "name": "Toolsset",
+    "tagline": "Browser-side utilities for text, data, and media. Nothing leaves your device unless you choose to."
+  },
+  "nav": {
+    "home": "Home",
+    "docs": "Docs"
+  },
+  "home": {
+    "introTitle": "A calm workspace for small tools",
+    "introBody": "Each tool runs in your browser. We do not upload your inputs to our servers by default — check each page for specifics.",
+    "ctaBrowse": "Browse tools",
+    "ctaSoon": "Tools ship incrementally; the repo tracks progress in /docs.",
+    "toolsSectionTitle": "Tool directory",
+    "toolsPlaceholder": "No tools wired yet — add routes under src/app/[locale] as each ships."
+  },
+  "footer": {
+    "privacy": "Privacy",
+    "local": "Local-first by default"
+  },
+  "locale": {
+    "label": "Language"
+  }
+}

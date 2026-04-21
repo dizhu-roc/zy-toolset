@@ -1,0 +1,67 @@
+/**
+ * Design tokens (palette + rhythm). Tailwind maps these in globals.css @theme.
+ */
+
+:root {
+  --palette-canvas: #f6f4ef;
+  --palette-surface: #fffcf7;
+  --palette-surface-raised: #ffffff;
+  --palette-border: #d9d3c7;
+  --palette-border-strong: #b8b0a2;
+
+  --palette-text: #1c1b18;
+  --palette-text-secondary: #4a4740;
+  --palette-text-muted: #6f6a60;
+
+  --palette-accent: #2d6a66;
+  --palette-accent-hover: #245652;
+  --palette-accent-muted: #e8f2f1;
+
+  --palette-danger: #a42020;
+  --palette-danger-surface: #fcefeb;
+
+  --palette-success: #2f5d2f;
+  --palette-warning: #8a5b00;
+
+  --palette-ui: var(--font-plex-sans), "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei", "Noto Sans SC", ui-sans-serif, system-ui, sans-serif;
+  --palette-mono: var(--font-plex-mono), ui-monospace, "Cascadia Code",
+    "Source Code Pro", Menlo, monospace;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  --shadow-sm: 0 1px 2px rgb(28 27 24 / 0.06);
+  --shadow-md: 0 4px 12px rgb(28 27 24 / 0.08);
+
+  --measure-prose: 42rem;
+  --measure-content: 68rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --palette-canvas: #141312;
+    --palette-surface: #1c1b19;
+    --palette-surface-raised: #242220;
+    --palette-border: #3d3935;
+    --palette-border-strong: #524c46;
+
+    --palette-text: #f2efe8;
+    --palette-text-secondary: #c9c4ba;
+    --palette-text-muted: #9c958a;
+
+    --palette-accent: #6eb8b3;
+    --palette-accent-hover: #8bc9c5;
+    --palette-accent-muted: #1e3331;
+
+    --palette-danger: #e07070;
+    --palette-danger-surface: #3a2222;
+
+    --palette-success: #8fce8f;
+    --palette-warning: #e4c46d;
+
+    --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.35);
+    --shadow-md: 0 4px 16px rgb(0 0 0 / 0.45);
+  }
+}

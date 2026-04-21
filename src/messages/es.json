@@ -1,0 +1,25 @@
+{
+  "site": {
+    "name": "Toolsset",
+    "tagline": "Utilidades en el navegador para texto, datos y medios. Por defecto nada sale de tu dispositivo salvo que tú lo decidas."
+  },
+  "nav": {
+    "home": "Inicio",
+    "docs": "Documentación"
+  },
+  "home": {
+    "introTitle": "Un espacio sereno para herramientas pequeñas",
+    "introBody": "Cada herramienta se ejecuta en tu navegador. Por defecto no subimos tus entradas a nuestros servidores; revisa cada página para los detalles.",
+    "ctaBrowse": "Explorar herramientas",
+    "ctaSoon": "Las herramientas se irán publicando; el avance está en /docs del repositorio.",
+    "toolsSectionTitle": "Directorio de herramientas",
+    "toolsPlaceholder": "Aún no hay herramientas enlazadas: añade rutas bajo src/app/[locale] según vayan estando listas."
+  },
+  "footer": {
+    "privacy": "Privacidad",
+    "local": "Por defecto, procesamiento local"
+  },
+  "locale": {
+    "label": "Idioma"
+  }
+}

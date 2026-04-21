@@ -1,0 +1,57 @@
+# See https://help.github.com/articles/ignoring-files/
+
+# ── Dependencies (npm / Yarn / pnpm) ──
+node_modules/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# ── Next.js (App Router, Turbopack 仍输出到 .next) ──
+.next/
+out/
+.vercel
+
+# ── Build / 产物 ──
+build/
+dist/
+*.tsbuildinfo
+
+# ── 环境变量（本地覆盖；可提交 .env.example 等模板） ──
+.env
+.env.local
+.env*.local
+!.env.example
+
+# ── 测试与覆盖率 ──
+coverage/
+.nyc_output/
+
+# ── 调试与日志 ──
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# ── ESLint ──
+.eslintcache
+
+# ── TypeScript（由 Next 生成，忽略避免与工具链版本漂移冲突） ──
+next-env.d.ts
+
+# ── 证书与密钥 ──
+*.pem
+
+# ── 操作系统 ──
+.DS_Store
+Thumbs.db
+
+# ── 编辑器 / IDE（个人配置；团队共享的 .vscode/extensions.json 等如需可再收窄） ──
+.idea/
+*.swp
+*.swo
+*~

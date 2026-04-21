@@ -1,0 +1,25 @@
+{
+  "site": {
+    "name": "Toolsset",
+    "tagline": "在浏览器内处理文本、数据与媒体的实用工具。默认情况下内容不会上传到服务器。"
+  },
+  "nav": {
+    "home": "首页",
+    "docs": "文档"
+  },
+  "home": {
+    "introTitle": "为小工具准备的工作台",
+    "introBody": "各工具在本地运行；默认不上传输入内容——具体说明见各工具页。",
+    "ctaBrowse": "浏览工具",
+    "ctaSoon": "工具会逐步上线；进度见仓库 /docs。",
+    "toolsSectionTitle": "工具目录",
+    "toolsPlaceholder": "尚未接入具体工具页；随开发进度在 src/app/[locale] 下增加路由即可。"
+  },
+  "footer": {
+    "privacy": "隐私",
+    "local": "默认本地处理"
+  },
+  "locale": {
+    "label": "语言"
+  }
+}

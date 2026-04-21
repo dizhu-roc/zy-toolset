@@ -1,0 +1,25 @@
+{
+  "site": {
+    "name": "Toolsset",
+    "tagline": "Utilitaires côté navigateur pour le texte, les données et les médias. Rien ne quitte votre appareil par défaut, sauf si vous le choisissez."
+  },
+  "nav": {
+    "home": "Accueil",
+    "docs": "Documentation"
+  },
+  "home": {
+    "introTitle": "Un espace posé pour de petits outils",
+    "introBody": "Chaque outil s’exécute dans votre navigateur. Par défaut nous n’envoyons pas vos saisies sur nos serveurs — voir chaque page pour le détail.",
+    "ctaBrowse": "Parcourir les outils",
+    "ctaSoon": "Les outils seront ajoutés progressivement ; l’avancement est suivi dans /docs du dépôt.",
+    "toolsSectionTitle": "Répertoire des outils",
+    "toolsPlaceholder": "Aucun outil n’est encore branché : ajoutez des routes sous src/app/[locale] au fil des mises en ligne."
+  },
+  "footer": {
+    "privacy": "Confidentialité",
+    "local": "Traitement local par défaut"
+  },
+  "locale": {
+    "label": "Langue"
+  }
+}

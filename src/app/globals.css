@@ -1,0 +1,65 @@
+@import "tailwindcss";
+@import "../styles/tokens.css";
+
+/* Tailwind v4 theme bridge — utilities match docs/字体与UI设计文档.md */
+@theme inline {
+  --font-sans: var(--palette-ui);
+  --font-mono: var(--palette-mono);
+
+  --color-canvas: var(--palette-canvas);
+  --color-surface: var(--palette-surface);
+  --color-surface-raised: var(--palette-surface-raised);
+  --color-border: var(--palette-border);
+  --color-border-strong: var(--palette-border-strong);
+
+  --color-text: var(--palette-text);
+  --color-text-secondary: var(--palette-text-secondary);
+  --color-text-muted: var(--palette-text-muted);
+
+  --color-accent: var(--palette-accent);
+  --color-accent-hover: var(--palette-accent-hover);
+  --color-accent-muted: var(--palette-accent-muted);
+
+  --color-danger: var(--palette-danger);
+  --color-danger-surface: var(--palette-danger-surface);
+  --color-success: var(--palette-success);
+  --color-warning: var(--palette-warning);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+
+  --max-width-prose: var(--measure-prose);
+  --max-width-content: var(--measure-content);
+}
+
+@layer utilities {
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+}
+
+@layer base {
+  body {
+    font-feature-settings: "kern" 1, "liga" 1;
+  }
+
+  :where(a) {
+    @apply text-accent underline-offset-4 transition-colors hover:text-accent-hover;
+  }
+
+  :where(code, kbd) {
+    @apply rounded-sm bg-surface-raised px-1 py-0.5 font-mono text-sm text-text-secondary outline outline-1 -outline-offset-1 outline-border;
+  }
+}
