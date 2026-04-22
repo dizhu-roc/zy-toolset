@@ -27,7 +27,7 @@ export function SiteShell({ locale, messages, children, homeMain }: Props) {
 
   return (
     <div className="flex min-h-dvh flex-col">
-      <header className="border-b border-border bg-surface shadow-sm">
+      <header className="border-b border-border bg-surface-raised shadow-sm">
         <div className="mx-auto grid min-h-14 max-w-content grid-cols-[auto_1fr_auto] items-center gap-4 px-4 py-2 sm:px-6">
           <SiteLogo href={homeHref} />
           <nav

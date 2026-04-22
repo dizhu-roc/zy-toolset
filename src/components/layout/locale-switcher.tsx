@@ -188,8 +188,8 @@ export function LocaleSwitcher({ locale, labels }: Props) {
         }}
         className={cn(
           "grid w-max min-w-0 max-w-[8.75rem] grid-cols-[auto_1fr_auto] items-center gap-1.5 rounded-md px-2 py-1.5 text-sm font-normal",
-          "cursor-pointer border border-accent/55 bg-surface text-text outline-none",
-          "transition-[border-color]",
+          "cursor-pointer border border-accent/55 bg-surface-raised text-text outline-none",
+          "transition-[background-color,border-color] hover:bg-surface-raised",
           open && "border-accent",
           "focus-visible:ring-2 focus-visible:ring-accent/25 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas",
           "disabled:cursor-wait disabled:opacity-55",
