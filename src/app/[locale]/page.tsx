@@ -42,11 +42,11 @@ export default async function HomePage({ params }: Props) {
 
   return (
     <article className="w-full py-10">
-      <header className="mx-auto max-w-3xl text-center">
-        <h1 className="font-semibold tracking-tight text-text text-3xl leading-tight sm:text-4xl">
+      <header className="mx-auto max-w-5xl overflow-x-auto text-center">
+        <h1 className="inline-block whitespace-nowrap font-semibold tracking-tight text-text text-4xl leading-tight sm:text-5xl">
           {t.home.introTitle}
         </h1>
-        <p className="mt-6 text-text-muted leading-relaxed">{t.site.tagline}</p>
+        <p className="mt-2 text-lg text-text-muted leading-relaxed">{t.site.tagline}</p>
       </header>
 
       <section id="tools" className="mt-8">
@@ -55,7 +55,7 @@ export default async function HomePage({ params }: Props) {
           <Link href={`${base64Href}#text`} className={cardClassName}>
             <HomeToolIcon id="base64Text" className="text-text-secondary" />
             <div className="min-w-0 flex-1">
-              <h3 className="text-base font-semibold tracking-tight text-text">
+              <h3 className="text-lg font-semibold tracking-tight text-text">
                 {t.home.base64TextCardTitle}
               </h3>
               <p className="mt-1.5 text-sm text-text-secondary leading-snug">
@@ -66,7 +66,7 @@ export default async function HomePage({ params }: Props) {
           <Link href={`${base64Href}#file`} className={cardClassName}>
             <HomeToolIcon id="base64File" className="text-text-secondary" />
             <div className="min-w-0 flex-1">
-              <h3 className="text-base font-semibold tracking-tight text-text">
+              <h3 className="text-lg font-semibold tracking-tight text-text">
                 {t.home.base64FileCardTitle}
               </h3>
               <p className="mt-1.5 text-sm text-text-secondary leading-snug">
@@ -84,7 +84,7 @@ export default async function HomePage({ params }: Props) {
               >
                 <HomeToolIcon id={icon} className="text-text-secondary" />
                 <div className="min-w-0 flex-1">
-                  <h3 className="text-base font-semibold tracking-tight text-text">
+                  <h3 className="text-lg font-semibold tracking-tight text-text">
                     {tc.pageTitle}
                   </h3>
                   <p className="mt-1.5 text-sm text-text-secondary leading-snug">

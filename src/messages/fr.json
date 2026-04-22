@@ -1,7 +1,7 @@
 {
   "site": {
     "name": "MiniToolset",
-    "tagline": "Utilitaires côté navigateur pour le texte, les données et les médias. Rien ne quitte votre appareil par défaut, sauf si vous le choisissez."
+    "tagline": "Outils navigateur pour texte, données et médias—local par défaut."
   },
   "nav": {
     "home": "Accueil",

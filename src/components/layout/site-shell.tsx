@@ -32,7 +32,7 @@ export function SiteShell({ locale, messages, children, homeMain }: Props) {
           <SiteLogo href={homeHref} />
           <nav
             aria-label="Primary"
-            className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm"
+            className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[0.875rem]"
           >
             <Link
               href={homeHref}

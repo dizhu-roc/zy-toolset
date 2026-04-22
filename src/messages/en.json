@@ -1,7 +1,7 @@
 {
   "site": {
     "name": "MiniToolset",
-    "tagline": "Browser-side utilities for text, data, and media. Nothing leaves your device unless you choose to."
+    "tagline": "Browser tools for text, data, and media—local-first by default."
   },
   "nav": {
     "home": "Home",

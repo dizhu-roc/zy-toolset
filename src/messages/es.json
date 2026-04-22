@@ -1,7 +1,7 @@
 {
   "site": {
     "name": "MiniToolset",
-    "tagline": "Utilidades en el navegador para texto, datos y medios. Por defecto nada sale de tu dispositivo salvo que tú lo decidas."
+    "tagline": "Herramientas en el navegador para texto, datos y medios—local por defecto."
   },
   "nav": {
     "home": "Inicio",
