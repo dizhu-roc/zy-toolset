@@ -92,7 +92,7 @@
       "generate": "Codificar",
       "clearAll": "Borrar todo",
       "outputFormatLabel": "Formato de salida",
-      "formatPlain": "Base64 puro",
+      "formatPlain": "Raw",
       "formatDataUrl": "Data URL",
       "copyOutput": "Copiar",
       "saveAs": "Guardar como…",

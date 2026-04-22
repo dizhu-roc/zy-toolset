@@ -92,7 +92,7 @@
       "generate": "生成",
       "clearAll": "清空",
       "outputFormatLabel": "输出格式",
-      "formatPlain": "纯 Base64",
+      "formatPlain": "Raw",
       "formatDataUrl": "Data URL",
       "copyOutput": "复制",
       "saveAs": "另存为",

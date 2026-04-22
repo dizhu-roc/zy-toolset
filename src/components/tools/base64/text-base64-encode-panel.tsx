@@ -1,11 +1,14 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import type { Messages } from "@/i18n/dictionaries";
 import { bytesToBase64, utf8TextToBytes } from "@/lib/base64";
 import { cn } from "@/lib/utils";
 
 const MAX_CHARS = 100_000;
+
+/** 与行号列一致，避免滚动不同步 */
+const EDITOR_LINE = "text-[13px] leading-[1.5rem]";
 
 type Copy = Messages["tools"]["base64TextEncode"];
 
@@ -15,6 +18,11 @@ function encodeOutput(text: string, dataUrl: boolean): string {
   return dataUrl
     ? `data:text/plain;charset=utf-8;base64,${b64}`
     : b64;
+}
+
+function lineCount(text: string): number {
+  if (text === "") return 1;
+  return text.split("\n").length;
 }
 
 function IconTrash({ className }: { className?: string }) {
@@ -100,6 +108,74 @@ function ToolbarIconButton({
   );
 }
 
+function LineNumberedField({
+  value,
+  onChange,
+  readOnly,
+  mono,
+  placeholder,
+  maxLength,
+  ariaLabel,
+}: {
+  value: string;
+  onChange?: (next: string) => void;
+  readOnly?: boolean;
+  mono?: boolean;
+  placeholder?: string;
+  maxLength?: number;
+  ariaLabel: string;
+}) {
+  const taRef = useRef<HTMLTextAreaElement>(null);
+  const gutterRef = useRef<HTMLPreElement>(null);
+  const lines = useMemo(() => lineCount(value), [value]);
+
+  const lineText = useMemo(
+    () => Array.from({ length: lines }, (_, i) => String(i + 1)).join("\n"),
+    [lines],
+  );
+
+  const syncScroll = useCallback(() => {
+    const g = gutterRef.current;
+    const t = taRef.current;
+    if (g && t) g.scrollTop = t.scrollTop;
+  }, []);
+
+  useEffect(() => {
+    syncScroll();
+  }, [value, syncScroll]);
+
+  return (
+    <div className="flex min-h-0 flex-1 overflow-hidden bg-white dark:bg-zinc-950">
+      <pre
+        ref={gutterRef}
+        className={cn(
+          "m-0 min-h-0 w-[2.625rem] shrink-0 overflow-y-auto overflow-x-hidden border-r border-zinc-200/90 bg-zinc-100 py-2 pr-1.5 pl-0 text-right font-mono tabular-nums text-zinc-400 [scrollbar-width:none] dark:border-zinc-600 dark:bg-zinc-800/90 dark:text-zinc-500 [&::-webkit-scrollbar]:hidden",
+          EDITOR_LINE,
+        )}
+        aria-hidden
+      >
+        {lineText}
+      </pre>
+      <textarea
+        ref={taRef}
+        readOnly={readOnly}
+        value={value}
+        onChange={onChange ? (e) => onChange(e.target.value) : undefined}
+        onScroll={syncScroll}
+        spellCheck={false}
+        placeholder={placeholder}
+        aria-label={ariaLabel}
+        maxLength={maxLength}
+        className={cn(
+          "min-h-0 min-w-0 flex-1 resize-y overflow-y-auto border-0 bg-transparent py-2 pl-3 pr-3 text-text outline-none focus-visible:ring-0 sm:pr-4",
+          EDITOR_LINE,
+          mono ? "font-mono" : "font-sans",
+        )}
+      />
+    </div>
+  );
+}
+
 export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
   const inputId = useId();
   const outputId = useId();
@@ -173,7 +249,7 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
   const titleBarClass =
     "flex flex-wrap items-center gap-2 border-b border-zinc-200 bg-white px-3 py-2 sm:px-4 dark:border-zinc-700 dark:bg-zinc-900";
   const colClass =
-    "flex min-h-[min(30rem,62vh)] flex-col rounded-xl border border-zinc-200/90 bg-white shadow-sm lg:min-h-[min(36rem,70vh)] dark:border-zinc-700/90 dark:bg-zinc-900";
+    "flex min-h-[min(30rem,62vh)] flex-col overflow-hidden rounded-xl border border-zinc-200/90 bg-white shadow-sm lg:min-h-[min(36rem,70vh)] dark:border-zinc-700/90 dark:bg-zinc-900";
 
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-5">
@@ -205,17 +281,17 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
             </ToolbarIconButton>
           </div>
         </div>
-        <div className="flex flex-1 flex-col gap-1.5 bg-white p-3 sm:p-4 dark:bg-zinc-900">
-          <textarea
-            className="min-h-0 w-full flex-1 resize-y rounded-md border border-zinc-200 bg-white px-3 py-2 font-sans text-sm text-text outline-none focus-visible:ring-2 focus-visible:ring-accent/25 dark:border-zinc-700 dark:bg-zinc-950"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            maxLength={MAX_CHARS}
-            spellCheck={false}
-            placeholder={copy.inputPlaceholder}
-            aria-label={copy.inputColumnTitle}
-          />
-          <p className="text-right text-xs text-text-muted">
+        <div className="flex min-h-0 flex-1 flex-col bg-white dark:bg-zinc-900">
+          <div className="min-h-0 flex-1">
+            <LineNumberedField
+              value={input}
+              onChange={setInput}
+              placeholder={copy.inputPlaceholder}
+              maxLength={MAX_CHARS}
+              ariaLabel={copy.inputColumnTitle}
+            />
+          </div>
+          <p className="border-t border-zinc-100 px-3 py-2 text-right text-xs text-text-muted dark:border-zinc-800 sm:px-4">
             {copy.charCount
               .replace("{n}", String(input.length))
               .replace("{max}", String(MAX_CHARS))}
@@ -228,39 +304,47 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
           <h2 id={outputId} className="min-w-0 text-sm font-semibold text-text">
             {copy.outputColumnTitle}
           </h2>
-          <div className="ml-auto flex flex-wrap items-center justify-end gap-1.5">
+          <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
             <span className="sr-only">{copy.outputFormatLabel}</span>
             <div
-              className="inline-flex rounded-md border border-zinc-200 bg-zinc-50/80 p-0.5 dark:border-zinc-600 dark:bg-zinc-800/80"
-              role="group"
-              aria-label={copy.outputFormatLabel}
+              className="flex items-center gap-2 rounded-full bg-zinc-100/90 px-2.5 py-1 dark:bg-zinc-800/90"
+              role="presentation"
             >
-              <button
-                type="button"
+              <span
                 className={cn(
-                  "rounded px-2 py-0.5 text-[11px] font-medium transition-colors sm:text-xs",
-                  !dataUrl
-                    ? "bg-[#1675BB] text-white shadow-sm"
-                    : "text-text-secondary hover:text-text",
+                  "text-xs tabular-nums",
+                  !dataUrl ? "font-semibold text-text" : "text-text-muted",
                 )}
-                aria-pressed={!dataUrl}
-                onClick={() => setDataUrl(false)}
               >
                 {copy.formatPlain}
-              </button>
+              </span>
               <button
                 type="button"
+                role="switch"
+                aria-checked={dataUrl}
+                aria-label={copy.outputFormatLabel}
+                title={dataUrl ? copy.formatDataUrl : copy.formatPlain}
+                onClick={() => setDataUrl((v) => !v)}
                 className={cn(
-                  "rounded px-2 py-0.5 text-[11px] font-medium transition-colors sm:text-xs",
-                  dataUrl
-                    ? "bg-[#1675BB] text-white shadow-sm"
-                    : "text-text-secondary hover:text-text",
+                  "relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors duration-200",
+                  dataUrl ? "bg-[#1675BB]" : "bg-zinc-400 dark:bg-zinc-600",
                 )}
-                aria-pressed={dataUrl}
-                onClick={() => setDataUrl(true)}
+              >
+                <span
+                  className={cn(
+                    "pointer-events-none absolute top-0.5 left-0.5 size-4 rounded-full bg-white shadow-sm transition-transform duration-200 ease-out",
+                    dataUrl ? "translate-x-4" : "translate-x-0",
+                  )}
+                />
+              </button>
+              <span
+                className={cn(
+                  "max-w-[5.5rem] truncate text-xs sm:max-w-none",
+                  dataUrl ? "font-semibold text-text" : "text-text-muted",
+                )}
               >
                 {copy.formatDataUrl}
-              </button>
+              </span>
             </div>
             <ToolbarIconButton
               label={copy.copyOutput}
@@ -274,16 +358,15 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
             </ToolbarIconButton>
           </div>
         </div>
-        <div className="flex flex-1 flex-col bg-white p-3 sm:p-4 dark:bg-zinc-900">
-          <textarea
-            readOnly
-            className="min-h-0 w-full flex-1 resize-y rounded-md border border-zinc-200 bg-white px-3 py-2 font-mono text-sm text-text dark:border-zinc-700 dark:bg-zinc-950"
-            value={output}
-            spellCheck={false}
-            aria-label={copy.outputColumnTitle}
-          />
+        <div className="flex min-h-0 flex-1 flex-col bg-white dark:bg-zinc-900">
+          <div className="min-h-0 flex-1">
+            <LineNumberedField value={output} readOnly mono ariaLabel={copy.outputColumnTitle} />
+          </div>
           {copyHint ? (
-            <p className="mt-1.5 text-xs text-text-secondary" role="status">
+            <p
+              className="border-t border-zinc-100 px-3 py-2 text-xs text-text-secondary dark:border-zinc-800 sm:px-4"
+              role="status"
+            >
               {copyHint}
             </p>
           ) : null}
