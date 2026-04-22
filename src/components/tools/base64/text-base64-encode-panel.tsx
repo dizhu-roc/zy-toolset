@@ -9,6 +9,7 @@ import {
   IconColumnSourceText,
 } from "@/components/tools/base64/base64-text-column-icons";
 import { LineNumberedField } from "@/components/tools/base64/line-numbered-field";
+import { TextFileUploadButton } from "@/components/tools/base64/text-file-upload-button";
 
 /** 桌面专用：左右卡片固定总高，正文在 textarea 内滚动 */
 const EDITOR_PANEL_HEIGHT_CLASS = "h-[34rem]";
@@ -129,6 +130,7 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
   const [outputMode, setOutputMode] = useState<TextBase64OutputMode>("standard");
   const [autoUpdate, setAutoUpdate] = useState(true);
   const [copyHint, setCopyHint] = useState<string | null>(null);
+  const [uploadHint, setUploadHint] = useState<string | null>(null);
   const inputRef = useRef(input);
   inputRef.current = input;
 
@@ -154,6 +156,7 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
     setInput("");
     setOutput("");
     setCopyHint(null);
+    setUploadHint(null);
   };
 
   const copyOutput = async () => {
@@ -199,6 +202,18 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
             <span className="min-w-0 truncate">{copy.inputColumnTitle}</span>
           </h2>
           <div className="ml-auto flex flex-wrap items-center justify-end gap-x-2 gap-y-2">
+            <TextFileUploadButton
+              label={copy.uploadTextFile}
+              title={copy.uploadTextFileTooltip}
+              onTextLoaded={(text) => {
+                setInput(text);
+                setUploadHint(null);
+              }}
+              onInvalid={() => {
+                setUploadHint(copy.uploadFileRejectNotText);
+                window.setTimeout(() => setUploadHint(null), 5000);
+              }}
+            />
             <label className="flex cursor-pointer items-center gap-1.5 text-xs text-text-secondary">
               <input
                 type="checkbox"
@@ -227,6 +242,14 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
             </ToolbarIconButton>
           </div>
         </div>
+        {uploadHint ? (
+          <p
+            className="border-b border-red-200 bg-red-50 px-4 py-1.5 text-xs text-red-800 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200"
+            role="alert"
+          >
+            {uploadHint}
+          </p>
+        ) : null}
         <div className="flex min-h-0 flex-1 flex-col bg-white dark:bg-zinc-900">
           <div className="flex min-h-0 flex-1 flex-col">
             <LineNumberedField
