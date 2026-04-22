@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { HomeToolIcon } from "@/components/icons/home-tool-icons";
 import { ToolPageLayout } from "@/components/layout/tool-page-layout";
-import { TextBase64EncodePanel } from "@/components/tools/base64/text-base64-encode-panel";
+import { TextBase64DecodePanel } from "@/components/tools/base64/text-base64-decode-panel";
 import { getMessages } from "@/i18n/dictionaries";
 import { isLocale, type Locale } from "@/i18n/config";
 import { hrefForLocale } from "@/lib/localized-path";
@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
   const locale: Locale = raw;
   const t = await getMessages(locale);
-  const p = t.tools.base64TextEncode;
+  const p = t.tools.base64TextDecode;
   return {
     title: `${p.metaTitle} · ${t.site.name}`,
     description: p.metaDescription,
@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function Base64TextEncodePage({ params }: Props) {
+export default async function Base64TextDecodePage({ params }: Props) {
   const { locale: raw } = await params;
   if (!isLocale(raw)) {
     notFound();
@@ -33,8 +33,8 @@ export default async function Base64TextEncodePage({ params }: Props) {
   const locale: Locale = raw;
   const t = await getMessages(locale);
   const privacyHref = hrefForLocale(locale, "privacy");
-  const decodeHref = hrefForLocale(locale, "tools/base64/text-decode");
-  const p = t.tools.base64TextEncode;
+  const encodeHref = hrefForLocale(locale, "tools/base64/text-encode");
+  const p = t.tools.base64TextDecode;
 
   return (
     <ToolPageLayout
@@ -49,10 +49,10 @@ export default async function Base64TextEncodePage({ params }: Props) {
           <p className="m-0 text-xs text-text-muted leading-relaxed">
             {p.pageDescriptionHintBefore}
             <Link
-              href={decodeHref}
+              href={encodeHref}
               className="font-medium text-accent underline decoration-accent/35 underline-offset-2 hover:decoration-accent"
             >
-              {p.decodeLinkLabel}
+              {p.encodeLinkLabel}
             </Link>
             {p.pageDescriptionHintAfter}
           </p>
@@ -69,7 +69,7 @@ export default async function Base64TextEncodePage({ params }: Props) {
         </p>
       }
     >
-      <TextBase64EncodePanel copy={p} />
+      <TextBase64DecodePanel copy={p} />
     </ToolPageLayout>
   );
 }

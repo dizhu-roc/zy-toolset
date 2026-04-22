@@ -19,6 +19,7 @@ type Props = {
 export function SiteShell({ locale, messages, children, homeMain }: Props) {
   const homeHref = hrefForLocale(locale, "");
   const base64TextEncodeHref = hrefForLocale(locale, "tools/base64/text-encode");
+  const base64TextDecodeHref = hrefForLocale(locale, "tools/base64/text-decode");
   const base64FileEncodeHref = hrefForLocale(locale, "tools/base64/file-encode");
   const passwordHref = hrefForLocale(locale, "tools/generator/password");
   const icoHref = hrefForLocale(locale, "tools/generator/ico");
@@ -51,7 +52,7 @@ export function SiteShell({ locale, messages, children, homeMain }: Props) {
                   icon: "base64Text",
                 },
                 {
-                  href: `${base64FileEncodeHref}#decode`,
+                  href: base64TextDecodeHref,
                   title: messages.nav.base64ToText,
                   icon: "base64Text",
                 },

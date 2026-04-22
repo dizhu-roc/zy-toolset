@@ -1,94 +1,40 @@
 "use client";
 
-import {
-  useCallback,
-  useEffect,
-  useId,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import type { Messages } from "@/i18n/dictionaries";
-import { bytesToBase64, utf8TextToBytes } from "@/lib/base64";
+import { bytesToBase64, bytesToBase64Url, utf8TextToBytes } from "@/lib/base64";
 import { cn } from "@/lib/utils";
+import {
+  IconColumnBase64Text,
+  IconColumnSourceText,
+} from "@/components/tools/base64/base64-text-column-icons";
+import { LineNumberedField } from "@/components/tools/base64/line-numbered-field";
 
-const MAX_CHARS = 100_000;
+/** 桌面专用：左右卡片固定总高，正文在 textarea 内滚动 */
+const EDITOR_PANEL_HEIGHT_CLASS = "h-[34rem]";
 
-/** 与行号列一致，避免滚动不同步 */
-const EDITOR_LINE = "text-[13px] leading-[1.5rem]";
+/** `base64-output-YYYYMMDDHHmmss.txt`（本地时间） */
+function buildBase64DownloadFilename(): string {
+  const d = new Date();
+  const p = (n: number) => String(n).padStart(2, "0");
+  return `base64-output-${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}.txt`;
+}
 
 type Copy = Messages["tools"]["base64TextEncode"];
 
-function encodeOutput(text: string, dataUrl: boolean): string {
+const OUTPUT_MODES = ["standard", "base64url", "dataUrl"] as const;
+type TextBase64OutputMode = (typeof OUTPUT_MODES)[number];
+
+function encodeOutput(text: string, mode: TextBase64OutputMode): string {
   if (!text) return "";
-  const b64 = bytesToBase64(utf8TextToBytes(text));
-  return dataUrl
-    ? `data:text/plain;charset=utf-8;base64,${b64}`
-    : b64;
-}
-
-/**
- * 按与 textarea 相同的可视宽度与字体，测量 soft-wrap 后的行数（用于行号 gutter）。
- * 空内容固定为 1 行，避免在很高 min-height 的 flex 里用 scrollHeight 误判出多行「空行号」。
- */
-function measureWrappedLineCount(text: string, sample: HTMLTextAreaElement): number {
-  if (text === "") return 1;
-
-  const cs = getComputedStyle(sample);
-  const padL = parseFloat(cs.paddingLeft) || 0;
-  const padR = parseFloat(cs.paddingRight) || 0;
-  const borL = parseFloat(cs.borderLeftWidth) || 0;
-  const borR = parseFloat(cs.borderRightWidth) || 0;
-  const innerW = Math.max(0, sample.clientWidth - padL - padR - borL - borR);
-  if (innerW <= 0) return 1;
-
-  const d = document.createElement("div");
-  d.style.cssText = [
-    "position:fixed",
-    "left:0",
-    "top:0",
-    "visibility:hidden",
-    "pointer-events:none",
-    "z-index:-1",
-    `width:${innerW}px`,
-    "white-space:pre-wrap",
-    "word-break:break-all",
-    "overflow-wrap:anywhere",
-    `font:${cs.font}`,
-    `line-height:${cs.lineHeight}`,
-    `letter-spacing:${cs.letterSpacing}`,
-  ].join(";");
-  const lhProbe = document.createElement("div");
-  lhProbe.style.cssText = [
-    "position:fixed",
-    "left:0",
-    "top:0",
-    "visibility:hidden",
-    "pointer-events:none",
-    "z-index:-1",
-    `width:${innerW}px`,
-    "white-space:pre",
-    `font:${cs.font}`,
-    `line-height:${cs.lineHeight}`,
-    `letter-spacing:${cs.letterSpacing}`,
-  ].join(";");
-  lhProbe.textContent = "█";
-  document.documentElement.appendChild(lhProbe);
-  const probeLineHeight = Math.max(1, lhProbe.offsetHeight);
-  document.documentElement.removeChild(lhProbe);
-
-  d.textContent = text;
-  document.documentElement.appendChild(d);
-
-  let lh = parseFloat(cs.lineHeight);
-  if (!Number.isFinite(lh) || lh <= 0) {
-    lh = probeLineHeight;
+  const bytes = utf8TextToBytes(text);
+  if (mode === "dataUrl") {
+    return `data:text/plain;charset=utf-8;base64,${bytesToBase64(bytes)}`;
   }
-  const lines = Math.max(1, Math.round(d.offsetHeight / lh));
-
-  document.documentElement.removeChild(d);
-  return lines;
+  if (mode === "base64url") {
+    return bytesToBase64Url(bytes);
+  }
+  return bytesToBase64(bytes);
 }
 
 function IconTrash({ className }: { className?: string }) {
@@ -162,10 +108,10 @@ function ToolbarIconButton({
       disabled={disabled}
       onClick={onClick}
       className={cn(
-        "inline-flex size-8 shrink-0 items-center justify-center rounded-md border border-zinc-200 bg-white text-zinc-600 transition-colors",
+        "inline-flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-md border border-zinc-200 bg-white text-zinc-600 transition-colors",
         "hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-900",
         "dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-50",
-        "disabled:pointer-events-none disabled:opacity-40",
+        "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
       )}
     >
@@ -174,162 +120,34 @@ function ToolbarIconButton({
   );
 }
 
-function LineNumberedField({
-  value,
-  onChange,
-  readOnly,
-  mono,
-  showGutter = true,
-  placeholder,
-  maxLength,
-  ariaLabel,
-}: {
-  value: string;
-  onChange?: (next: string) => void;
-  readOnly?: boolean;
-  mono?: boolean;
-  showGutter?: boolean;
-  placeholder?: string;
-  maxLength?: number;
-  ariaLabel: string;
-}) {
-  const taRef = useRef<HTMLTextAreaElement>(null);
-  const gutterInnerRef = useRef<HTMLPreElement>(null);
-  const [wrappedLines, setWrappedLines] = useState(1);
-
-  const gutterNumbers = useMemo(
-    () => Array.from({ length: wrappedLines }, (_, i) => String(i + 1)).join("\n"),
-    [wrappedLines],
-  );
-
-  const remeasureWrappedLines = useCallback(() => {
-    if (!showGutter) return;
-    const el = taRef.current;
-    if (!el) return;
-    const next = measureWrappedLineCount(value, el);
-    setWrappedLines((prev) => (prev === next ? prev : next));
-  }, [value, showGutter]);
-
-  useLayoutEffect(() => {
-    if (!showGutter) return;
-    remeasureWrappedLines();
-  }, [remeasureWrappedLines, showGutter]);
-
-  useEffect(() => {
-    if (!showGutter) return;
-    const el = taRef.current;
-    if (!el) return;
-    const ro = new ResizeObserver(() => {
-      remeasureWrappedLines();
-    });
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [remeasureWrappedLines, showGutter]);
-
-  /** 常见编辑器做法：只有正文可滚动；行号列 overflow:hidden，用 transform 跟随 scrollTop，无第二根滚动条、也不可拖行号区滚动 */
-  const syncGutterToTextarea = useCallback(() => {
-    const t = taRef.current;
-    const g = gutterInnerRef.current;
-    if (!t || !g) return;
-    g.style.transform = `translate3d(0,-${t.scrollTop}px,0)`;
-  }, []);
-
-  useEffect(() => {
-    if (!showGutter) return;
-    syncGutterToTextarea();
-  }, [value, gutterNumbers, syncGutterToTextarea, showGutter]);
-
-  /** 行号必须与正文同族同字号行高，否则行号列与 textarea 逐行对不齐（此前行号用 mono、正文用 sans 会放大差异） */
-  const syncedFont = mono ? "font-mono" : "font-sans";
-
-  return (
-    <div
-      className={cn(
-        "flex min-h-0 flex-1 overflow-hidden bg-white dark:bg-zinc-950",
-        showGutter ? "flex-row" : "flex-col",
-      )}
-    >
-      {showGutter ? (
-        <div
-          className={cn(
-            "relative m-0 min-h-0 w-[2.625rem] shrink-0 overflow-hidden border-r border-zinc-200/90 bg-zinc-100 py-2 pr-1.5 pl-0 dark:border-zinc-600 dark:bg-zinc-800/90",
-            EDITOR_LINE,
-          )}
-          aria-hidden
-        >
-          <pre
-            ref={gutterInnerRef}
-            className={cn(
-              "m-0 block w-full select-none text-right tabular-nums text-zinc-400 will-change-transform dark:text-zinc-500",
-              EDITOR_LINE,
-              syncedFont,
-            )}
-          >
-            {gutterNumbers}
-          </pre>
-        </div>
-      ) : null}
-      <textarea
-        ref={taRef}
-        readOnly={readOnly}
-        value={value}
-        onChange={onChange ? (e) => onChange(e.target.value) : undefined}
-        onScroll={showGutter ? syncGutterToTextarea : undefined}
-        spellCheck={false}
-        placeholder={placeholder}
-        aria-label={ariaLabel}
-        maxLength={maxLength}
-        wrap="soft"
-        className={cn(
-          "min-h-0 min-w-0 w-full flex-1 resize-none overflow-x-hidden overflow-y-auto border-0 bg-transparent py-2 pl-3 pr-3 text-text outline-none focus-visible:ring-0 sm:pr-4",
-          "whitespace-pre-wrap break-all [overflow-wrap:anywhere]",
-          EDITOR_LINE,
-          syncedFont,
-        )}
-      />
-    </div>
-  );
-}
-
 export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
   const inputId = useId();
   const outputId = useId();
+  const outputFormatRadioName = useId();
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
-  const [dataUrl, setDataUrl] = useState(false);
+  const [outputMode, setOutputMode] = useState<TextBase64OutputMode>("standard");
   const [autoUpdate, setAutoUpdate] = useState(true);
   const [copyHint, setCopyHint] = useState<string | null>(null);
   const inputRef = useRef(input);
   inputRef.current = input;
 
   useEffect(() => {
-    if (input.length > MAX_CHARS) {
-      setOutput("");
-      return;
-    }
     if (autoUpdate) {
-      setOutput(encodeOutput(input, dataUrl));
+      setOutput(encodeOutput(input, outputMode));
     } else if (!input) {
       setOutput("");
     }
-  }, [input, dataUrl, autoUpdate]);
+  }, [input, outputMode, autoUpdate]);
 
   useEffect(() => {
     if (autoUpdate) return;
     const text = inputRef.current;
-    if (text.length > MAX_CHARS) {
-      setOutput("");
-      return;
-    }
-    setOutput(encodeOutput(text, dataUrl));
-  }, [dataUrl, autoUpdate]);
+    setOutput(encodeOutput(text, outputMode));
+  }, [outputMode, autoUpdate]);
 
   const runEncode = () => {
-    if (input.length > MAX_CHARS) {
-      setOutput("");
-      return;
-    }
-    setOutput(encodeOutput(input, dataUrl));
+    setOutput(encodeOutput(input, outputMode));
   };
 
   const clearAll = () => {
@@ -356,22 +174,29 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = copy.downloadFilename;
+    a.download = buildBase64DownloadFilename();
     a.click();
     URL.revokeObjectURL(url);
   };
 
   const titleBarClass =
-    "flex flex-wrap items-center gap-2 border-b border-zinc-200 bg-white px-3 py-2 sm:px-4 dark:border-zinc-700 dark:bg-zinc-900";
-  const colClass =
-    "flex min-h-[min(30rem,62vh)] flex-col overflow-hidden rounded-xl border border-zinc-200/90 bg-white shadow-sm lg:min-h-[min(36rem,70vh)] dark:border-zinc-700/90 dark:bg-zinc-900";
+    "flex flex-wrap items-center gap-2 border-b border-zinc-200/90 bg-zinc-100 px-4 py-2 dark:border-zinc-600 dark:bg-zinc-800/95";
+  const encodeDisabled = input.trim() === "";
+  const colClass = cn(
+    "flex flex-col overflow-hidden rounded-xl border border-zinc-200/90 bg-white shadow-sm dark:border-zinc-700/90 dark:bg-zinc-900",
+    EDITOR_PANEL_HEIGHT_CLASS,
+  );
 
   return (
-    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-5">
+    <div className="grid grid-cols-2 gap-5">
       <section className={colClass} aria-labelledby={inputId}>
         <div className={titleBarClass}>
-          <h2 id={inputId} className="min-w-0 text-sm font-semibold text-text">
-            {copy.inputColumnTitle}
+          <h2
+            id={inputId}
+            className="flex min-w-0 flex-1 items-center gap-2 text-sm font-semibold text-text"
+          >
+            <IconColumnSourceText className="size-4 shrink-0 text-text-secondary" />
+            <span className="min-w-0 truncate">{copy.inputColumnTitle}</span>
           </h2>
           <div className="ml-auto flex flex-wrap items-center justify-end gap-x-2 gap-y-2">
             <label className="flex cursor-pointer items-center gap-1.5 text-xs text-text-secondary">
@@ -385,7 +210,13 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
             </label>
             <button
               type="button"
-              className="inline-flex items-center gap-1 rounded-md bg-[#1675BB] px-2.5 py-1 text-xs font-medium text-white shadow-sm transition-colors hover:bg-[#125d99]"
+              disabled={encodeDisabled}
+              className={cn(
+                "inline-flex cursor-pointer items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium text-white transition-colors",
+                "bg-[#1675BB] hover:bg-[#125d99]",
+                "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-[#1675BB]",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
+              )}
               onClick={runEncode}
             >
               <IconEncode className="size-3.5 shrink-0 opacity-95" />
@@ -402,65 +233,63 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
               value={input}
               onChange={setInput}
               placeholder={copy.inputPlaceholder}
-              maxLength={MAX_CHARS}
               ariaLabel={copy.inputColumnTitle}
             />
           </div>
-          <p className="border-t border-zinc-100 px-3 py-2 text-right text-xs text-text-muted dark:border-zinc-800 sm:px-4">
-            {copy.charCount
-              .replace("{n}", String(input.length))
-              .replace("{max}", String(MAX_CHARS))}
+          <p className="border-t border-zinc-100 px-4 py-2 text-right text-xs text-text-muted dark:border-zinc-800">
+            {copy.charCount.replace("{n}", String(input.length))}
           </p>
         </div>
       </section>
 
       <section className={colClass} aria-labelledby={outputId}>
         <div className={titleBarClass}>
-          <h2 id={outputId} className="min-w-0 text-sm font-semibold text-text">
-            {copy.outputColumnTitle}
+          <h2
+            id={outputId}
+            className="flex min-w-0 flex-1 items-center gap-2 text-sm font-semibold text-text"
+          >
+            <IconColumnBase64Text className="size-4 shrink-0 text-text-secondary" />
+            <span className="min-w-0 truncate">{copy.outputColumnTitle}</span>
           </h2>
           <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
-            <span className="sr-only">{copy.outputFormatLabel}</span>
-            <div
-              className="flex items-center gap-2 rounded-full bg-zinc-100/90 px-2.5 py-1 dark:bg-zinc-800/90"
-              role="presentation"
-            >
-              <span
-                className={cn(
-                  "text-xs tabular-nums",
-                  !dataUrl ? "font-semibold text-text" : "text-text-muted",
-                )}
-              >
-                {copy.formatPlain}
-              </span>
-              <button
-                type="button"
-                role="switch"
-                aria-checked={dataUrl}
-                aria-label={copy.outputFormatLabel}
-                title={dataUrl ? copy.formatDataUrl : copy.formatPlain}
-                onClick={() => setDataUrl((v) => !v)}
-                className={cn(
-                  "relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors duration-200",
-                  dataUrl ? "bg-[#1675BB]" : "bg-zinc-400 dark:bg-zinc-600",
-                )}
-              >
-                <span
-                  className={cn(
-                    "pointer-events-none absolute top-0.5 left-0.5 size-4 rounded-full bg-white shadow-sm transition-transform duration-200 ease-out",
-                    dataUrl ? "translate-x-4" : "translate-x-0",
-                  )}
-                />
-              </button>
-              <span
-                className={cn(
-                  "max-w-[5.5rem] truncate text-xs sm:max-w-none",
-                  dataUrl ? "font-semibold text-text" : "text-text-muted",
-                )}
-              >
-                {copy.formatDataUrl}
-              </span>
-            </div>
+            <fieldset className="m-0 shrink-0 border-0 p-0">
+              <legend className="sr-only">{copy.outputFormatLabel}</legend>
+              <div className="inline-flex rounded-full border border-zinc-200 bg-zinc-100 p-0.5 dark:border-zinc-600 dark:bg-zinc-800/90">
+                {(
+                  [
+                    ["standard", copy.formatPlain] as const,
+                    ["base64url", copy.formatBase64Url] as const,
+                    ["dataUrl", copy.formatDataUrl] as const,
+                  ] as const
+                ).map(([id, label], i) => (
+                  <label
+                    key={id}
+                    className={cn(
+                      "cursor-pointer select-none px-3 py-1.5 text-xs font-medium transition-colors duration-150",
+                      i === 0 && "rounded-l-full",
+                      i === 1 && "rounded-none",
+                      i === 2 && "rounded-r-full",
+                      outputMode === id
+                        ? "bg-[#1675BB] text-white"
+                        : cn(
+                            "text-text-secondary hover:text-text",
+                            "hover:bg-zinc-200/90 dark:hover:bg-zinc-700/80 dark:hover:text-zinc-100",
+                          ),
+                    )}
+                  >
+                    <input
+                      type="radio"
+                      name={outputFormatRadioName}
+                      value={id}
+                      checked={outputMode === id}
+                      onChange={() => setOutputMode(id)}
+                      className="sr-only"
+                    />
+                    {label}
+                  </label>
+                ))}
+              </div>
+            </fieldset>
             <ToolbarIconButton
               label={copy.copyOutput}
               onClick={copyOutput}
@@ -484,7 +313,7 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
           </div>
           {copyHint ? (
             <p
-              className="border-t border-zinc-100 px-3 py-2 text-xs text-text-secondary dark:border-zinc-800 sm:px-4"
+              className="border-t border-zinc-100 px-4 py-2 text-xs text-text-secondary dark:border-zinc-800"
               role="status"
             >
               {copyHint}

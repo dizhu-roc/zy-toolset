@@ -34,7 +34,7 @@ export function Base64Workbench({
   copy: Copy;
   privacyHref: string;
   /** 无 hash 时的初始 Tab（仍可用 #decode 等覆盖） */
-  defaultTab?: "text" | "file";
+  defaultTab?: TabId;
 }) {
   const tabsId = useId();
   const [tab, setTab] = useState<TabId>(defaultTab ?? "text");

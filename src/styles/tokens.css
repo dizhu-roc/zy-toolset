@@ -29,8 +29,8 @@
 
   --palette-ui: var(--font-inter), "PingFang SC", "Hiragino Sans GB",
     "Microsoft YaHei", "Noto Sans SC", ui-sans-serif, system-ui, sans-serif;
-  --palette-mono: var(--font-jetbrains-mono), ui-monospace, "Cascadia Code",
-    "Source Code Pro", Menlo, monospace;
+  /* 与正文一致：等宽场景也用 Inter 常规无衬线（不再单独加载 JetBrains Mono） */
+  --palette-mono: var(--palette-ui);
 
   --radius-sm: 6px;
   --radius-md: 10px;

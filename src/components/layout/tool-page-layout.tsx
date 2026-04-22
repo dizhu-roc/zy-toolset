@@ -43,7 +43,7 @@ export function ToolPageLayout({
       <header
         className={cn(
           "border-b border-border",
-          heroCompact ? "pb-4 text-center" : "pb-8",
+          heroCompact ? "pb-5 text-center" : "pb-8",
         )}
       >
         {heroCompact ? (
@@ -60,9 +60,9 @@ export function ToolPageLayout({
               </h1>
             </div>
             {description ? (
-              <p className="text-sm text-text-secondary leading-relaxed sm:text-[0.9375rem]">
+              <div className="flex flex-col gap-1.5 text-sm text-text-secondary leading-relaxed sm:text-[0.9375rem]">
                 {description}
-              </p>
+              </div>
             ) : null}
             {heroFootnote ? (
               <p className="text-xs text-text-muted leading-relaxed">{heroFootnote}</p>
@@ -91,7 +91,7 @@ export function ToolPageLayout({
         </div>
       ) : null}
 
-      <div className={cn(intro ? "mt-6" : heroCompact ? "mt-5" : "mt-8")}>{children}</div>
+      <div className={cn(intro ? "mt-6" : "mt-8")}>{children}</div>
 
       {ancillary ? (
         <div className="mt-12 border-t border-border pt-8 text-sm text-text-muted">
