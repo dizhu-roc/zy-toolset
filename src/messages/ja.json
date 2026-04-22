@@ -20,8 +20,8 @@
   "home": {
     "introTitle": "オンラインの実用ツール集",
     "toolsSectionTitle": "ツール一覧",
-    "base64TextCardTitle": "テキストと Base64",
-    "base64TextCardDesc": "UTF-8 をブラウザ内で扱います。Base64 や Data URL を元のテキストに戻すときは「デコード」タブに切り替えてください。",
+    "base64TextCardTitle": "テキストを Base64 に",
+    "base64TextCardDesc": "ブラウザ内でプレーンテキストを Base64（UTF-8）に変換します。アップロードしません。",
     "base64FileCardTitle": "ファイルと Base64",
     "base64FileCardDesc": "アップロードを Base64 または Data URL にします。バイト列が必要なときは「デコード」タブを使います。"
   },
@@ -76,6 +76,30 @@
       "decodeBinaryHint": "デコード結果は UTF-8 として無効です。生バイナリをダウンロードしてください。",
       "decodeUtf8Ok": "UTF-8 テキストとして表示しています。",
       "downloadDecoded": "デコードしたファイルをダウンロード"
+    },
+    "base64TextEncode": {
+      "metaTitle": "テキストを Base64 に",
+      "metaDescription": "ブラウザ内でテキスト→Base64。最大 10 万文字、ローカルのみ。",
+      "pageTitle": "テキストを Base64 に",
+      "pageDescriptionBefore": "左に入力、右に Base64。「自動更新」で入力に追従。戻す場合は ",
+      "decodeLinkLabel": "Base64 をテキストに",
+      "pageDescriptionAfter": "。",
+      "heroFootnote": "処理はすべてブラウザ内で行われ、当社サーバーには送られません。",
+      "inputColumnTitle": "プレーンテキスト（UTF-8）",
+      "outputColumnTitle": "Base64 出力",
+      "inputPlaceholder": "ここにテキストを入力または貼り付け（最大 100,000 文字）。",
+      "autoUpdate": "自動更新",
+      "generate": "エンコード",
+      "clearAll": "すべてクリア",
+      "outputFormatLabel": "出力形式",
+      "formatPlain": "生の Base64",
+      "formatDataUrl": "Data URL",
+      "copyOutput": "コピー",
+      "saveAs": "名前を付けて保存",
+      "downloadFilename": "base64-output.txt",
+      "charCount": "{n} / {max} 文字",
+      "copied": "クリップボードにコピーしました。",
+      "copyFailed": "コピーできませんでした。手動で選択してコピーしてください。"
     },
     "passwordGenerator": {
       "metaTitle": "パスワード生成",

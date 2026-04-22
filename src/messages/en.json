@@ -20,8 +20,8 @@
   "home": {
     "introTitle": "A collection of practical online tools",
     "toolsSectionTitle": "Tool directory",
-    "base64TextCardTitle": "Text & Base64",
-    "base64TextCardDesc": "UTF-8 in the browser; switch to the decode tab whenever you need to turn Base64 or Data URLs back into text.",
+    "base64TextCardTitle": "Text to Base64",
+    "base64TextCardDesc": "Turn plain text into Base64 in your browser (UTF-8). Nothing is uploaded.",
     "base64FileCardTitle": "File & Base64",
     "base64FileCardDesc": "Turn uploads into Base64 or Data URLs locally; use the decode tab when you need the bytes back."
   },
@@ -76,6 +76,30 @@
       "decodeBinaryHint": "Decoded bytes are not valid UTF-8. Download the raw file instead.",
       "decodeUtf8Ok": "Shown as UTF-8 text.",
       "downloadDecoded": "Download decoded file"
+    },
+    "base64TextEncode": {
+      "metaTitle": "Text to Base64",
+      "metaDescription": "Plain text → Base64 in your browser (up to 100k chars, local only).",
+      "pageTitle": "Text to Base64",
+      "pageDescriptionBefore": "Left: your text → right: Base64. Toggle auto-update to refresh while typing. Reverse: ",
+      "decodeLinkLabel": "Base64 to text",
+      "pageDescriptionAfter": ".",
+      "heroFootnote": "Runs entirely in your browser — nothing is sent to our servers.",
+      "inputColumnTitle": "Plain text (UTF-8)",
+      "outputColumnTitle": "Base64 output",
+      "inputPlaceholder": "Type or paste text here (up to 100,000 characters).",
+      "autoUpdate": "Auto-update",
+      "generate": "Encode",
+      "clearAll": "Clear all",
+      "outputFormatLabel": "Output format",
+      "formatPlain": "Raw Base64",
+      "formatDataUrl": "Data URL",
+      "copyOutput": "Copy",
+      "saveAs": "Save as…",
+      "downloadFilename": "base64-output.txt",
+      "charCount": "{n} / {max} characters",
+      "copied": "Copied to clipboard.",
+      "copyFailed": "Could not copy — select and copy manually."
     },
     "passwordGenerator": {
       "metaTitle": "Password generator",

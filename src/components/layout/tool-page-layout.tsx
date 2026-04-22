@@ -5,6 +5,12 @@ type Props = {
   title: React.ReactNode;
   /** 标题下说明，可选 */
   description?: React.ReactNode;
+  /** 紧凑 Hero：更矮、居中，可与 `titleIcon`、`heroFootnote` 搭配 */
+  heroCompact?: boolean;
+  /** 显示在标题前的图标（如 `HomeToolIcon`） */
+  titleIcon?: React.ReactNode;
+  /** 紧挨标题区、主说明下方的一行小字（如本地处理提示） */
+  heroFootnote?: React.ReactNode;
   /** 主工作区：可为 Server 内容或内嵌 Client 子树 */
   children: React.ReactNode;
   /** 标题区下方、主工作区之上的可选区域（如工具级提示） */
@@ -21,6 +27,9 @@ type Props = {
 export function ToolPageLayout({
   title,
   description,
+  heroCompact,
+  titleIcon,
+  heroFootnote,
   children,
   intro,
   ancillary,
@@ -28,26 +37,61 @@ export function ToolPageLayout({
 }: Props) {
   return (
     <article
-      className={cn("w-full py-10", className)}
+      className={cn("w-full", heroCompact ? "py-6" : "py-10", className)}
       aria-labelledby="tool-page-title"
     >
-      <header className="border-b border-border pb-8">
-        <h1
-          id="tool-page-title"
-          className="text-2xl font-semibold tracking-tight text-text sm:text-[1.75rem] sm:leading-snug"
-        >
-          {title}
-        </h1>
-        {description ? (
-          <p className="mt-3 max-w-prose text-base text-text-secondary leading-relaxed">
-            {description}
-          </p>
-        ) : null}
+      <header
+        className={cn(
+          "border-b border-border",
+          heroCompact ? "pb-4 text-center" : "pb-8",
+        )}
+      >
+        {heroCompact ? (
+          <div className="mx-auto flex max-w-2xl flex-col items-center gap-2">
+            <div className="flex flex-wrap items-center justify-center gap-2.5">
+              {titleIcon ? (
+                <span className="flex shrink-0 items-center">{titleIcon}</span>
+              ) : null}
+              <h1
+                id="tool-page-title"
+                className="text-xl font-semibold tracking-tight text-text sm:text-2xl sm:leading-snug"
+              >
+                {title}
+              </h1>
+            </div>
+            {description ? (
+              <p className="text-sm text-text-secondary leading-relaxed sm:text-[0.9375rem]">
+                {description}
+              </p>
+            ) : null}
+            {heroFootnote ? (
+              <p className="text-xs text-text-muted leading-relaxed">{heroFootnote}</p>
+            ) : null}
+          </div>
+        ) : (
+          <>
+            <h1
+              id="tool-page-title"
+              className="text-2xl font-semibold tracking-tight text-text sm:text-[1.75rem] sm:leading-snug"
+            >
+              {title}
+            </h1>
+            {description ? (
+              <p className="mt-3 max-w-prose text-base text-text-secondary leading-relaxed">
+                {description}
+              </p>
+            ) : null}
+          </>
+        )}
       </header>
 
-      {intro ? <div className="mt-6 max-w-prose">{intro}</div> : null}
+      {intro ? (
+        <div className={cn("max-w-prose", heroCompact ? "mx-auto mt-4 text-center" : "mt-6")}>
+          {intro}
+        </div>
+      ) : null}
 
-      <div className={intro ? "mt-6" : "mt-8"}>{children}</div>
+      <div className={cn(intro ? "mt-6" : heroCompact ? "mt-5" : "mt-8")}>{children}</div>
 
       {ancillary ? (
         <div className="mt-12 border-t border-border pt-8 text-sm text-text-muted">

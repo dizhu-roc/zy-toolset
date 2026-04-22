@@ -20,8 +20,8 @@
   "home": {
     "introTitle": "Colección de herramientas prácticas en línea",
     "toolsSectionTitle": "Directorio de herramientas",
-    "base64TextCardTitle": "Texto y Base64",
-    "base64TextCardDesc": "UTF-8 en el navegador; cambia a la pestaña de decodificación cuando necesites pasar Base64 o Data URL a texto.",
+    "base64TextCardTitle": "Texto a Base64",
+    "base64TextCardDesc": "Convierte texto plano en Base64 en tu navegador (UTF-8). No se sube nada.",
     "base64FileCardTitle": "Archivo y Base64",
     "base64FileCardDesc": "Convierte subidas en Base64 o Data URL en local; usa la pestaña de decodificación para recuperar los bytes."
   },
@@ -76,6 +76,30 @@
       "decodeBinaryHint": "Los bytes decodificados no son UTF-8 válido. Descarga el binario en su lugar.",
       "decodeUtf8Ok": "Mostrado como texto UTF-8.",
       "downloadDecoded": "Descargar archivo decodificado"
+    },
+    "base64TextEncode": {
+      "metaTitle": "Texto a Base64",
+      "metaDescription": "Texto → Base64 en el navegador (100k caracteres, solo local).",
+      "pageTitle": "Texto a Base64",
+      "pageDescriptionBefore": "Izquierda: texto → derecha: Base64. Auto-actualizar opcional. Para decodificar: ",
+      "decodeLinkLabel": "Base64 a texto",
+      "pageDescriptionAfter": ".",
+      "heroFootnote": "Todo ocurre en tu navegador: no enviamos tu contenido a nuestros servidores.",
+      "inputColumnTitle": "Texto plano (UTF-8)",
+      "outputColumnTitle": "Salida Base64",
+      "inputPlaceholder": "Escribe o pega texto aquí (hasta 100.000 caracteres).",
+      "autoUpdate": "Actualizar automáticamente",
+      "generate": "Codificar",
+      "clearAll": "Borrar todo",
+      "outputFormatLabel": "Formato de salida",
+      "formatPlain": "Base64 puro",
+      "formatDataUrl": "Data URL",
+      "copyOutput": "Copiar",
+      "saveAs": "Guardar como…",
+      "downloadFilename": "base64-output.txt",
+      "charCount": "{n} / {max} caracteres",
+      "copied": "Copiado al portapapeles.",
+      "copyFailed": "No se pudo copiar; selecciona y copia manualmente."
     },
     "passwordGenerator": {
       "metaTitle": "Generador de contraseñas",

@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { HomeToolIcon } from "@/components/icons/home-tool-icons";
 import { ToolPageLayout } from "@/components/layout/tool-page-layout";
-import { Base64Workbench } from "@/components/tools/base64/base64-workbench";
+import { TextBase64EncodePanel } from "@/components/tools/base64/text-base64-encode-panel";
 import { getMessages } from "@/i18n/dictionaries";
 import { isLocale, type Locale } from "@/i18n/config";
 import { hrefForLocale } from "@/lib/localized-path";
@@ -16,9 +17,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
   const locale: Locale = raw;
   const t = await getMessages(locale);
+  const p = t.tools.base64TextEncode;
   return {
-    title: `${t.home.base64TextCardTitle} · ${t.site.name}`,
-    description: t.home.base64TextCardDesc,
+    title: `${p.metaTitle} · ${t.site.name}`,
+    description: p.metaDescription,
     robots: { index: true, follow: true },
   };
 }
@@ -31,11 +33,29 @@ export default async function Base64TextEncodePage({ params }: Props) {
   const locale: Locale = raw;
   const t = await getMessages(locale);
   const privacyHref = hrefForLocale(locale, "privacy");
+  const decodeHref = hrefForLocale(locale, "tools/base64/file-encode#decode");
+  const p = t.tools.base64TextEncode;
 
   return (
     <ToolPageLayout
-      title={t.home.base64TextCardTitle}
-      description={t.home.base64TextCardDesc}
+      heroCompact
+      titleIcon={
+        <HomeToolIcon id="base64Text" className="size-8 text-text-secondary sm:size-9" />
+      }
+      title={p.pageTitle}
+      description={
+        <>
+          {p.pageDescriptionBefore}
+          <Link
+            href={decodeHref}
+            className="font-medium text-accent underline decoration-accent/35 underline-offset-2 hover:decoration-accent"
+          >
+            {p.decodeLinkLabel}
+          </Link>
+          {p.pageDescriptionAfter}
+        </>
+      }
+      heroFootnote={p.heroFootnote}
       ancillary={
         <p>
           <Link
@@ -47,11 +67,7 @@ export default async function Base64TextEncodePage({ params }: Props) {
         </p>
       }
     >
-      <Base64Workbench
-        copy={t.tools.base64}
-        privacyHref={privacyHref}
-        defaultTab="text"
-      />
+      <TextBase64EncodePanel copy={p} />
     </ToolPageLayout>
   );
 }
