@@ -20,11 +20,11 @@ export function SiteShell({ locale, messages, children, homeMain }: Props) {
   const homeHref = hrefForLocale(locale, "");
   const base64TextEncodeHref = hrefForLocale(locale, "tools/base64/text-encode");
   const base64FileEncodeHref = hrefForLocale(locale, "tools/base64/file-encode");
-  const passwordHref = hrefForLocale(locale, "tools/password-generator");
-  const icoHref = hrefForLocale(locale, "tools/ico-generator");
-  const imageCompressHref = hrefForLocale(locale, "tools/image-compressor");
-  const imageCropHref = hrefForLocale(locale, "tools/image-cropper");
-  const imageResizeHref = hrefForLocale(locale, "tools/image-resizer");
+  const passwordHref = hrefForLocale(locale, "tools/generator/password");
+  const icoHref = hrefForLocale(locale, "tools/generator/ico");
+  const imageCompressHref = hrefForLocale(locale, "tools/image/compress");
+  const imageCropHref = hrefForLocale(locale, "tools/image/crop");
+  const imageResizeHref = hrefForLocale(locale, "tools/image/resize");
 
   return (
     <div className="flex min-h-dvh flex-col">

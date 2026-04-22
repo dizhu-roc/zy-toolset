@@ -39,11 +39,6 @@
     "privacyHint": "全站隐私与本地处理说明 →"
   },
   "tools": {
-    "template": {
-      "title": "工具页模板",
-      "description": "使用 ToolPageLayout 的空白路由；上线真实工具时复制本目录为 tools/{slug}。",
-      "body": "此壳层保持为 Server Component；编辑器、Tab、文件读写等请放在子级 Client 组件中。"
-    },
     "base64": {
       "metaTitle": "Base64 工作台",
       "metaDescription": "在浏览器本地将文本或文件编码为 Base64 / Data URL，或解码 Base64 与 Data URL。",

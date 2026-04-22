@@ -39,11 +39,6 @@
     "privacyHint": "サイト全体のプライバシーとローカル処理について →"
   },
   "tools": {
-    "template": {
-      "title": "ツールページのテンプレート",
-      "description": "ToolPageLayout を使った空のルート。実ツールでは tools/{slug} として複製してください。",
-      "body": "この枠は Server Component のままにし、エディタ・タブ・ファイル操作などは子の Client コンポーネントに置いてください。"
-    },
     "base64": {
       "metaTitle": "Base64 ワークベンチ",
       "metaDescription": "テキストやファイルを Base64 / Data URL にエンコードし、Base64 と Data URL をブラウザ内でデコードします。",

@@ -39,11 +39,6 @@
     "privacyHint": "Site-wide privacy & local processing →"
   },
   "tools": {
-    "template": {
-      "title": "Tool page template",
-      "description": "Blank route using ToolPageLayout — copy this folder when adding a real tool at tools/{slug}.",
-      "body": "Keep this layout as a Server Component shell; put editors, tabs, and file handling in child Client components."
-    },
     "base64": {
       "metaTitle": "Base64 workbench",
       "metaDescription": "Encode text or files to Base64 and Data URLs, decode Base64 and Data URLs locally in your browser.",

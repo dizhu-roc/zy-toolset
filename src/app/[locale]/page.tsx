@@ -21,11 +21,15 @@ const HOME_TOOL_ENTRIES: {
   >;
   icon: HomeToolIconId;
 }[] = [
-  { rest: "tools/password-generator", key: "passwordGenerator", icon: "passwordGenerator" },
-  { rest: "tools/ico-generator", key: "icoGenerator", icon: "icoGenerator" },
-  { rest: "tools/image-compressor", key: "imageCompressor", icon: "imageCompressor" },
-  { rest: "tools/image-cropper", key: "imageCropper", icon: "imageCropper" },
-  { rest: "tools/image-resizer", key: "imageResizer", icon: "imageResizer" },
+  {
+    rest: "tools/generator/password",
+    key: "passwordGenerator",
+    icon: "passwordGenerator",
+  },
+  { rest: "tools/generator/ico", key: "icoGenerator", icon: "icoGenerator" },
+  { rest: "tools/image/compress", key: "imageCompressor", icon: "imageCompressor" },
+  { rest: "tools/image/crop", key: "imageCropper", icon: "imageCropper" },
+  { rest: "tools/image/resize", key: "imageResizer", icon: "imageResizer" },
 ];
 
 const cardClassName =

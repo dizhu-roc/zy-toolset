@@ -39,11 +39,6 @@
     "privacyHint": "Confidentialité et traitement local du site →"
   },
   "tools": {
-    "template": {
-      "title": "Modèle de page d’outil",
-      "description": "Route vide avec ToolPageLayout — dupliquez ce dossier en tools/{slug} pour un vrai outil.",
-      "body": "Gardez cette coque en Server Component ; éditeurs, onglets et fichiers vont dans des composants client enfants."
-    },
     "base64": {
       "metaTitle": "Atelier Base64",
       "metaDescription": "Encodez du texte ou des fichiers en Base64 et Data URL, ou décodez Base64 et Data URL localement dans le navigateur.",

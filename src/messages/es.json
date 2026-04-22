@@ -39,11 +39,6 @@
     "privacyHint": "Privacidad y procesamiento local del sitio →"
   },
   "tools": {
-    "template": {
-      "title": "Plantilla de página de herramienta",
-      "description": "Ruta vacía con ToolPageLayout; copia esta carpeta como tools/{slug} para una herramienta real.",
-      "body": "Mantén este contenedor como Server Component; editores, pestañas y archivos van en componentes cliente hijos."
-    },
     "base64": {
       "metaTitle": "Banco de trabajo Base64",
       "metaDescription": "Codifica texto o archivos a Base64 y Data URL, o decodifica Base64 y Data URL localmente en tu navegador.",

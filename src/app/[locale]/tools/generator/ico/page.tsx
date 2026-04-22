@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
   const locale: Locale = raw;
   const t = await getMessages(locale);
-  const tc = t.tools.passwordGenerator;
+  const tc = t.tools.icoGenerator;
   return {
     title: `${tc.metaTitle} · ${t.site.name}`,
     description: tc.metaDescription,
@@ -23,14 +23,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function PasswordGeneratorPage({ params }: Props) {
+export default async function GeneratorIcoPage({ params }: Props) {
   const { locale: raw } = await params;
   if (!isLocale(raw)) {
     notFound();
   }
   const locale: Locale = raw;
   const t = await getMessages(locale);
-  const tc = t.tools.passwordGenerator;
+  const tc = t.tools.icoGenerator;
   const privacyHref = hrefForLocale(locale, "privacy");
 
   return (

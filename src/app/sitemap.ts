@@ -9,14 +9,13 @@ const STATIC_REST = [
   "privacy",
   "terms",
   "cookies",
-  "tools/template",
   "tools/base64/text-encode",
   "tools/base64/file-encode",
-  "tools/password-generator",
-  "tools/ico-generator",
-  "tools/image-compressor",
-  "tools/image-cropper",
-  "tools/image-resizer",
+  "tools/generator/password",
+  "tools/generator/ico",
+  "tools/image/compress",
+  "tools/image/crop",
+  "tools/image/resize",
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
