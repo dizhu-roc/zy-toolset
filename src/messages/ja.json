@@ -12,9 +12,10 @@
     "categoryGeneratorsMenuAria": "ジェネレーター系ツールのメニュー",
     "categoryImages": "画像",
     "categoryImagesMenuAria": "画像ツールのメニュー",
-    "soonBadge": "近日",
-    "soonHex": "Hex ↔ Base64",
-    "soonUrl": "URL → Base64（取得）"
+    "textToBase64": "テキストを Base64 に",
+    "base64ToText": "Base64 をテキストに",
+    "fileToBase64": "ファイルを Base64 に",
+    "base64ToFile": "Base64 をファイルに"
   },
   "home": {
     "introTitle": "オンラインの実用ツール集",
@@ -96,23 +97,23 @@
       "body": "このページはプレースホルダーです。対話型の ICO ビルダーは今後の更新で追加予定です。"
     },
     "imageCompressor": {
-      "metaTitle": "画像圧縮",
+      "metaTitle": "画像を圧縮",
       "metaDescription": "ブラウザ内で画像ファイルのサイズを小さくします。既定では当社サーバーにアップロードしません。",
-      "pageTitle": "画像圧縮",
+      "pageTitle": "画像を圧縮",
       "pageDescription": "JPG / PNG / WebP などの容量を抑え、プレビューと書き出しはローカルで行います。",
       "body": "このページはプレースホルダーです。対話型の圧縮は今後の更新で追加予定です。"
     },
     "imageCropper": {
-      "metaTitle": "画像トリミング",
+      "metaTitle": "画像を切り抜く",
       "metaDescription": "ブラウザ内で必要な領域だけに画像を切り抜きます。",
-      "pageTitle": "画像トリミング",
+      "pageTitle": "画像を切り抜く",
       "pageDescription": "範囲を選んでプレビューし、端末から離れずに書き出せます。",
       "body": "このページはプレースホルダーです。対話型のトリミングは今後の更新で追加予定です。"
     },
     "imageResizer": {
-      "metaTitle": "画像リサイズ",
+      "metaTitle": "画像サイズを変更",
       "metaDescription": "ブラウザ内で画像の幅と高さを変更します。ローカル処理です。",
-      "pageTitle": "画像リサイズ",
+      "pageTitle": "画像サイズを変更",
       "pageDescription": "目標ピクセルや割合で拡大縮小してからダウンロードできます。",
       "body": "このページはプレースホルダーです。対話型のリサイズは今後の更新で追加予定です。"
     }

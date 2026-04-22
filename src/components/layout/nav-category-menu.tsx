@@ -8,13 +8,20 @@ import {
   useRef,
   useState,
 } from "react";
+import {
+  HomeToolIcon,
+  type HomeToolIconId,
+} from "@/components/icons/home-tool-icons";
 import { cn } from "@/lib/utils";
 
 const CLOSE_DELAY_MS = 140;
 
+const MENU_ICON_CLASS = "size-[1.125rem] shrink-0 text-text-secondary";
+
 export type NavCategoryMenuItem = {
   href: string;
   title: string;
+  icon: HomeToolIconId;
 };
 
 type Props = {
@@ -139,13 +146,14 @@ export function NavCategoryMenu({ category, categoryAria, items }: Props) {
               key={item.href}
               role="menuitem"
               href={item.href}
-              className="block px-4 py-2 font-normal text-text no-underline hover:bg-text/[0.04]"
+              className="flex items-center gap-2.5 px-4 py-2 font-normal text-text no-underline hover:bg-text/[0.04]"
               onClick={() => {
                 clearCloseTimer();
                 setOpen(false);
               }}
             >
-              {item.title}
+              <HomeToolIcon id={item.icon} className={MENU_ICON_CLASS} />
+              <span className="min-w-0">{item.title}</span>
             </Link>
           ))}
         </div>

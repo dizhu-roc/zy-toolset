@@ -17,13 +17,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const locale: Locale = raw;
   const t = await getMessages(locale);
   return {
-    title: `${t.tools.base64.metaTitle} · ${t.site.name}`,
-    description: t.tools.base64.metaDescription,
+    title: `${t.home.base64TextCardTitle} · ${t.site.name}`,
+    description: t.home.base64TextCardDesc,
     robots: { index: true, follow: true },
   };
 }
 
-export default async function Base64WorkbenchPage({ params }: Props) {
+export default async function Base64TextEncodePage({ params }: Props) {
   const { locale: raw } = await params;
   if (!isLocale(raw)) {
     notFound();
@@ -34,8 +34,8 @@ export default async function Base64WorkbenchPage({ params }: Props) {
 
   return (
     <ToolPageLayout
-      title={t.tools.base64.pageTitle}
-      description={t.tools.base64.pageDescription}
+      title={t.home.base64TextCardTitle}
+      description={t.home.base64TextCardDesc}
       ancillary={
         <p>
           <Link
@@ -47,7 +47,11 @@ export default async function Base64WorkbenchPage({ params }: Props) {
         </p>
       }
     >
-      <Base64Workbench copy={t.tools.base64} privacyHref={privacyHref} />
+      <Base64Workbench
+        copy={t.tools.base64}
+        privacyHref={privacyHref}
+        defaultTab="text"
+      />
     </ToolPageLayout>
   );
 }

@@ -12,9 +12,10 @@
     "categoryGeneratorsMenuAria": "Menú de herramientas generadoras",
     "categoryImages": "Imágenes",
     "categoryImagesMenuAria": "Menú de herramientas de imagen",
-    "soonBadge": "Pronto",
-    "soonHex": "Hex ↔ Base64",
-    "soonUrl": "URL → Base64 (fetch)"
+    "textToBase64": "Texto a Base64",
+    "base64ToText": "Base64 a texto",
+    "fileToBase64": "Archivo a Base64",
+    "base64ToFile": "Base64 a archivo"
   },
   "home": {
     "introTitle": "Colección de herramientas prácticas en línea",
@@ -96,9 +97,9 @@
       "body": "Esta página es un marcador de posición. El constructor ICO interactivo llegará en una actualización posterior."
     },
     "imageCompressor": {
-      "metaTitle": "Compresor de imágenes",
+      "metaTitle": "Comprimir imagen",
       "metaDescription": "Reduce el peso de las imágenes en el navegador sin subir tus archivos a nuestros servidores.",
-      "pageTitle": "Compresor de imágenes",
+      "pageTitle": "Comprimir imagen",
       "pageDescription": "Aligera JPG, PNG, WebP y más; la vista previa y la exportación son locales.",
       "body": "Esta página es un marcador de posición. El compresor interactivo llegará en una actualización posterior."
     },
@@ -110,9 +111,9 @@
       "body": "Esta página es un marcador de posición. La herramienta de recorte interactiva llegará en una actualización posterior."
     },
     "imageResizer": {
-      "metaTitle": "Redimensionar imagen",
+      "metaTitle": "Cambiar tamaño de imagen",
       "metaDescription": "Cambia el ancho y alto de las imágenes en el navegador con procesamiento local.",
-      "pageTitle": "Redimensionar imagen",
+      "pageTitle": "Cambiar tamaño de imagen",
       "pageDescription": "Define píxeles objetivo o escala por porcentaje antes de descargar.",
       "body": "Esta página es un marcador de posición. El redimensionador interactivo llegará en una actualización posterior."
     }

@@ -12,9 +12,10 @@
     "categoryGeneratorsMenuAria": "Menu des outils générateurs",
     "categoryImages": "Images",
     "categoryImagesMenuAria": "Menu des outils image",
-    "soonBadge": "Bientôt",
-    "soonHex": "Hex ↔ Base64",
-    "soonUrl": "URL → Base64 (fetch)"
+    "textToBase64": "Texte vers Base64",
+    "base64ToText": "Base64 vers texte",
+    "fileToBase64": "Fichier vers Base64",
+    "base64ToFile": "Base64 vers fichier"
   },
   "home": {
     "introTitle": "Une collection d’outils pratiques en ligne",
@@ -96,23 +97,23 @@
       "body": "Cette page est un placeholder. Le créateur ICO interactif arrivera dans une prochaine mise à jour."
     },
     "imageCompressor": {
-      "metaTitle": "Compression d’images",
+      "metaTitle": "Compresser une image",
       "metaDescription": "Réduisez le poids des images dans le navigateur sans envoyer vos fichiers sur nos serveurs.",
-      "pageTitle": "Compression d’images",
+      "pageTitle": "Compresser une image",
       "pageDescription": "Allégez JPG, PNG, WebP et plus ; aperçu et export restent locaux.",
       "body": "Cette page est un placeholder. Le compresseur interactif arrivera dans une prochaine mise à jour."
     },
     "imageCropper": {
-      "metaTitle": "Recadrage d’image",
+      "metaTitle": "Recadrer une image",
       "metaDescription": "Recadrez vos images sur la zone voulue directement dans le navigateur.",
-      "pageTitle": "Recadrage d’image",
+      "pageTitle": "Recadrer une image",
       "pageDescription": "Sélectionnez la zone, prévisualisez et exportez sans quitter votre appareil.",
       "body": "Cette page est un placeholder. L’outil de recadrage interactif arrivera dans une prochaine mise à jour."
     },
     "imageResizer": {
-      "metaTitle": "Redimensionnement d’image",
+      "metaTitle": "Redimensionner une image",
       "metaDescription": "Modifiez largeur et hauteur des images dans le navigateur, en local.",
-      "pageTitle": "Redimensionnement d’image",
+      "pageTitle": "Redimensionner une image",
       "pageDescription": "Définissez la taille cible ou un pourcentage avant téléchargement.",
       "body": "Cette page est un placeholder. Le redimensionneur interactif arrivera dans une prochaine mise à jour."
     }

@@ -12,9 +12,10 @@
     "categoryGeneratorsMenuAria": "Generator tools menu",
     "categoryImages": "Images",
     "categoryImagesMenuAria": "Image tools menu",
-    "soonBadge": "Soon",
-    "soonHex": "Hex ↔ Base64",
-    "soonUrl": "URL → Base64 (fetch)"
+    "textToBase64": "Text to Base64",
+    "base64ToText": "Base64 to Text",
+    "fileToBase64": "File to Base64",
+    "base64ToFile": "Base64 to File"
   },
   "home": {
     "introTitle": "A collection of practical online tools",
@@ -96,23 +97,23 @@
       "body": "This page is a placeholder. The interactive ICO builder will ship in a later update."
     },
     "imageCompressor": {
-      "metaTitle": "Image compressor",
+      "metaTitle": "Compress Image",
       "metaDescription": "Shrink image file size in the browser without uploading your files to our servers.",
-      "pageTitle": "Image compressor",
+      "pageTitle": "Compress Image",
       "pageDescription": "Reduce weight for JPG, PNG, WebP, and more while keeping previews local.",
       "body": "This page is a placeholder. The interactive compressor will ship in a later update."
     },
     "imageCropper": {
-      "metaTitle": "Image cropper",
+      "metaTitle": "Crop Image",
       "metaDescription": "Crop images to the region you need directly in the browser.",
-      "pageTitle": "Image cropper",
+      "pageTitle": "Crop Image",
       "pageDescription": "Select an area, preview the result, and export without leaving your device.",
       "body": "This page is a placeholder. The interactive crop tool will ship in a later update."
     },
     "imageResizer": {
-      "metaTitle": "Image resizer",
+      "metaTitle": "Resize Image",
       "metaDescription": "Change image width and height in the browser with local processing.",
-      "pageTitle": "Image resizer",
+      "pageTitle": "Resize Image",
       "pageDescription": "Set target dimensions or scale by percentage before download.",
       "body": "This page is a placeholder. The interactive resizer will ship in a later update."
     }

@@ -18,7 +18,8 @@ type Props = {
 
 export function SiteShell({ locale, messages, children, homeMain }: Props) {
   const homeHref = hrefForLocale(locale, "");
-  const base64Href = hrefForLocale(locale, "tools/base64");
+  const base64TextEncodeHref = hrefForLocale(locale, "tools/base64/text-encode");
+  const base64FileEncodeHref = hrefForLocale(locale, "tools/base64/file-encode");
   const passwordHref = hrefForLocale(locale, "tools/password-generator");
   const icoHref = hrefForLocale(locale, "tools/ico-generator");
   const imageCompressHref = hrefForLocale(locale, "tools/image-compressor");
@@ -41,22 +42,45 @@ export function SiteShell({ locale, messages, children, homeMain }: Props) {
               {messages.nav.home}
             </Link>
             <NavToolCategories
-              workbenchHref={base64Href}
-              labels={{
-                category: messages.nav.categoryBase64,
-                categoryAria: messages.nav.categoryBase64MenuAria,
-                workbenchTitle: messages.tools.base64.navEntryTitle,
-                soonHex: messages.nav.soonHex,
-                soonUrl: messages.nav.soonUrl,
-                soonBadge: messages.nav.soonBadge,
-              }}
+              category={messages.nav.categoryBase64}
+              categoryAria={messages.nav.categoryBase64MenuAria}
+              items={[
+                {
+                  href: base64TextEncodeHref,
+                  title: messages.nav.textToBase64,
+                  icon: "base64Text",
+                },
+                {
+                  href: `${base64TextEncodeHref}#decode`,
+                  title: messages.nav.base64ToText,
+                  icon: "base64Text",
+                },
+                {
+                  href: base64FileEncodeHref,
+                  title: messages.nav.fileToBase64,
+                  icon: "base64File",
+                },
+                {
+                  href: `${base64FileEncodeHref}#decode`,
+                  title: messages.nav.base64ToFile,
+                  icon: "base64File",
+                },
+              ]}
             />
             <NavCategoryMenu
               category={messages.nav.categoryGenerators}
               categoryAria={messages.nav.categoryGeneratorsMenuAria}
               items={[
-                { href: passwordHref, title: messages.tools.passwordGenerator.pageTitle },
-                { href: icoHref, title: messages.tools.icoGenerator.pageTitle },
+                {
+                  href: passwordHref,
+                  title: messages.tools.passwordGenerator.pageTitle,
+                  icon: "passwordGenerator",
+                },
+                {
+                  href: icoHref,
+                  title: messages.tools.icoGenerator.pageTitle,
+                  icon: "icoGenerator",
+                },
               ]}
             />
             <NavCategoryMenu
@@ -66,14 +90,17 @@ export function SiteShell({ locale, messages, children, homeMain }: Props) {
                 {
                   href: imageCompressHref,
                   title: messages.tools.imageCompressor.pageTitle,
+                  icon: "imageCompressor",
                 },
                 {
                   href: imageCropHref,
                   title: messages.tools.imageCropper.pageTitle,
+                  icon: "imageCropper",
                 },
                 {
                   href: imageResizeHref,
                   title: messages.tools.imageResizer.pageTitle,
+                  icon: "imageResizer",
                 },
               ]}
             />

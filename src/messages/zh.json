@@ -12,9 +12,10 @@
     "categoryGeneratorsMenuAria": "生成器类工具菜单",
     "categoryImages": "图片",
     "categoryImagesMenuAria": "图片处理工具菜单",
-    "soonBadge": "即将",
-    "soonHex": "Hex ↔ Base64",
-    "soonUrl": "URL → Base64（拉取）"
+    "textToBase64": "文本转 Base64",
+    "base64ToText": "Base64 转文本",
+    "fileToBase64": "文件转 Base64",
+    "base64ToFile": "Base64 转文件"
   },
   "home": {
     "introTitle": "在线的实用工具集合",
@@ -96,23 +97,23 @@
       "body": "本页为占位说明，交互式 ICO 生成将在后续版本接入。"
     },
     "imageCompressor": {
-      "metaTitle": "图片压缩",
+      "metaTitle": "压缩图片",
       "metaDescription": "在浏览器内减小图片体积，默认不把文件上传到我们的服务器。",
-      "pageTitle": "图片压缩",
+      "pageTitle": "压缩图片",
       "pageDescription": "针对 JPG、PNG、WebP 等格式减轻体积，预览与导出均在本地完成。",
       "body": "本页为占位说明，交互式压缩将在后续版本接入。"
     },
     "imageCropper": {
-      "metaTitle": "图片裁剪",
+      "metaTitle": "裁剪图片",
       "metaDescription": "在浏览器中裁剪图片到所需区域。",
-      "pageTitle": "图片裁剪",
+      "pageTitle": "裁剪图片",
       "pageDescription": "框选区域、预览效果并导出，数据默认留在本机。",
       "body": "本页为占位说明，交互式裁剪将在后续版本接入。"
     },
     "imageResizer": {
-      "metaTitle": "调整图片尺寸",
+      "metaTitle": "缩放图片",
       "metaDescription": "在浏览器中修改图片宽高，本地处理。",
-      "pageTitle": "调整图片尺寸",
+      "pageTitle": "缩放图片",
       "pageDescription": "设置目标像素或按比例缩放后再下载。",
       "body": "本页为占位说明，交互式尺寸调整将在后续版本接入。"
     }

@@ -38,7 +38,8 @@ export default async function HomePage({ params }: Props) {
   }
   const locale: Locale = raw;
   const t = await getMessages(locale);
-  const base64Href = hrefForLocale(locale, "tools/base64");
+  const textBase64Href = hrefForLocale(locale, "tools/base64/text-encode");
+  const fileBase64Href = hrefForLocale(locale, "tools/base64/file-encode");
 
   return (
     <article className="w-full py-10">
@@ -52,7 +53,7 @@ export default async function HomePage({ params }: Props) {
       <section id="tools" className="mt-8">
         <h2 className="sr-only">{t.home.toolsSectionTitle}</h2>
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          <Link href={`${base64Href}#text`} className={cardClassName}>
+          <Link href={textBase64Href} className={cardClassName}>
             <HomeToolIcon id="base64Text" className="text-text-secondary" />
             <div className="min-w-0 flex-1">
               <h3 className="text-lg font-semibold tracking-tight text-text">
@@ -63,7 +64,7 @@ export default async function HomePage({ params }: Props) {
               </p>
             </div>
           </Link>
-          <Link href={`${base64Href}#file`} className={cardClassName}>
+          <Link href={fileBase64Href} className={cardClassName}>
             <HomeToolIcon id="base64File" className="text-text-secondary" />
             <div className="min-w-0 flex-1">
               <h3 className="text-lg font-semibold tracking-tight text-text">
