@@ -1,6 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import type { Messages } from "@/i18n/dictionaries";
 import { bytesToBase64, utf8TextToBytes } from "@/lib/base64";
 import { cn } from "@/lib/utils";
@@ -20,9 +28,67 @@ function encodeOutput(text: string, dataUrl: boolean): string {
     : b64;
 }
 
-function lineCount(text: string): number {
+/**
+ * 按与 textarea 相同的可视宽度与字体，测量 soft-wrap 后的行数（用于行号 gutter）。
+ * 空内容固定为 1 行，避免在很高 min-height 的 flex 里用 scrollHeight 误判出多行「空行号」。
+ */
+function measureWrappedLineCount(text: string, sample: HTMLTextAreaElement): number {
   if (text === "") return 1;
-  return text.split("\n").length;
+
+  const cs = getComputedStyle(sample);
+  const padL = parseFloat(cs.paddingLeft) || 0;
+  const padR = parseFloat(cs.paddingRight) || 0;
+  const borL = parseFloat(cs.borderLeftWidth) || 0;
+  const borR = parseFloat(cs.borderRightWidth) || 0;
+  const innerW = Math.max(0, sample.clientWidth - padL - padR - borL - borR);
+  if (innerW <= 0) return 1;
+
+  const d = document.createElement("div");
+  d.style.cssText = [
+    "position:fixed",
+    "left:0",
+    "top:0",
+    "visibility:hidden",
+    "pointer-events:none",
+    "z-index:-1",
+    `width:${innerW}px`,
+    "white-space:pre-wrap",
+    "word-break:break-all",
+    "overflow-wrap:anywhere",
+    `font:${cs.font}`,
+    `line-height:${cs.lineHeight}`,
+    `letter-spacing:${cs.letterSpacing}`,
+  ].join(";");
+  const lhProbe = document.createElement("div");
+  lhProbe.style.cssText = [
+    "position:fixed",
+    "left:0",
+    "top:0",
+    "visibility:hidden",
+    "pointer-events:none",
+    "z-index:-1",
+    `width:${innerW}px`,
+    "white-space:pre",
+    `font:${cs.font}`,
+    `line-height:${cs.lineHeight}`,
+    `letter-spacing:${cs.letterSpacing}`,
+  ].join(";");
+  lhProbe.textContent = "█";
+  document.documentElement.appendChild(lhProbe);
+  const probeLineHeight = Math.max(1, lhProbe.offsetHeight);
+  document.documentElement.removeChild(lhProbe);
+
+  d.textContent = text;
+  document.documentElement.appendChild(d);
+
+  let lh = parseFloat(cs.lineHeight);
+  if (!Number.isFinite(lh) || lh <= 0) {
+    lh = probeLineHeight;
+  }
+  const lines = Math.max(1, Math.round(d.offsetHeight / lh));
+
+  document.documentElement.removeChild(d);
+  return lines;
 }
 
 function IconTrash({ className }: { className?: string }) {
@@ -113,6 +179,7 @@ function LineNumberedField({
   onChange,
   readOnly,
   mono,
+  showGutter = true,
   placeholder,
   maxLength,
   ariaLabel,
@@ -121,55 +188,103 @@ function LineNumberedField({
   onChange?: (next: string) => void;
   readOnly?: boolean;
   mono?: boolean;
+  showGutter?: boolean;
   placeholder?: string;
   maxLength?: number;
   ariaLabel: string;
 }) {
   const taRef = useRef<HTMLTextAreaElement>(null);
-  const gutterRef = useRef<HTMLPreElement>(null);
-  const lines = useMemo(() => lineCount(value), [value]);
+  const gutterInnerRef = useRef<HTMLPreElement>(null);
+  const [wrappedLines, setWrappedLines] = useState(1);
 
-  const lineText = useMemo(
-    () => Array.from({ length: lines }, (_, i) => String(i + 1)).join("\n"),
-    [lines],
+  const gutterNumbers = useMemo(
+    () => Array.from({ length: wrappedLines }, (_, i) => String(i + 1)).join("\n"),
+    [wrappedLines],
   );
 
-  const syncScroll = useCallback(() => {
-    const g = gutterRef.current;
+  const remeasureWrappedLines = useCallback(() => {
+    if (!showGutter) return;
+    const el = taRef.current;
+    if (!el) return;
+    const next = measureWrappedLineCount(value, el);
+    setWrappedLines((prev) => (prev === next ? prev : next));
+  }, [value, showGutter]);
+
+  useLayoutEffect(() => {
+    if (!showGutter) return;
+    remeasureWrappedLines();
+  }, [remeasureWrappedLines, showGutter]);
+
+  useEffect(() => {
+    if (!showGutter) return;
+    const el = taRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => {
+      remeasureWrappedLines();
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [remeasureWrappedLines, showGutter]);
+
+  /** 常见编辑器做法：只有正文可滚动；行号列 overflow:hidden，用 transform 跟随 scrollTop，无第二根滚动条、也不可拖行号区滚动 */
+  const syncGutterToTextarea = useCallback(() => {
     const t = taRef.current;
-    if (g && t) g.scrollTop = t.scrollTop;
+    const g = gutterInnerRef.current;
+    if (!t || !g) return;
+    g.style.transform = `translate3d(0,-${t.scrollTop}px,0)`;
   }, []);
 
   useEffect(() => {
-    syncScroll();
-  }, [value, syncScroll]);
+    if (!showGutter) return;
+    syncGutterToTextarea();
+  }, [value, gutterNumbers, syncGutterToTextarea, showGutter]);
+
+  /** 行号必须与正文同族同字号行高，否则行号列与 textarea 逐行对不齐（此前行号用 mono、正文用 sans 会放大差异） */
+  const syncedFont = mono ? "font-mono" : "font-sans";
 
   return (
-    <div className="flex min-h-0 flex-1 overflow-hidden bg-white dark:bg-zinc-950">
-      <pre
-        ref={gutterRef}
-        className={cn(
-          "m-0 min-h-0 w-[2.625rem] shrink-0 overflow-y-auto overflow-x-hidden border-r border-zinc-200/90 bg-zinc-100 py-2 pr-1.5 pl-0 text-right font-mono tabular-nums text-zinc-400 [scrollbar-width:none] dark:border-zinc-600 dark:bg-zinc-800/90 dark:text-zinc-500 [&::-webkit-scrollbar]:hidden",
-          EDITOR_LINE,
-        )}
-        aria-hidden
-      >
-        {lineText}
-      </pre>
+    <div
+      className={cn(
+        "flex min-h-0 flex-1 overflow-hidden bg-white dark:bg-zinc-950",
+        showGutter ? "flex-row" : "flex-col",
+      )}
+    >
+      {showGutter ? (
+        <div
+          className={cn(
+            "relative m-0 min-h-0 w-[2.625rem] shrink-0 overflow-hidden border-r border-zinc-200/90 bg-zinc-100 py-2 pr-1.5 pl-0 dark:border-zinc-600 dark:bg-zinc-800/90",
+            EDITOR_LINE,
+          )}
+          aria-hidden
+        >
+          <pre
+            ref={gutterInnerRef}
+            className={cn(
+              "m-0 block w-full select-none text-right tabular-nums text-zinc-400 will-change-transform dark:text-zinc-500",
+              EDITOR_LINE,
+              syncedFont,
+            )}
+          >
+            {gutterNumbers}
+          </pre>
+        </div>
+      ) : null}
       <textarea
         ref={taRef}
         readOnly={readOnly}
         value={value}
         onChange={onChange ? (e) => onChange(e.target.value) : undefined}
-        onScroll={syncScroll}
+        onScroll={showGutter ? syncGutterToTextarea : undefined}
         spellCheck={false}
         placeholder={placeholder}
         aria-label={ariaLabel}
         maxLength={maxLength}
+        wrap="soft"
         className={cn(
-          "min-h-0 min-w-0 flex-1 resize-y overflow-y-auto border-0 bg-transparent py-2 pl-3 pr-3 text-text outline-none focus-visible:ring-0 sm:pr-4",
+          "min-h-0 min-w-0 w-full flex-1 resize-none overflow-x-hidden overflow-y-auto border-0 bg-transparent py-2 pl-3 pr-3 text-text outline-none focus-visible:ring-0 sm:pr-4",
+          "whitespace-pre-wrap break-all [overflow-wrap:anywhere]",
           EDITOR_LINE,
-          mono ? "font-mono" : "font-sans",
+          syncedFont,
         )}
       />
     </div>
@@ -282,7 +397,7 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
           </div>
         </div>
         <div className="flex min-h-0 flex-1 flex-col bg-white dark:bg-zinc-900">
-          <div className="min-h-0 flex-1">
+          <div className="flex min-h-0 flex-1 flex-col">
             <LineNumberedField
               value={input}
               onChange={setInput}
@@ -359,8 +474,13 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
           </div>
         </div>
         <div className="flex min-h-0 flex-1 flex-col bg-white dark:bg-zinc-900">
-          <div className="min-h-0 flex-1">
-            <LineNumberedField value={output} readOnly mono ariaLabel={copy.outputColumnTitle} />
+          <div className="flex min-h-0 flex-1 flex-col">
+            <LineNumberedField
+              value={output}
+              readOnly
+              showGutter={false}
+              ariaLabel={copy.outputColumnTitle}
+            />
           </div>
           {copyHint ? (
             <p
