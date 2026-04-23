@@ -33,7 +33,7 @@ const HOME_TOOL_ENTRIES: {
 ];
 
 const cardClassName =
-  "group flex gap-3.5 rounded-xl border border-tool-card-border bg-white p-5 text-text shadow-sm no-underline hover:text-text motion-safe:transition-[transform,box-shadow] motion-safe:duration-500 motion-safe:ease-in-out motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-md";
+  "group flex gap-3.5 rounded-lg border border-tool-card-border bg-white p-5 text-text shadow-sm no-underline hover:text-text motion-safe:transition-[transform,box-shadow] motion-safe:duration-500 motion-safe:ease-in-out motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-md";
 
 export default async function HomePage({ params }: Props) {
   const { locale: raw } = await params;

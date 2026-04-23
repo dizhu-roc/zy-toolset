@@ -137,7 +137,7 @@ export function NavCategoryMenu({ category, categoryAria, items }: Props) {
           role="menu"
           aria-label={categoryAria}
           className={cn(
-            "absolute left-0 top-full z-50 mt-1 min-w-[16rem] rounded-xl border border-border bg-surface-raised py-2 shadow-xl",
+            "absolute left-0 top-full z-50 mt-1 min-w-[16rem] rounded-lg border border-border bg-surface-raised py-2 shadow-xl",
             "ring-1 ring-text/8",
           )}
         >

@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { HomeToolIcon } from "@/components/icons/home-tool-icons";
 import { ToolPageLayout } from "@/components/layout/tool-page-layout";
-import { Base64Workbench } from "@/components/tools/base64/base64-workbench";
+import { FileBase64EncodePanel } from "@/components/tools/base64/file-base64-encode-panel";
 import { getMessages } from "@/i18n/dictionaries";
 import { isLocale, type Locale } from "@/i18n/config";
 import { hrefForLocale } from "@/lib/localized-path";
@@ -16,9 +17,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
   const locale: Locale = raw;
   const t = await getMessages(locale);
+  const p = t.tools.base64FileEncode;
   return {
-    title: `${t.home.base64FileCardTitle} · ${t.site.name}`,
-    description: t.home.base64FileCardDesc,
+    title: `${p.metaTitle} · ${t.site.name}`,
+    description: p.metaDescription,
     robots: { index: true, follow: true },
   };
 }
@@ -31,11 +33,31 @@ export default async function Base64FileEncodePage({ params }: Props) {
   const locale: Locale = raw;
   const t = await getMessages(locale);
   const privacyHref = hrefForLocale(locale, "privacy");
+  const textEncodeHref = hrefForLocale(locale, "tools/base64/text-encode");
+  const p = t.tools.base64FileEncode;
 
   return (
     <ToolPageLayout
-      title={t.home.base64FileCardTitle}
-      description={t.home.base64FileCardDesc}
+      heroCompact
+      titleIcon={
+        <HomeToolIcon id="base64File" className="size-8 text-text-secondary sm:size-9" />
+      }
+      title={p.pageTitle}
+      description={
+        <>
+          <p className="m-0">{p.pageDescription}</p>
+          <p className="m-0 text-xs text-text-muted leading-relaxed">
+            {p.pageDescriptionHintBefore}
+            <Link
+              href={textEncodeHref}
+              className="font-medium text-[#1576BB] underline decoration-[#1576BB]/35 underline-offset-2 hover:decoration-[#1576BB]"
+            >
+              {p.textEncodeLinkLabel}
+            </Link>
+            {p.pageDescriptionHintAfter}
+          </p>
+        </>
+      }
       ancillary={
         <p>
           <Link
@@ -47,11 +69,7 @@ export default async function Base64FileEncodePage({ params }: Props) {
         </p>
       }
     >
-      <Base64Workbench
-        copy={t.tools.base64}
-        privacyHref={privacyHref}
-        defaultTab="file"
-      />
+      <FileBase64EncodePanel copy={p} />
     </ToolPageLayout>
   );
 }

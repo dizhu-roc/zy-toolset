@@ -62,7 +62,7 @@ export function SiteShell({ locale, messages, children, homeMain }: Props) {
                   icon: "base64File",
                 },
                 {
-                  href: `${base64FileEncodeHref}#decode`,
+                  href: base64TextDecodeHref,
                   title: messages.nav.base64ToFile,
                   icon: "base64File",
                 },

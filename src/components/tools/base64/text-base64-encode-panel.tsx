@@ -382,7 +382,7 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
     "flex flex-wrap items-center gap-2 border-b border-zinc-200/90 bg-zinc-100 px-4 py-2 dark:border-zinc-600 dark:bg-zinc-800/95";
   const encodeDisabled = input.trim() === "";
   const colClass = cn(
-    "flex flex-col overflow-hidden rounded-xl border border-zinc-200/90 bg-white shadow-sm dark:border-zinc-700/90 dark:bg-zinc-900",
+    "flex flex-col overflow-hidden rounded-lg border border-zinc-200/90 bg-white shadow-sm dark:border-zinc-700/90 dark:bg-zinc-900",
     EDITOR_PANEL_HEIGHT_CLASS,
   );
 

@@ -208,7 +208,7 @@ export function LocaleSwitcher({ locale, labels }: Props) {
           role="listbox"
           aria-labelledby={TRIGGER_ID}
           className={cn(
-            "absolute right-0 top-full z-50 mt-1 w-[min(calc(100vw-1.5rem),28rem)] rounded-2xl bg-surface-raised p-5 shadow-xl",
+            "absolute right-0 top-full z-50 mt-1 w-[min(calc(100vw-1.5rem),28rem)] rounded-lg bg-surface-raised p-5 shadow-xl",
             "ring-1 ring-text/8",
           )}
         >
