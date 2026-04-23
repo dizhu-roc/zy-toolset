@@ -231,8 +231,8 @@ function IconPreviewArchive({ className }: { className?: string }) {
 }
 
 const filePreviewBoxClass = cn(
-  "h-32 w-full shrink-0 overflow-hidden rounded-lg",
-  "border border-zinc-200/80 bg-zinc-100/60 dark:border-zinc-600/40 dark:bg-zinc-800/50",
+  "h-32 w-full min-w-0 shrink-0 overflow-hidden",
+  "bg-zinc-100/60 dark:bg-zinc-800/50",
 );
 
 function FilePreviewTextBlock({
@@ -313,7 +313,7 @@ function FilePreviewPanel({ file, copy }: { file: File | null; copy: Copy }) {
 
   return (
     <div
-      className="shrink-0"
+      className="shrink-0 w-full min-w-0"
       role="region"
       aria-label={copy.filePreviewLabel}
     >
@@ -522,86 +522,93 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
           />
 
           <div
-            role="button"
-            tabIndex={0}
-            aria-label={file ? copy.dropZoneReplace : copy.inputColumnTitle}
-            onClick={onPick}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
+            className="flex min-w-0 flex-col overflow-hidden rounded-lg border border-zinc-200/90 dark:border-zinc-600/50"
+          >
+            <div
+              role="button"
+              tabIndex={0}
+              aria-label={file ? copy.dropZoneReplace : copy.inputColumnTitle}
+              onClick={onPick}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  onPick();
+                }
+              }}
+              onDragEnter={(e) => {
                 e.preventDefault();
-                onPick();
-              }
-            }}
-            onDragEnter={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              dragDepthRef.current += 1;
-              setDragOver(true);
-            }}
-            onDragLeave={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              dragDepthRef.current -= 1;
-              if (dragDepthRef.current <= 0) {
+                e.stopPropagation();
+                dragDepthRef.current += 1;
+                setDragOver(true);
+              }}
+              onDragLeave={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dragDepthRef.current -= 1;
+                if (dragDepthRef.current <= 0) {
+                  dragDepthRef.current = 0;
+                  setDragOver(false);
+                }
+              }}
+              onDragOver={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                e.dataTransfer.dropEffect = "copy";
+              }}
+              onDrop={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 dragDepthRef.current = 0;
                 setDragOver(false);
-              }
-            }}
-            onDragOver={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              e.dataTransfer.dropEffect = "copy";
-            }}
-            onDrop={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              dragDepthRef.current = 0;
-              setDragOver(false);
-              const f = e.dataTransfer.files?.[0] ?? null;
-              applyFile(f);
-            }}
-            className={cn(
-              "flex min-h-[11.5rem] shrink-0 cursor-pointer flex-col items-center justify-center gap-2 rounded-lg px-3 py-4 text-center transition-colors sm:min-h-[12.5rem] sm:py-5",
-              "border-2 border-dashed",
-              "outline-none focus-visible:ring-2 focus-visible:ring-[#1576BB]/30",
-              dragOver
-                ? "border-[#1576BB]/45 bg-[#1576BB]/6 dark:border-[#1576BB]/50 dark:bg-[#1576BB]/10"
-                : "border-zinc-300/90 bg-zinc-50/50 dark:border-zinc-500/50 dark:bg-zinc-800/20",
-            )}
-          >
-            {!file ? (
-              <>
-                <IconUploadZone className="size-8 shrink-0 text-zinc-400 dark:text-zinc-500" />
-                <p className="m-0 max-w-[22rem] text-sm text-text-secondary">
-                  {copy.dropZoneHint}
-                </p>
-                <div className="w-full max-w-[22rem] space-y-1 text-center text-[0.7rem] leading-relaxed text-text-muted">
-                  <p className="m-0">{copy.uploadZoneFormatsLine}</p>
-                  <p className="m-0">
+                const f = e.dataTransfer.files?.[0] ?? null;
+                applyFile(f);
+              }}
+              className={cn(
+                "flex min-h-[11.5rem] shrink-0 cursor-pointer flex-col items-center justify-center gap-2 text-center transition-colors sm:min-h-[12.5rem]",
+                "outline-none focus-visible:ring-2 focus-visible:ring-[#1576BB]/30",
+                dragOver
+                  ? "bg-[#1576BB]/6 dark:bg-[#1576BB]/10"
+                  : "bg-zinc-50/50 dark:bg-zinc-800/20",
+              )}
+            >
+              {!file ? (
+                <>
+                  <IconUploadZone className="size-8 shrink-0 text-zinc-400 dark:text-zinc-500" />
+                  <p className="m-0 max-w-[22rem] text-sm text-text-secondary">
+                    {copy.dropZoneHint}
+                  </p>
+                  <div className="w-full max-w-[22rem] space-y-1 text-center text-[0.7rem] leading-relaxed text-text-muted">
+                    <p className="m-0">{copy.uploadZoneFormatsLine}</p>
+                    <p className="m-0">
+                      {copy.uploadZoneSizeLine.replace(
+                        "{mb}",
+                        String(MAX_FILE_BYTES / (1024 * 1024)),
+                      )}
+                    </p>
+                  </div>
+                </>
+              ) : (
+                <div className="flex w-full min-w-0 flex-col items-center justify-center gap-1.5">
+                  <IconUploadZone className="size-7 shrink-0 text-[#1576BB]/80 dark:text-[#4a9fd4]" />
+                  <p className="m-0 text-xs text-text-muted">
+                    {copy.dropZoneReplace}
+                  </p>
+                  <p className="m-0 max-w-[22rem] text-center text-[0.65rem] leading-relaxed text-text-muted">
                     {copy.uploadZoneSizeLine.replace(
                       "{mb}",
                       String(MAX_FILE_BYTES / (1024 * 1024)),
                     )}
                   </p>
                 </div>
-              </>
-            ) : (
-              <div className="flex w-full min-w-0 flex-col items-center justify-center gap-1.5 px-1">
-                <IconUploadZone className="size-7 shrink-0 text-[#1576BB]/80 dark:text-[#4a9fd4]" />
-                <p className="m-0 text-xs text-text-muted">
-                  {copy.dropZoneReplace}
-                </p>
-                <p className="m-0 max-w-[22rem] text-center text-[0.65rem] leading-relaxed text-text-muted">
-                  {copy.uploadZoneSizeLine.replace(
-                    "{mb}",
-                    String(MAX_FILE_BYTES / (1024 * 1024)),
-                  )}
-                </p>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
 
-          <FilePreviewPanel file={file} copy={copy} />
+            <div
+              className="min-w-0 border-t border-zinc-200/90 dark:border-zinc-600/50"
+            >
+              <FilePreviewPanel file={file} copy={copy} />
+            </div>
+          </div>
 
           <div className="shrink-0">
             <p className="text-xs font-medium text-text-secondary">{copy.fileInfoTitle}</p>
