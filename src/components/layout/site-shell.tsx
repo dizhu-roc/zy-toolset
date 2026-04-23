@@ -61,11 +61,6 @@ export function SiteShell({ locale, messages, children, homeMain }: Props) {
                   title: messages.nav.fileToBase64,
                   icon: "base64File",
                 },
-                {
-                  href: base64TextDecodeHref,
-                  title: messages.nav.base64ToFile,
-                  icon: "base64File",
-                },
               ]}
             />
             <NavCategoryMenu

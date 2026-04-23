@@ -12,7 +12,7 @@ const MAX_FILE_BYTES = 8 * 1024 * 1024;
 const PREVIEW_TEXT_BYTES = 64 * 1024;
 
 const titleBarClass =
-  "flex flex-wrap items-center gap-2 border-b border-zinc-200/90 bg-zinc-100 px-4 py-2 dark:border-zinc-600 dark:bg-zinc-800/95";
+  "flex flex-wrap items-center gap-2 border-b border-zinc-200/90 bg-zinc-100 px-3 py-2 sm:px-4 dark:border-zinc-600 dark:bg-zinc-800/95";
 const outputColClass = cn(
   "flex h-full min-h-0 w-full min-w-0 flex-col overflow-hidden rounded-lg border border-zinc-200/90 bg-white shadow-sm dark:border-zinc-700/90 dark:bg-zinc-900",
 );
@@ -232,7 +232,7 @@ function IconPreviewArchive({ className }: { className?: string }) {
 
 const filePreviewBoxClass = cn(
   "h-32 w-full min-w-0 shrink-0 overflow-hidden",
-  "bg-zinc-100/60 dark:bg-zinc-800/50",
+  "bg-white dark:bg-zinc-950",
 );
 
 function FilePreviewTextBlock({
@@ -329,7 +329,12 @@ function FilePreviewPanel({ file, copy }: { file: File | null; copy: Copy }) {
         )}
       >
         {!file ? (
-          <IconPreviewDefaultFile className="h-[4.5rem] w-[4.5rem] shrink-0 text-zinc-300 dark:text-zinc-600" />
+          <div className="flex max-w-[20rem] flex-col items-center justify-center gap-2 px-3 text-center">
+            <IconPreviewDefaultFile className="h-10 w-10 shrink-0 text-zinc-300 dark:text-zinc-600" />
+            <p className="m-0 text-[0.7rem] leading-snug text-text-secondary">
+              {copy.filePreviewEmptyHint}
+            </p>
+          </div>
         ) : mode === "text" && file ? (
           <div className="flex min-h-0 w-full flex-1 flex-col">
             <FilePreviewTextBlock
@@ -376,6 +381,51 @@ function FilePreviewPanel({ file, copy }: { file: File | null; copy: Copy }) {
   );
 }
 
+function DataUrlSwitch({
+  checked,
+  onChange,
+  label,
+  ariaLabel,
+}: {
+  checked: boolean;
+  onChange: (next: boolean) => void;
+  label: string;
+  ariaLabel: string;
+}) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      aria-label={ariaLabel}
+      title={ariaLabel}
+      onClick={() => onChange(!checked)}
+      className={cn(
+        "inline-flex shrink-0 items-center gap-1.5 rounded-md border px-2 py-1",
+        "border-zinc-200 bg-white text-text-secondary dark:border-zinc-600 dark:bg-zinc-900",
+        "hover:border-zinc-300 dark:hover:border-zinc-500",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
+      )}
+    >
+      <span className="text-[0.7rem] font-medium leading-none">{label}</span>
+      <span
+        className={cn(
+          "relative inline-flex h-4 w-7 shrink-0 rounded-full transition-colors",
+          checked ? "bg-[#1576BB]" : "bg-zinc-300 dark:bg-zinc-600",
+        )}
+        aria-hidden
+      >
+        <span
+          className={cn(
+            "pointer-events-none absolute top-0.5 left-0.5 size-3 rounded-full bg-white shadow transition-transform",
+            checked ? "translate-x-3" : "translate-x-0",
+          )}
+        />
+      </span>
+    </button>
+  );
+}
+
 function ToolbarIconButton({
   label,
   onClick,
@@ -418,6 +468,7 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
   const [error, setError] = useState<string | null>(null);
   const [copyHint, setCopyHint] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
+  const [autoEncode, setAutoEncode] = useState(true);
 
   const onPick = () => inputRef.current?.click();
 
@@ -467,6 +518,11 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
     }
   }, [copy, dataUrl, file]);
 
+  useEffect(() => {
+    if (!autoEncode || !file) return;
+    void encode();
+  }, [autoEncode, file, dataUrl, encode]);
+
   const clearAll = () => {
     setFile(null);
     dragDepthRef.current = 0;
@@ -506,13 +562,7 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
       <div
         className="grid grid-cols-1 gap-5 gap-x-4 sm:gap-x-5 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:items-stretch"
       >
-        <div
-          className={cn(
-            "flex h-full min-h-0 min-w-0 flex-col gap-4 rounded-lg p-4 sm:p-5",
-            "border border-zinc-200/90 bg-surface-raised/30",
-            "dark:border-zinc-600/50 dark:bg-zinc-900/30",
-          )}
-        >
+        <div className="flex h-full min-h-0 min-w-0 flex-col gap-4">
           <input
             id={fileInputId}
             ref={inputRef}
@@ -521,9 +571,7 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
             onChange={onFileInputChange}
           />
 
-          <div
-            className="flex min-w-0 flex-col overflow-hidden rounded-lg border border-zinc-200/90 dark:border-zinc-600/50"
-          >
+          <div className="flex min-w-0 flex-col gap-3">
             <div
               role="button"
               tabIndex={0}
@@ -565,19 +613,20 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
               }}
               className={cn(
                 "flex min-h-[11.5rem] shrink-0 cursor-pointer flex-col items-center justify-center gap-2 text-center transition-colors sm:min-h-[12.5rem]",
+                "overflow-hidden rounded-lg border border-zinc-200/90 dark:border-zinc-600/50",
                 "outline-none focus-visible:ring-2 focus-visible:ring-[#1576BB]/30",
                 dragOver
-                  ? "bg-[#1576BB]/6 dark:bg-[#1576BB]/10"
-                  : "bg-zinc-50/50 dark:bg-zinc-800/20",
+                  ? "bg-sky-100 dark:bg-sky-900/55"
+                  : "bg-sky-50 dark:bg-sky-950/45",
               )}
             >
               {!file ? (
                 <>
-                  <IconUploadZone className="size-8 shrink-0 text-zinc-400 dark:text-zinc-500" />
-                  <p className="m-0 max-w-[22rem] text-sm text-text-secondary">
+                  <IconUploadZone className="size-8 shrink-0 text-zinc-500 dark:text-zinc-400" />
+                  <p className="m-0 max-w-[22rem] text-base font-medium text-text">
                     {copy.dropZoneHint}
                   </p>
-                  <div className="w-full max-w-[22rem] space-y-1 text-center text-[0.7rem] leading-relaxed text-text-muted">
+                  <div className="w-full max-w-[22rem] space-y-1 text-center text-xs leading-relaxed text-text-secondary">
                     <p className="m-0">{copy.uploadZoneFormatsLine}</p>
                     <p className="m-0">
                       {copy.uploadZoneSizeLine.replace(
@@ -589,11 +638,11 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
                 </>
               ) : (
                 <div className="flex w-full min-w-0 flex-col items-center justify-center gap-1.5">
-                  <IconUploadZone className="size-7 shrink-0 text-[#1576BB]/80 dark:text-[#4a9fd4]" />
-                  <p className="m-0 text-xs text-text-muted">
+                  <IconUploadZone className="size-7 shrink-0 text-[#125d99] dark:text-[#3d93c9]" />
+                  <p className="m-0 text-sm font-medium text-text-secondary">
                     {copy.dropZoneReplace}
                   </p>
-                  <p className="m-0 max-w-[22rem] text-center text-[0.65rem] leading-relaxed text-text-muted">
+                  <p className="m-0 max-w-[22rem] text-center text-xs leading-relaxed text-text-secondary">
                     {copy.uploadZoneSizeLine.replace(
                       "{mb}",
                       String(MAX_FILE_BYTES / (1024 * 1024)),
@@ -603,23 +652,22 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
               )}
             </div>
 
-            <div
-              className="min-w-0 border-t border-zinc-200/90 dark:border-zinc-600/50"
-            >
+            <div className="min-w-0 overflow-hidden rounded-lg border border-zinc-200/90 dark:border-zinc-600/50">
               <FilePreviewPanel file={file} copy={copy} />
             </div>
           </div>
 
-          <div className="shrink-0">
-            <p className="text-xs font-medium text-text-secondary">{copy.fileInfoTitle}</p>
-            <div
-              className={cn(
-                "mt-1.5 rounded-lg p-3",
-                "border border-zinc-200/80 bg-zinc-50/40",
-                "dark:border-zinc-600/40 dark:bg-zinc-800/30",
-              )}
-              aria-live="polite"
-            >
+          <div
+            className={cn(
+              "shrink-0 overflow-hidden rounded-lg border border-zinc-200/80",
+              "dark:border-zinc-600/40",
+            )}
+            aria-live="polite"
+          >
+            <div className="border-b border-zinc-200/80 bg-zinc-100/70 px-3 py-2 text-xs font-medium text-text-secondary dark:border-zinc-600/40 dark:bg-zinc-800/60">
+              {copy.fileInfoTitle}
+            </div>
+            <div className="bg-zinc-50/40 px-3 py-3 dark:bg-zinc-800/25">
               <dl className="m-0 grid min-w-0 grid-cols-[max-content_minmax(0,1fr)] items-center gap-x-2 gap-y-1.5 text-sm">
                 <dt className="m-0 text-left text-xs text-text-muted">
                   {copy.fileInfoLabelName}
@@ -672,44 +720,43 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
             </p>
           ) : null}
 
-          <div>
-            <label className="inline-flex cursor-pointer items-start gap-2.5 text-sm text-text-secondary">
+          <div className="mt-auto flex w-full min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:gap-4">
+            <label className="flex shrink-0 cursor-pointer items-center gap-2.5 text-sm text-text-secondary sm:pt-0.5">
               <input
                 type="checkbox"
-                className="mt-0.5 size-3.5 shrink-0 rounded border-zinc-300 accent-[#1576BB]"
-                checked={dataUrl}
-                onChange={(e) => setDataUrl(e.target.checked)}
+                className="size-3.5 shrink-0 rounded border-zinc-300 accent-[#1576BB] dark:border-zinc-600"
+                checked={autoEncode}
+                onChange={(e) => setAutoEncode(e.target.checked)}
               />
-              <span>{copy.asDataUrl}</span>
+              <span>{copy.autoEncode}</span>
             </label>
-          </div>
-
-          <div className="mt-auto flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={() => void encode()}
-              className={cn(
-                "inline-flex cursor-pointer items-center gap-1.5 rounded-md px-3.5 py-1.5 text-sm font-medium text-white transition-colors",
-                "bg-[#1576BB] hover:bg-[#125d99]",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
-              )}
-            >
-              <IconEncode className="size-3.5 shrink-0 opacity-95" />
-              {copy.encodeAction}
-            </button>
-            <button
-              type="button"
-              onClick={clearAll}
-              className={cn(
-                "inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-zinc-200 bg-transparent px-3.5 py-1.5 text-sm font-medium text-text-secondary transition-colors",
-                "hover:border-zinc-300 hover:bg-zinc-50 hover:text-text",
-                "dark:border-zinc-600 dark:hover:border-zinc-500 dark:hover:bg-zinc-800/80",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
-              )}
-            >
-              <IconTrash className="size-3.5" />
-              {copy.clearAll}
-            </button>
+            <div className="flex min-h-0 min-w-0 flex-1 gap-2">
+              <button
+                type="button"
+                onClick={() => void encode()}
+                className={cn(
+                  "flex-[2] basis-0 inline-flex min-h-10 min-w-0 cursor-pointer items-center justify-center gap-1.5 rounded-md px-4 py-2.5 text-sm font-medium text-white transition-colors",
+                  "bg-[#1576BB] hover:bg-[#125d99]",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
+                )}
+              >
+                <IconEncode className="size-3.5 shrink-0 opacity-95" />
+                {copy.encodeAction}
+              </button>
+              <button
+                type="button"
+                onClick={clearAll}
+                className={cn(
+                  "flex-[1] basis-0 inline-flex min-h-10 min-w-0 cursor-pointer items-center justify-center gap-1.5 rounded-md border border-zinc-200 bg-transparent px-4 py-2.5 text-sm font-medium text-text-secondary transition-colors",
+                  "hover:border-zinc-300 hover:bg-zinc-50 hover:text-text",
+                  "dark:border-zinc-600 dark:hover:border-zinc-500 dark:hover:bg-zinc-800/80",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
+                )}
+              >
+                <IconTrash className="size-3.5 shrink-0" />
+                {copy.clearAll}
+              </button>
+            </div>
           </div>
         </div>
 
@@ -723,6 +770,12 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
               <span className="min-w-0 truncate">{copy.outputColumnTitle}</span>
             </h2>
             <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
+              <DataUrlSwitch
+                checked={dataUrl}
+                onChange={setDataUrl}
+                label={copy.dataUrlToggleLabel}
+                ariaLabel={copy.asDataUrl}
+              />
               <ToolbarIconButton
                 label={copy.copyOutput}
                 onClick={copyOut}
