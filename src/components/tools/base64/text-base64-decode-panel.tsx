@@ -303,7 +303,7 @@ export function TextBase64DecodePanel({ copy }: { copy: PageCopy }) {
               <label className="flex cursor-pointer items-center gap-1.5 text-xs text-text-secondary">
                 <input
                   type="checkbox"
-                  className="size-3.5 rounded border-zinc-300 accent-[#1675BB]"
+                  className="size-3.5 rounded border-zinc-300 accent-[#1576BB]"
                   checked={autoDecode}
                   onChange={(e) => setAutoDecode(e.target.checked)}
                 />
@@ -313,9 +313,9 @@ export function TextBase64DecodePanel({ copy }: { copy: PageCopy }) {
                 type="button"
                 disabled={decodeDisabled}
                 className={cn(
-                  "inline-flex cursor-pointer items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium text-white transition-colors",
-                  "bg-[#1675BB] hover:bg-[#125d99]",
-                  "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-[#1675BB]",
+                  "inline-flex cursor-pointer items-center gap-1 rounded-md px-3 py-1.5 text-xs font-medium text-white transition-colors",
+                  "bg-[#1576BB] hover:bg-[#125d99]",
+                  "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-[#1576BB]",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
                 )}
                 onClick={manualDecode}

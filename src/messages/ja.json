@@ -88,7 +88,7 @@
       "inputColumnTitle": "元のテキスト",
       "outputColumnTitle": "Base64 テキスト",
       "inputPlaceholder": "ここにテキストを入力または貼り付け。",
-      "autoUpdate": "自動更新",
+      "autoEncode": "自動エンコード",
       "generate": "エンコード",
       "clearAll": "すべてクリア",
       "outputFormatLabel": "出力形式",

@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import {
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
+import { createPortal } from "react-dom";
 import type { Messages } from "@/i18n/dictionaries";
 import { bytesToBase64, bytesToBase64Url, utf8TextToBytes } from "@/lib/base64";
 import { cn } from "@/lib/utils";
@@ -90,6 +97,196 @@ function IconEncode({ className }: { className?: string }) {
   );
 }
 
+function IconChevronDown({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M6 9l6 6 6-6" />
+    </svg>
+  );
+}
+
+function OutputFormatMenu({
+  value,
+  onChange,
+  copy,
+}: {
+  value: TextBase64OutputMode;
+  onChange: (m: TextBase64OutputMode) => void;
+  copy: Copy;
+}) {
+  const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const listboxId = useId();
+  const [place, setPlace] = useState<{
+    top: number;
+    right: number;
+  } | null>(null);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const options: { id: TextBase64OutputMode; label: string }[] = [
+    { id: "standard", label: copy.formatPlain },
+    { id: "base64url", label: copy.formatBase64Url },
+    { id: "dataUrl", label: copy.formatDataUrl },
+  ];
+  const currentLabel = options.find((o) => o.id === value)?.label ?? value;
+
+  useLayoutEffect(() => {
+    if (!open) {
+      setPlace(null);
+      return;
+    }
+    const el = triggerRef.current;
+    if (!el) return;
+    const update = () => {
+      const r = el.getBoundingClientRect();
+      setPlace({
+        top: r.bottom + 2,
+        right: globalThis.innerWidth - r.right,
+      });
+    };
+    update();
+    globalThis.addEventListener("scroll", update, true);
+    globalThis.addEventListener("resize", update);
+    return () => {
+      globalThis.removeEventListener("scroll", update, true);
+      globalThis.removeEventListener("resize", update);
+    };
+  }, [open]);
+
+  const clearCloseTimer = () => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+  };
+
+  const scheduleClose = () => {
+    clearCloseTimer();
+    closeTimerRef.current = setTimeout(() => setOpen(false), 180);
+  };
+
+  useEffect(() => () => clearCloseTimer(), []);
+
+  useEffect(() => {
+    if (!open) return;
+    const onDoc = (e: MouseEvent) => {
+      const t = e.target as Node;
+      if (triggerRef.current?.contains(t)) return;
+      if (menuRef.current?.contains(t)) return;
+      clearCloseTimer();
+      setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        clearCloseTimer();
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", onDoc);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDoc);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  const touchOrNoHoverToggle = () => {
+    if (globalThis.matchMedia("(hover: none)").matches) {
+      setOpen((o) => !o);
+    }
+  };
+
+  return (
+    <div className="relative">
+      <button
+        ref={triggerRef}
+        type="button"
+        className={cn(
+          "inline-flex min-w-0 max-w-full cursor-pointer items-center gap-0.5 rounded-sm border-0 bg-transparent py-1 pl-0 pr-0.5 text-xs font-medium",
+          "text-text-secondary shadow-none ring-0 outline-none",
+          "hover:text-text",
+          "dark:text-zinc-400 dark:hover:text-zinc-100",
+          "focus-visible:ring-2 focus-visible:ring-accent/25",
+        )}
+        aria-label={copy.outputFormatLabel}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls={open ? listboxId : undefined}
+        onMouseEnter={() => {
+          clearCloseTimer();
+          setOpen(true);
+        }}
+        onMouseLeave={scheduleClose}
+        onClick={touchOrNoHoverToggle}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setOpen((o) => !o);
+          }
+        }}
+      >
+        <span className="min-w-0 truncate">{currentLabel}</span>
+        <IconChevronDown
+          className={cn("size-3.5 shrink-0 opacity-80 transition-transform", open && "rotate-180")}
+        />
+      </button>
+      {open && place
+        ? createPortal(
+            <div
+              ref={menuRef}
+              id={listboxId}
+              role="listbox"
+              className={cn(
+                "fixed z-[200] w-max min-w-0 max-w-[min(11rem,calc(100vw-1.5rem))] rounded-lg border",
+                "border-zinc-200/95 bg-white py-0.5 shadow-lg ring-1 ring-zinc-950/5",
+                "dark:border-zinc-600 dark:bg-zinc-800 dark:ring-zinc-950/40",
+              )}
+              style={{ top: place.top, right: place.right }}
+              onMouseEnter={clearCloseTimer}
+              onMouseLeave={scheduleClose}
+            >
+              {options.map((o) => {
+                const selected = value === o.id;
+                return (
+                  <button
+                    key={o.id}
+                    type="button"
+                    role="option"
+                    aria-selected={selected}
+                    className={cn(
+                      "flex w-full cursor-pointer items-center whitespace-nowrap px-2 py-1.5 text-left text-xs",
+                      selected
+                        ? "bg-zinc-100 font-medium text-text dark:bg-zinc-700/80 dark:text-zinc-50"
+                        : "text-text-secondary hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-700/50",
+                    )}
+                    onClick={() => {
+                      clearCloseTimer();
+                      onChange(o.id);
+                      setOpen(false);
+                    }}
+                  >
+                    {o.label}
+                  </button>
+                );
+              })}
+            </div>,
+            document.body,
+          )
+        : null}
+    </div>
+  );
+}
+
 function ToolbarIconButton({
   label,
   onClick,
@@ -124,29 +321,28 @@ function ToolbarIconButton({
 export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
   const inputId = useId();
   const outputId = useId();
-  const outputFormatRadioName = useId();
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
   const [outputMode, setOutputMode] = useState<TextBase64OutputMode>("standard");
-  const [autoUpdate, setAutoUpdate] = useState(true);
+  const [autoEncode, setAutoEncode] = useState(true);
   const [copyHint, setCopyHint] = useState<string | null>(null);
   const [uploadHint, setUploadHint] = useState<string | null>(null);
   const inputRef = useRef(input);
   inputRef.current = input;
 
   useEffect(() => {
-    if (autoUpdate) {
+    if (autoEncode) {
       setOutput(encodeOutput(input, outputMode));
     } else if (!input) {
       setOutput("");
     }
-  }, [input, outputMode, autoUpdate]);
+  }, [input, outputMode, autoEncode]);
 
   useEffect(() => {
-    if (autoUpdate) return;
+    if (autoEncode) return;
     const text = inputRef.current;
     setOutput(encodeOutput(text, outputMode));
-  }, [outputMode, autoUpdate]);
+  }, [outputMode, autoEncode]);
 
   const runEncode = () => {
     setOutput(encodeOutput(input, outputMode));
@@ -217,19 +413,19 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
             <label className="flex cursor-pointer items-center gap-1.5 text-xs text-text-secondary">
               <input
                 type="checkbox"
-                className="size-3.5 rounded border-zinc-300 accent-[#1675BB]"
-                checked={autoUpdate}
-                onChange={(e) => setAutoUpdate(e.target.checked)}
+                className="size-3.5 rounded border-zinc-300 accent-[#1576BB]"
+                checked={autoEncode}
+                onChange={(e) => setAutoEncode(e.target.checked)}
               />
-              <span>{copy.autoUpdate}</span>
+              <span>{copy.autoEncode}</span>
             </label>
             <button
               type="button"
               disabled={encodeDisabled}
               className={cn(
-                "inline-flex cursor-pointer items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium text-white transition-colors",
-                "bg-[#1675BB] hover:bg-[#125d99]",
-                "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-[#1675BB]",
+                "inline-flex cursor-pointer items-center gap-1 rounded-md px-3 py-1.5 text-xs font-medium text-white transition-colors",
+                "bg-[#1576BB] hover:bg-[#125d99]",
+                "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-[#1576BB]",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
               )}
               onClick={runEncode}
@@ -275,44 +471,11 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
             <span className="min-w-0 truncate">{copy.outputColumnTitle}</span>
           </h2>
           <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
-            <fieldset className="m-0 shrink-0 border-0 p-0">
-              <legend className="sr-only">{copy.outputFormatLabel}</legend>
-              <div className="inline-flex rounded-full border border-zinc-200 bg-zinc-100 p-0.5 dark:border-zinc-600 dark:bg-zinc-800/90">
-                {(
-                  [
-                    ["standard", copy.formatPlain] as const,
-                    ["base64url", copy.formatBase64Url] as const,
-                    ["dataUrl", copy.formatDataUrl] as const,
-                  ] as const
-                ).map(([id, label], i) => (
-                  <label
-                    key={id}
-                    className={cn(
-                      "cursor-pointer select-none px-3 py-1.5 text-xs font-medium transition-colors duration-150",
-                      i === 0 && "rounded-l-full",
-                      i === 1 && "rounded-none",
-                      i === 2 && "rounded-r-full",
-                      outputMode === id
-                        ? "bg-[#1675BB] text-white"
-                        : cn(
-                            "text-text-secondary hover:text-text",
-                            "hover:bg-zinc-200/90 dark:hover:bg-zinc-700/80 dark:hover:text-zinc-100",
-                          ),
-                    )}
-                  >
-                    <input
-                      type="radio"
-                      name={outputFormatRadioName}
-                      value={id}
-                      checked={outputMode === id}
-                      onChange={() => setOutputMode(id)}
-                      className="sr-only"
-                    />
-                    {label}
-                  </label>
-                ))}
-              </div>
-            </fieldset>
+            <OutputFormatMenu
+              value={outputMode}
+              onChange={setOutputMode}
+              copy={copy}
+            />
             <ToolbarIconButton
               label={copy.copyOutput}
               onClick={copyOutput}

@@ -88,7 +88,7 @@
       "inputColumnTitle": "原始文本",
       "outputColumnTitle": "Base64 文本",
       "inputPlaceholder": "在此输入或粘贴文本。",
-      "autoUpdate": "自动更新",
+      "autoEncode": "自动编码",
       "generate": "生成",
       "clearAll": "清空",
       "outputFormatLabel": "输出格式",

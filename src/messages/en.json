@@ -88,7 +88,7 @@
       "inputColumnTitle": "Original text",
       "outputColumnTitle": "Base64 text",
       "inputPlaceholder": "Type or paste your text here.",
-      "autoUpdate": "Auto-update",
+      "autoEncode": "Auto-encode",
       "generate": "Encode",
       "clearAll": "Clear all",
       "outputFormatLabel": "Output format",

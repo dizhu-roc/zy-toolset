@@ -50,7 +50,7 @@ export default async function Base64TextEncodePage({ params }: Props) {
             {p.pageDescriptionHintBefore}
             <Link
               href={decodeHref}
-              className="font-medium text-accent underline decoration-accent/35 underline-offset-2 hover:decoration-accent"
+              className="font-medium text-[#1576BB] underline decoration-[#1576BB]/35 underline-offset-2 hover:decoration-[#1576BB]"
             >
               {p.decodeLinkLabel}
             </Link>
