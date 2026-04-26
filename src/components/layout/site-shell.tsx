@@ -21,6 +21,7 @@ export function SiteShell({ locale, messages, children, homeMain }: Props) {
   const base64TextEncodeHref = hrefForLocale(locale, "tools/base64/text-encode");
   const base64TextDecodeHref = hrefForLocale(locale, "tools/base64/text-decode");
   const base64FileEncodeHref = hrefForLocale(locale, "tools/base64/file-encode");
+  const base64FileDecodeHref = hrefForLocale(locale, "tools/base64/file-decode");
   const passwordHref = hrefForLocale(locale, "tools/generator/password");
   const icoHref = hrefForLocale(locale, "tools/generator/ico");
   const imageCompressHref = hrefForLocale(locale, "tools/image/compress");
@@ -59,6 +60,11 @@ export function SiteShell({ locale, messages, children, homeMain }: Props) {
                 {
                   href: base64FileEncodeHref,
                   title: messages.nav.fileToBase64,
+                  icon: "base64File",
+                },
+                {
+                  href: base64FileDecodeHref,
+                  title: messages.nav.base64ToFile,
                   icon: "base64File",
                 },
               ]}

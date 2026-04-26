@@ -12,6 +12,7 @@ const STATIC_REST = [
   "tools/base64/text-encode",
   "tools/base64/text-decode",
   "tools/base64/file-encode",
+  "tools/base64/file-decode",
   "tools/generator/password",
   "tools/generator/ico",
   "tools/image/compress",
