@@ -48,16 +48,6 @@ export default async function Base64FileDecodePage({ params }: Props) {
         <>
           <p className="m-0">{p.pageDescription}</p>
           <p className="m-0 text-xs text-text-muted leading-relaxed">
-            {p.pageDescriptionHintBefore}
-            <Link
-              href={textDecodeHref}
-              className="font-medium text-[#1576BB] underline decoration-[#1576BB]/35 underline-offset-2 hover:decoration-[#1576BB]"
-            >
-              {p.textDecodeLinkLabel}
-            </Link>
-            {p.pageDescriptionHintAfter}
-          </p>
-          <p className="m-0 text-xs text-text-muted leading-relaxed">
             {p.pageHintFileEncodeBefore}
             <Link
               href={fileEncodeHref}

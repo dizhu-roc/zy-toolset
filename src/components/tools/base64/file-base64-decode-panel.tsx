@@ -21,7 +21,7 @@ import { TextFileUploadButton } from "@/components/tools/base64/text-file-upload
 
 type Copy = Messages["tools"]["base64FileDecode"];
 
-const LEFT_PANEL_MIN_H = "min-h-[22rem] lg:min-h-[28rem]";
+const PANEL_FIXED_H = "h-[36rem] sm:h-[38rem]";
 
 function isStructuredBinaryMime(m: string): boolean {
   const x = mainMime(m);
@@ -230,7 +230,7 @@ export function FileBase64DecodePanel({
         )}
       >
         <section
-          className={cn(panelShellClass, "flex flex-col")}
+          className={cn(panelShellClass, PANEL_FIXED_H, "flex flex-col")}
           aria-labelledby={inputId}
         >
           <div className={titleBarClass}>
@@ -241,8 +241,18 @@ export function FileBase64DecodePanel({
               <IconColumnSourceText className="size-4 shrink-0 text-text-secondary" />
               <span className="min-w-0 truncate">{copy.inputColumnTitle}</span>
             </h2>
+            <TextFileUploadButton
+              label={copy.uploadTextFile}
+              title={copy.uploadTextFileTooltip}
+              onTextLoaded={(text) => {
+                setInput(text);
+                clearError();
+                setPreview(null);
+              }}
+              onInvalid={() => setErrorKey("uploadFileRejectNotText")}
+            />
           </div>
-          <div className={cn("flex min-h-0 flex-1 flex-col gap-3 p-3 sm:p-4", LEFT_PANEL_MIN_H)}>
+          <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden p-3 sm:p-4">
             <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-md border border-zinc-200/90 dark:border-zinc-600/60">
               <LineNumberedField
                 value={input}
@@ -256,16 +266,6 @@ export function FileBase64DecodePanel({
               {copy.maxDecodedHint.replace("{mb}", mbLimit)}
             </p>
             <div className="flex flex-wrap items-center gap-2">
-              <TextFileUploadButton
-                label={copy.uploadTextFile}
-                title={copy.uploadTextFileTooltip}
-                onTextLoaded={(text) => {
-                  setInput(text);
-                  clearError();
-                  setPreview(null);
-                }}
-                onInvalid={() => setErrorKey("uploadFileRejectNotText")}
-              />
               <button
                 type="button"
                 onClick={runPreview}
@@ -296,7 +296,7 @@ export function FileBase64DecodePanel({
         </section>
 
         <section
-          className={cn(panelShellClass, "flex flex-col")}
+          className={cn(panelShellClass, PANEL_FIXED_H, "flex flex-col")}
           aria-labelledby={previewRegionId}
         >
           <div className={titleBarClass}>
@@ -309,10 +309,7 @@ export function FileBase64DecodePanel({
             </h2>
           </div>
           <div
-            className={cn(
-              "flex min-h-0 flex-1 flex-col gap-3 p-3 sm:p-4",
-              LEFT_PANEL_MIN_H,
-            )}
+            className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden p-3 sm:p-4"
           >
             {errorMessage ? (
               <p className="m-0 text-sm text-red-600 dark:text-red-400" role="alert">

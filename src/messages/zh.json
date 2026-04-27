@@ -157,7 +157,7 @@
       "metaTitle": "Base64 转文件",
       "metaDescription": "在浏览器内将 Base64 或 Data URL 还原为文件：先预览再下载，内容不上传。",
       "pageTitle": "Base64 转文件",
-      "pageDescription": "粘贴 Base64、Base64URL 或 data:…;base64,…，先预览类型与内容，再下载为文件；解码在本机标签页完成。",
+      "pageDescription": "将Base64反向转换为对应的文件信息。",
       "pageDescriptionHintBefore": "若要以 UTF-8 文本方式阅读解码结果，请使用 ",
       "textDecodeLinkLabel": "Base64 转文本",
       "pageDescriptionHintAfter": "。",

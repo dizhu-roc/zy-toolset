@@ -157,7 +157,7 @@
       "metaTitle": "Base64 to File",
       "metaDescription": "Decode Base64 or a Data URL into a file in your browser—preview first, then download. Nothing is uploaded.",
       "pageTitle": "Base64 to File",
-      "pageDescription": "Paste Base64 or a data:…;base64,… string, preview the result, then download as a file. Decoding runs locally in your browser.",
+      "pageDescription": "Reverse-convert Base64 into the corresponding file information.",
       "pageDescriptionHintBefore": "To read decoded content as UTF-8 text instead, use ",
       "textDecodeLinkLabel": "Base64 to Text",
       "pageDescriptionHintAfter": ".",

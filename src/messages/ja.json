@@ -157,7 +157,7 @@
       "metaTitle": "Base64 をファイルに",
       "metaDescription": "Base64 や Data URL をブラウザ内でファイルへ復元。先にプレビューしてからダウンロード。アップロードしません。",
       "pageTitle": "Base64 をファイルに",
-      "pageDescription": "Base64 / Base64URL / data:…;base64,… を貼り付け、種類と内容をプレビューしてからファイルとして保存します。処理はこのタブ内だけです。",
+      "pageDescription": "Base64 を逆変換して、対応するファイル情報に変換します。",
       "pageDescriptionHintBefore": "UTF-8 のテキストとして読みたい場合は ",
       "textDecodeLinkLabel": "Base64 をテキストに",
       "pageDescriptionHintAfter": " をご利用ください。",

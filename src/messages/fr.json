@@ -157,7 +157,7 @@
       "metaTitle": "Base64 vers fichier",
       "metaDescription": "Décodez Base64 ou une Data URL en fichier dans le navigateur : aperçu puis téléchargement. Rien n’est envoyé au serveur.",
       "pageTitle": "Base64 vers fichier",
-      "pageDescription": "Collez du Base64, du Base64URL ou une data:…;base64,…, consultez l’aperçu, puis téléchargez le fichier. Tout reste dans cet onglet.",
+      "pageDescription": "Convertissez le Base64 en sens inverse vers les informations de fichier correspondantes.",
       "pageDescriptionHintBefore": "Pour lire le résultat en texte UTF-8, utilisez ",
       "textDecodeLinkLabel": "Base64 vers texte",
       "pageDescriptionHintAfter": ".",

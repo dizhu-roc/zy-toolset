@@ -157,7 +157,7 @@
       "metaTitle": "Base64 a archivo",
       "metaDescription": "Decodifica Base64 o un Data URL a un archivo en el navegador: primero vista previa, luego descarga. Sin subidas.",
       "pageTitle": "Base64 a archivo",
-      "pageDescription": "Pega Base64, Base64URL o un data:…;base64,…, revisa el tipo y una vista previa, y descarga el archivo. Todo ocurre en tu pestaña.",
+      "pageDescription": "Convierte Base64 en sentido inverso a la información de archivo correspondiente.",
       "pageDescriptionHintBefore": "Para leer el resultado como texto UTF-8, usa ",
       "textDecodeLinkLabel": "Base64 a texto",
       "pageDescriptionHintAfter": ".",
