@@ -28,12 +28,6 @@ const PREVIEW_HEIGHT_PX = 216;
 /** 裁剪框边缘/角的可拖动命中宽度（CSS px） */
 const CROP_EDGE_HIT_PX = 10;
 
-/** 右侧「结果预览」整块固定高度（标题栏 + 内边距 + 2×3 网格） */
-const ICO_RESULT_PREVIEW_SECTION_HEIGHT_REM = 12;
-
-/** 右侧预览顺序：导出尺寸从大到小；每排 3 个（共 2 排） */
-const ICO_PREVIEW_ORDER_DESC = [...ICO_OUTPUT_SIZES].sort((a, b) => b - a);
-
 const CORNER_OPTIONS = [0, 10, 20, 40, 60, 100] as const;
 
 function IcoPreviewSlotPlaceholder({
@@ -95,10 +89,16 @@ function sizeLabel(copy: Copy, s: IcoOutputSize): string {
       return copy.size16;
     case 32:
       return copy.size32;
+    case 48:
+      return copy.size48;
     case 64:
       return copy.size64;
     case 128:
       return copy.size128;
+    case 180:
+      return copy.size180;
+    case 192:
+      return copy.size192;
     case 256:
       return copy.size256;
     case 512:
@@ -259,14 +259,6 @@ function applyResizeZone(
   return clampFullCrop({ sx, sy, s }, iw, ih, minS);
 }
 
-function revokePreviewMap(m: Partial<Record<IcoOutputSize, string>>) {
-  for (const u of Object.values(m)) {
-    if (u) {
-      URL.revokeObjectURL(u);
-    }
-  }
-}
-
 export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
   const uploadId = useId();
   const [file, setFile] = useState<File | null>(null);
@@ -276,20 +268,24 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
   const [sizes, setSizes] = useState<Record<IcoOutputSize, boolean>>({
     16: true,
     32: true,
+    48: true,
     64: true,
-    128: false,
-    256: false,
+    128: true,
+    180: false,
+    192: false,
+    256: true,
     512: false,
   });
   const [cornerPercent, setCornerPercent] = useState<number>(0);
-  const [previewBySize, setPreviewBySize] = useState<
-    Partial<Record<IcoOutputSize, string>>
-  >({});
+  const [preview, setPreview] = useState<{
+    url: string;
+    size: IcoOutputSize;
+  } | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const [containerWidth, setContainerWidth] = useState(0);
+  const [containerSize, setContainerSize] = useState({ w: 0, h: 0 });
   const imgRef = useRef<HTMLImageElement>(null);
   const cropDragRef = useRef<CropPointerDrag | null>(null);
 
@@ -298,13 +294,22 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
     [sizes],
   );
 
+  const previewTargetSize = useMemo((): IcoOutputSize | null => {
+    if (selectedList.length === 0) {
+      return null;
+    }
+    return Math.max(...selectedList) as IcoOutputSize;
+  }, [selectedList]);
+
   const sizesRef = useRef(sizes);
   sizesRef.current = sizes;
 
   const revokePreview = useCallback(() => {
-    setPreviewBySize((prev) => {
-      revokePreviewMap(prev);
-      return {};
+    setPreview((p) => {
+      if (p) {
+        URL.revokeObjectURL(p.url);
+      }
+      return null;
     });
   }, []);
 
@@ -322,20 +327,29 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
     if (!el) {
       return;
     }
-    const measure = () => setContainerWidth(el.clientWidth);
+    const measure = () => {
+      setContainerSize((prev) => {
+        const w = el.clientWidth;
+        const h = el.clientHeight;
+        if (prev.w === w && prev.h === h) {
+          return prev;
+        }
+        return { w, h };
+      });
+    };
     measure();
     const ro = new ResizeObserver(measure);
     ro.observe(el);
     return () => ro.disconnect();
   }, [imgSrc]);
 
-  /** 预览区用 contain：整图按比例落在框内，与导出用的 source 坐标同一 scale 映射 */
+  /** 预览区用 contain：整图按比例落在框内，与导出用的 source 坐标同一 scale 映射；H 随裁切区实际高度 */
   const layout = useMemo(() => {
-    if (!natural || containerWidth < 8) {
+    if (!natural || containerSize.w < 8) {
       return null;
     }
-    const W = containerWidth;
-    const H = PREVIEW_HEIGHT_PX;
+    const W = containerSize.w;
+    const H = containerSize.h >= 8 ? containerSize.h : PREVIEW_HEIGHT_PX;
     const { w: iw, h: ih } = natural;
     const scale = Math.min(W / iw, H / ih);
     const dispW = iw * scale;
@@ -343,7 +357,7 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
     const offsetX = (W - dispW) / 2;
     const offsetY = (H - dispH) / 2;
     return { W, H, iw, ih, scale, dispW, dispH, offsetX, offsetY };
-  }, [natural, containerWidth]);
+  }, [natural, containerSize.w, containerSize.h]);
 
   const onFile = useCallback(
     (f: File | null) => {
@@ -397,7 +411,7 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
     if (!img.complete || img.naturalWidth === 0) {
       return;
     }
-    if (selectedList.length === 0) {
+    if (previewTargetSize == null) {
       const clearId = window.setTimeout(() => {
         revokePreview();
       }, 0);
@@ -406,54 +420,42 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
 
     let cancelled = false;
     const c = clampCrop(crop, natural.w, natural.h);
+    const size = previewTargetSize;
 
     const run = () => {
       void (async () => {
-        const next: Partial<Record<IcoOutputSize, string>> = {};
+        let newObjectUrl: string | null = null;
         try {
-          for (const s of ICO_OUTPUT_SIZES) {
-            if (!sizesRef.current[s]) {
-              continue;
-            }
-            const blob = await renderIconPng(img, c, s, cornerPercent);
-            if (cancelled) {
-              revokePreviewMap(next);
-              return;
-            }
-            if (!sizesRef.current[s]) {
-              continue;
-            }
-            next[s] = URL.createObjectURL(blob);
+          const blob = await renderIconPng(img, c, size, cornerPercent);
+          if (cancelled) {
+            return;
           }
+          const still = ICO_OUTPUT_SIZES.filter((s) => sizesRef.current[s]);
+          if (still.length === 0) {
+            return;
+          }
+          const currentMax = Math.max(...still) as IcoOutputSize;
+          if (currentMax !== size) {
+            return;
+          }
+          newObjectUrl = URL.createObjectURL(blob);
         } catch {
-          revokePreviewMap(next);
           if (!cancelled) {
             setError(copy.errorRender);
           }
           return;
         }
-        if (cancelled) {
-          revokePreviewMap(next);
+        if (cancelled || newObjectUrl == null) {
+          if (newObjectUrl) {
+            URL.revokeObjectURL(newObjectUrl);
+          }
           return;
         }
-        setPreviewBySize((prev) => {
-          const out: Partial<Record<IcoOutputSize, string>> = {};
-          for (const s of ICO_OUTPUT_SIZES) {
-            if (!sizesRef.current[s]) {
-              continue;
-            }
-            if (next[s]) {
-              out[s] = next[s]!;
-            }
+        setPreview((prev) => {
+          if (prev) {
+            URL.revokeObjectURL(prev.url);
           }
-          for (const s of ICO_OUTPUT_SIZES) {
-            const oldU = prev[s];
-            const newU = out[s];
-            if (oldU && oldU !== newU) {
-              URL.revokeObjectURL(oldU);
-            }
-          }
-          return out;
+          return { url: newObjectUrl!, size };
         });
       })();
     };
@@ -468,7 +470,7 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
     natural,
     crop,
     cornerPercent,
-    selectedList,
+    previewTargetSize,
     copy.errorRender,
     revokePreview,
   ]);
@@ -701,9 +703,12 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
     };
   }, [layout]);
 
+  const resultPreviewPending =
+    Boolean(imgSrc && natural && previewTargetSize) && !preview;
+
   return (
-    <div className="grid min-h-0 min-w-0 gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:gap-6">
-      <div className="flex min-w-0 flex-col gap-4">
+    <div className="grid min-h-0 min-w-0 items-stretch gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:gap-6">
+      <div className="flex h-full min-h-0 min-w-0 flex-col gap-4">
         <input
           id={uploadId}
           type="file"
@@ -717,7 +722,7 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
           onDragOver={onUploadZoneDragOver}
           onDrop={onUploadZoneDrop}
           className={cn(
-            "flex min-h-[13rem] cursor-pointer flex-col items-center justify-center gap-3 rounded-xl px-4 py-10 text-center",
+            "flex min-h-[13rem] shrink-0 cursor-pointer flex-col items-center justify-center gap-3 rounded-xl px-4 py-10 text-center",
             "bg-gradient-to-br from-[#F9690E]/14 via-[#ffb380]/10 to-amber-50/70",
             "hover:from-[#F9690E]/20 hover:via-[#ffc090]/14 hover:to-amber-50/80",
             "dark:from-[#F9690E]/12 dark:via-orange-950/25 dark:to-zinc-900",
@@ -742,11 +747,16 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
           </span>
         </label>
 
-        <div className={cn("overflow-hidden p-0", neutralCard)}>
+        <div
+          className={cn(
+            "flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden p-0",
+            neutralCard,
+          )}
+        >
           <div
             ref={containerRef}
-            className="relative isolate w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800"
-            style={{ height: PREVIEW_HEIGHT_PX }}
+            className="relative isolate min-h-0 w-full flex-1 overflow-hidden bg-zinc-100 dark:bg-zinc-800"
+            style={{ minHeight: PREVIEW_HEIGHT_PX }}
           >
             {imgSrc ? (
               <>
@@ -918,7 +928,9 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
           </div>
         </div>
 
-        <div className={cn("flex flex-col gap-3 p-4", neutralCard)}>
+        <div
+          className={cn("shrink-0", "flex flex-col gap-3 p-4", neutralCard)}
+        >
           <div
             className={cn(
               "rounded-md border border-zinc-200/80 bg-zinc-50/80 p-3",
@@ -972,25 +984,21 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
         </div>
 
         {error ? (
-          <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+          <p
+            className="shrink-0 text-sm text-red-600 dark:text-red-400"
+            role="alert"
+          >
             {error}
           </p>
         ) : null}
       </div>
 
-      <aside
-        className="flex h-full min-h-0 min-w-0 flex-col gap-4"
-      >
+      <aside className="flex h-full min-h-0 min-w-0 flex-col gap-4 lg:min-h-0">
         <section
           className={cn(
-            "flex flex-col overflow-hidden rounded-lg border border-zinc-200/90 bg-white shadow-sm",
+            "flex min-h-[12rem] flex-1 flex-col overflow-hidden rounded-lg border border-zinc-200/90 bg-white shadow-sm",
             "dark:border-zinc-700/90 dark:bg-zinc-900",
           )}
-          style={{
-            height: `${ICO_RESULT_PREVIEW_SECTION_HEIGHT_REM}rem`,
-            minHeight: `${ICO_RESULT_PREVIEW_SECTION_HEIGHT_REM}rem`,
-            maxHeight: `${ICO_RESULT_PREVIEW_SECTION_HEIGHT_REM}rem`,
-          }}
         >
           <h3
             className={cn(
@@ -1002,49 +1010,47 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
           </h3>
           <div
             className={cn(
-              "grid min-h-0 w-full flex-1 grid-cols-3 grid-rows-2 gap-x-3 gap-y-3 px-9 py-2.5 sm:px-11",
+              "flex min-h-0 w-full flex-1 flex-col items-center justify-center gap-2.5 px-8 py-4 sm:px-10",
             )}
           >
-            {ICO_PREVIEW_ORDER_DESC.map((s) => {
-              const url = previewBySize[s];
-              const active = sizes[s] && url;
-              const pending = sizes[s] && !url;
-              return (
-                <div
-                  key={s}
-                  className="grid h-full min-h-0 min-w-0 w-full grid-rows-[minmax(0,1fr)_auto] justify-items-center gap-1.5"
-                >
-                  <div className="flex min-h-0 w-full items-center justify-center self-stretch">
-                    <div
-                      className={cn(
-                        "aspect-square max-h-full w-full max-w-full min-w-0 overflow-hidden rounded-md",
-                        active
-                          ? "ring-1 ring-orange-200/80 dark:ring-orange-800/60"
-                          : "border border-dashed border-zinc-300/90 bg-zinc-100/90 dark:border-zinc-600 dark:bg-zinc-800/80",
-                      )}
-                    >
-                    {active ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={url}
-                        alt=""
-                        draggable={false}
-                        className="h-full w-full object-contain"
-                      />
-                    ) : (
-                      <IcoPreviewSlotPlaceholder
-                        className="h-[58%] w-[58%]"
-                        pulsing={pending}
-                      />
-                    )}
-                    </div>
-                  </div>
-                  <span className="w-full shrink-0 text-center text-[10px] font-medium tabular-nums leading-none text-text-muted">
-                    {s}×{s}
-                  </span>
-                </div>
-              );
-            })}
+            <div className="flex w-full min-w-0 max-w-sm flex-1 flex-col items-center justify-center gap-1.5">
+              <div
+                className={cn(
+                  "flex aspect-square w-full max-h-full min-h-0 max-w-full min-w-0 items-center justify-center overflow-hidden rounded-md",
+                  preview
+                    ? "ring-1 ring-orange-200/80 dark:ring-orange-800/60"
+                    : "border border-dashed border-zinc-300/90 bg-zinc-100/90 dark:border-zinc-600 dark:bg-zinc-800/80",
+                )}
+              >
+                {preview ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={preview.url}
+                    alt=""
+                    draggable={false}
+                    className="h-full w-full object-contain"
+                  />
+                ) : (
+                  <IcoPreviewSlotPlaceholder
+                    className="h-[50%] w-[50%] sm:h-[40%] sm:w-[40%]"
+                    pulsing={resultPreviewPending}
+                  />
+                )}
+              </div>
+              {preview ? (
+                <span className="w-full shrink-0 text-center text-xs font-medium tabular-nums leading-none text-text-muted">
+                  {sizeLabel(copy, preview.size)}
+                </span>
+              ) : resultPreviewPending && previewTargetSize != null ? (
+                <span className="w-full shrink-0 text-center text-xs font-medium tabular-nums leading-none text-text-muted/70">
+                  {sizeLabel(copy, previewTargetSize)}
+                </span>
+              ) : (
+                <span className="w-full shrink-0 text-center text-[10px] font-medium text-text-muted">
+                  {copy.summaryEmpty}
+                </span>
+              )}
+            </div>
           </div>
         </section>
 

@@ -1,4 +1,6 @@
-export const ICO_OUTPUT_SIZES = [16, 32, 64, 128, 256, 512] as const;
+export const ICO_OUTPUT_SIZES = [
+  16, 32, 48, 64, 128, 180, 192, 256, 512,
+] as const;
 export type IcoOutputSize = (typeof ICO_OUTPUT_SIZES)[number];
 
 export type SourceCrop = {
