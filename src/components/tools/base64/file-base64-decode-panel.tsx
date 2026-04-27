@@ -12,10 +12,7 @@ import {
 } from "@/lib/file-base64-decode";
 import { tryUtf8Decode } from "@/lib/base64";
 import { cn } from "@/lib/utils";
-import {
-  IconColumnBase64Text,
-  IconColumnSourceText,
-} from "@/components/tools/base64/base64-text-column-icons";
+import { IconColumnSourceText } from "@/components/tools/base64/base64-text-column-icons";
 import { LineNumberedField } from "@/components/tools/base64/line-numbered-field";
 import { TextFileUploadButton } from "@/components/tools/base64/text-file-upload-button";
 
@@ -233,7 +230,7 @@ export function FileBase64DecodePanel({
           className={cn(panelShellClass, PANEL_FIXED_H, "flex flex-col")}
           aria-labelledby={inputId}
         >
-          <div className={titleBarClass}>
+          <div className={cn(titleBarClass, "items-center")}>
             <h2
               id={inputId}
               className="flex min-w-0 flex-1 items-center gap-2 text-sm font-semibold text-text"
@@ -241,18 +238,45 @@ export function FileBase64DecodePanel({
               <IconColumnSourceText className="size-4 shrink-0 text-text-secondary" />
               <span className="min-w-0 truncate">{copy.inputColumnTitle}</span>
             </h2>
-            <TextFileUploadButton
-              label={copy.uploadTextFile}
-              title={copy.uploadTextFileTooltip}
-              onTextLoaded={(text) => {
-                setInput(text);
-                clearError();
-                setPreview(null);
-              }}
-              onInvalid={() => setErrorKey("uploadFileRejectNotText")}
-            />
+            <div className="ml-auto flex shrink-0 flex-wrap items-center justify-end gap-1.5">
+              <TextFileUploadButton
+                label={copy.uploadTextFile}
+                title={copy.uploadTextFileTooltip}
+                onTextLoaded={(text) => {
+                  setInput(text);
+                  clearError();
+                  setPreview(null);
+                }}
+                onInvalid={() => setErrorKey("uploadFileRejectNotText")}
+              />
+              <button
+                type="button"
+                onClick={runPreview}
+                className={cn(
+                  "inline-flex h-7 shrink-0 cursor-pointer items-center gap-1 rounded-md px-2 text-xs font-medium text-white transition-colors",
+                  "bg-[#1576BB] hover:bg-[#125d99]",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
+                )}
+              >
+                <IconDecode className="size-3 shrink-0 opacity-95" />
+                {copy.decodePreviewAction}
+              </button>
+              <button
+                type="button"
+                onClick={clearAll}
+                className={cn(
+                  "inline-flex h-7 shrink-0 cursor-pointer items-center gap-1 rounded-md border border-zinc-200 bg-white px-2 text-xs font-medium text-text-secondary transition-colors",
+                  "hover:border-zinc-300 hover:bg-zinc-50 hover:text-text",
+                  "dark:border-zinc-600 dark:bg-zinc-900 dark:hover:border-zinc-500 dark:hover:bg-zinc-800/80",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
+                )}
+              >
+                <IconTrash className="size-3 shrink-0" />
+                {copy.clearAll}
+              </button>
+            </div>
           </div>
-          <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden p-3 sm:p-4">
+          <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-0">
             <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-md border border-zinc-200/90 dark:border-zinc-600/60">
               <LineNumberedField
                 value={input}
@@ -262,55 +286,14 @@ export function FileBase64DecodePanel({
                 mono
               />
             </div>
-            <p className="m-0 text-xs text-text-muted">
-              {copy.maxDecodedHint.replace("{mb}", mbLimit)}
-            </p>
-            <div className="flex flex-wrap items-center gap-2">
-              <button
-                type="button"
-                onClick={runPreview}
-                className={cn(
-                  "inline-flex cursor-pointer items-center gap-1.5 rounded-md px-3.5 py-2 text-sm font-medium text-white transition-colors",
-                  "bg-[#1576BB] hover:bg-[#125d99]",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
-                )}
-              >
-                <IconDecode className="size-3.5 shrink-0 opacity-95" />
-                {copy.decodePreviewAction}
-              </button>
-              <button
-                type="button"
-                onClick={clearAll}
-                className={cn(
-                  "inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-zinc-200 bg-transparent px-3.5 py-2 text-sm font-medium text-text-secondary transition-colors",
-                  "hover:border-zinc-300 hover:bg-zinc-50 hover:text-text",
-                  "dark:border-zinc-600 dark:hover:border-zinc-500 dark:hover:bg-zinc-800/80",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
-                )}
-              >
-                <IconTrash className="size-3.5 shrink-0" />
-                {copy.clearAll}
-              </button>
-            </div>
           </div>
         </section>
 
-        <section
-          className={cn(panelShellClass, PANEL_FIXED_H, "flex flex-col")}
-          aria-labelledby={previewRegionId}
-        >
-          <div className={titleBarClass}>
-            <h2
-              id={previewRegionId}
-              className="flex min-w-0 flex-1 items-center gap-2 text-sm font-semibold text-text"
-            >
-              <IconColumnBase64Text className="size-4 shrink-0 text-text-secondary" />
-              <span className="min-w-0 truncate">{copy.previewColumnTitle}</span>
+        <section className={cn(PANEL_FIXED_H, "flex min-h-0 flex-col")} aria-labelledby={previewRegionId}>
+          <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden p-0">
+            <h2 id={previewRegionId} className="sr-only">
+              {copy.decodeResultPanelTitle}
             </h2>
-          </div>
-          <div
-            className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden p-3 sm:p-4"
-          >
             {errorMessage ? (
               <p className="m-0 text-sm text-red-600 dark:text-red-400" role="alert">
                 {errorMessage}
@@ -330,93 +313,105 @@ export function FileBase64DecodePanel({
               </p>
             ) : null}
 
-            {preview ? (
-              <>
-                <dl className="m-0 grid grid-cols-[auto_minmax(0,1fr)] gap-x-2 gap-y-1.5 text-xs">
-                  <dt className="m-0 text-text-muted">{copy.metaSizeLabel}</dt>
-                  <dd className="m-0 font-mono tabular-nums text-text">{preview.bytes.length} B</dd>
-                  <dt className="m-0 text-text-muted">{copy.metaMimeLabel}</dt>
-                  <dd className="m-0 min-w-0 break-all font-mono text-[0.7rem] text-text">
-                    {preview.mime}
-                  </dd>
-                  <dt className="m-0 self-center text-text-muted">{copy.metaFilenameLabel}</dt>
-                  <dd className="m-0 min-w-0">
-                    <input
-                      type="text"
-                      value={downloadName}
-                      onChange={(e) => setDownloadName(e.target.value)}
-                      className={cn(
-                        "w-full min-w-0 rounded-md border border-zinc-200 bg-white px-2 py-1.5 text-xs text-text",
-                        "dark:border-zinc-600 dark:bg-zinc-950",
-                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
-                      )}
-                      placeholder={copy.filenamePlaceholder}
-                      aria-label={copy.metaFilenameLabel}
-                    />
-                  </dd>
-                </dl>
-
-                <div
-                  className={cn(
-                    "flex min-h-[10rem] flex-1 flex-col overflow-hidden rounded-md border border-zinc-200/90 bg-white",
-                    "dark:border-zinc-600 dark:bg-zinc-950",
-                  )}
-                >
-                  {objectUrl && previewMime.startsWith("image/") ? (
-                    // eslint-disable-next-line @next/next/no-img-element -- blob preview
-                    <img
-                      src={objectUrl}
-                      alt=""
-                      className="mx-auto max-h-48 max-w-full object-contain p-2"
-                    />
-                  ) : objectUrl && previewMime.startsWith("video/") ? (
-                    <video
-                      src={objectUrl}
-                      controls
-                      playsInline
-                      className="max-h-48 w-full object-contain p-1"
-                      preload="metadata"
-                    />
-                  ) : objectUrl && previewMime.startsWith("audio/") ? (
-                    <div className="flex flex-1 items-center justify-center p-3">
-                      <audio src={objectUrl} controls className="w-full max-w-xs" preload="metadata" />
-                    </div>
-                  ) : objectUrl && previewMime === "application/pdf" ? (
-                    <iframe
-                      title={copy.previewPdfTitle}
-                      src={objectUrl}
-                      className="min-h-[12rem] w-full flex-1 border-0"
-                    />
-                  ) : (
-                    <div className="flex flex-1 flex-col items-center justify-center gap-2 p-4 text-center">
-                      <p className="m-0 text-sm font-medium text-text-secondary">
-                        {copy.previewBinaryTitle}
-                      </p>
-                      <p className="m-0 max-w-[18rem] text-xs text-text-muted">
-                        {copy.unknownTypeHint}
-                      </p>
-                    </div>
-                  )}
-                </div>
-
+            <div className="shrink-0 overflow-hidden rounded-md border border-zinc-200/90 dark:border-zinc-700/80">
+              <div className="flex items-center justify-between gap-2 border-b border-zinc-200/90 bg-zinc-100 px-3 py-2.5 dark:border-zinc-700/80 dark:bg-zinc-800/95">
+                <span className="min-w-0 text-xs font-semibold text-text">{copy.fileInfoBlockTitle}</span>
                 <button
                   type="button"
                   onClick={downloadFile}
+                  disabled={!preview}
                   className={cn(
-                    "inline-flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-md px-3.5 py-2.5 text-sm font-medium text-white transition-colors",
+                    "inline-flex h-7 shrink-0 cursor-pointer items-center gap-1 rounded-md px-2 text-xs font-medium text-white transition-colors",
                     "bg-[#1576BB] hover:bg-[#125d99]",
+                    "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
                   )}
                 >
-                  <IconArrowDownTray className="size-4 shrink-0" />
+                  <IconArrowDownTray className="size-3.5 shrink-0" />
                   {copy.downloadAction}
                 </button>
-              </>
-            ) : (
-              <p className="m-0 flex flex-1 items-center justify-center text-center text-sm text-text-muted">
-                {copy.previewPlaceholder}
-              </p>
-            )}
+              </div>
+              <dl className="m-0 grid grid-cols-[auto_minmax(0,1fr)] gap-x-2 gap-y-2 bg-white px-3 py-4 text-xs dark:bg-zinc-950">
+                <dt className="m-0 self-center text-text-muted">{copy.metaFilenameLabel}</dt>
+                <dd className="m-0 min-w-0">
+                  <input
+                    type="text"
+                    value={downloadName}
+                    onChange={(e) => setDownloadName(e.target.value)}
+                    className={cn(
+                      "w-full min-w-0 rounded-md border border-zinc-200 bg-white px-2 py-2 text-xs text-text",
+                      "dark:border-zinc-600 dark:bg-zinc-950",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
+                    )}
+                    placeholder={copy.filenamePlaceholder}
+                    aria-label={copy.metaFilenameLabel}
+                  />
+                </dd>
+                <dt className="m-0 text-text-muted">{copy.metaMimeLabel}</dt>
+                <dd className="m-0 min-w-0 break-all font-mono text-[0.7rem] text-text">
+                  {preview ? preview.mime : "--"}
+                </dd>
+                <dt className="m-0 text-text-muted">{copy.metaSizeLabel}</dt>
+                <dd className="m-0 font-mono tabular-nums text-text">
+                  {preview ? `${preview.bytes.length} B` : "--"}
+                </dd>
+              </dl>
+            </div>
+
+            <div
+              className={cn(
+                "flex min-h-0 flex-1 flex-col overflow-hidden rounded-md border border-sky-200/70",
+                "bg-[#f0f7fc] dark:border-sky-900/45 dark:bg-sky-950/35",
+              )}
+              role="region"
+              aria-label={copy.previewSectionTitle}
+            >
+              <div className="shrink-0 border-b border-sky-200/60 px-3 py-2 dark:border-sky-900/40">
+                <p className="m-0 text-xs font-semibold text-sky-950 dark:text-sky-100">{copy.previewSectionTitle}</p>
+              </div>
+              <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-0">
+                {!preview ? (
+                  <div className="flex flex-1 flex-col items-center justify-center gap-2 text-center">
+                    <p className="m-0 text-sm font-medium text-sky-950/90 dark:text-sky-100">
+                      {copy.previewSectionEmptyTitle}
+                    </p>
+                    <p className="m-0 max-w-[20rem] text-xs leading-relaxed text-sky-900/75 dark:text-sky-200/80">
+                      {copy.previewSectionEmptyBody}
+                    </p>
+                  </div>
+                ) : objectUrl && previewMime.startsWith("image/") ? (
+                  // eslint-disable-next-line @next/next/no-img-element -- blob preview
+                  <img src={objectUrl} alt="" className="mx-auto max-h-full max-w-full flex-1 object-contain" />
+                ) : objectUrl && previewMime.startsWith("video/") ? (
+                  <video
+                    src={objectUrl}
+                    controls
+                    playsInline
+                    className="max-h-full w-full flex-1 object-contain"
+                    preload="metadata"
+                  />
+                ) : objectUrl && previewMime.startsWith("audio/") ? (
+                  <div className="flex flex-1 items-center justify-center">
+                    <audio src={objectUrl} controls className="w-full max-w-xs" preload="metadata" />
+                  </div>
+                ) : objectUrl && previewMime === "application/pdf" ? (
+                  <iframe
+                    title={copy.previewPdfTitle}
+                    src={objectUrl}
+                    className="min-h-[12rem] w-full flex-1 border-0"
+                  />
+                ) : (
+                  <div className="flex flex-1 flex-col items-center justify-center gap-2 text-center">
+                    <p className="m-0 text-sm font-medium text-sky-950/90 dark:text-sky-100">
+                      {copy.previewBinaryTitle}
+                    </p>
+                    <p className="m-0 max-w-[20rem] text-xs leading-relaxed text-sky-900/75 dark:text-sky-200/80">
+                      {copy.unknownTypeHint}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </section>
       </div>
