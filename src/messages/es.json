@@ -252,6 +252,8 @@
       "resetAction": "Valores por defecto",
       "copyAllAction": "Copiar todo",
       "copyOneAction": "Copiar",
+      "copySuccessBubble": "Copiado",
+      "copyFailedBubble": "Error",
       "saveAsAction": "Guardar como",
       "saveAsTxt": "Texto (.txt)",
       "saveAsCsv": "CSV (.csv)",

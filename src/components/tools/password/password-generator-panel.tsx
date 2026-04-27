@@ -39,6 +39,12 @@ const toolbarBtnSecondary = cn(
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
 );
 
+function copyBubbleTone(ok: boolean) {
+  return ok
+    ? "bg-zinc-800 text-white ring-zinc-600/40 dark:bg-zinc-600 dark:ring-zinc-500/40"
+    : "bg-red-700 text-white ring-red-600/50";
+}
+
 function IconRefresh({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
@@ -99,6 +105,8 @@ export function PasswordGeneratorPanel({ copy }: { copy: Copy }) {
   const optionsRegionId = useId();
   const resultRegionId = useId();
   const saveMenuRef = useRef<HTMLDivElement>(null);
+  const rowTipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const allTipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [length, setLength] = useState(PASSWORD_LENGTH_DEFAULT);
   const [uppercase, setUppercase] = useState(true);
@@ -112,7 +120,10 @@ export function PasswordGeneratorPanel({ copy }: { copy: Copy }) {
 
   type ErrKey = "NO_CHARSET" | "EMPTY_POOL" | null;
   const [errorKey, setErrorKey] = useState<ErrKey>(null);
-  const [copyHint, setCopyHint] = useState<string | null>(null);
+  /** 单行复制：气泡提示（index + 是否失败） */
+  const [rowCopyTip, setRowCopyTip] = useState<{ index: number; error: boolean } | null>(null);
+  /** 全部复制：气泡提示 */
+  const [allCopyTip, setAllCopyTip] = useState<"ok" | "err" | null>(null);
 
   const opts = useMemo(
     () => ({
@@ -135,7 +146,10 @@ export function PasswordGeneratorPanel({ copy }: { copy: Copy }) {
 
   const regenerate = useCallback(() => {
     setErrorKey(null);
-    setCopyHint(null);
+    setRowCopyTip(null);
+    setAllCopyTip(null);
+    if (rowTipTimerRef.current) clearTimeout(rowTipTimerRef.current);
+    if (allTipTimerRef.current) clearTimeout(allTipTimerRef.current);
     try {
       const next = generatePasswordBatch(opts, batchCount);
       setPasswords(next);
@@ -150,6 +164,13 @@ export function PasswordGeneratorPanel({ copy }: { copy: Copy }) {
   useEffect(() => {
     regenerate();
   }, [regenerate]);
+
+  useEffect(() => {
+    return () => {
+      if (rowTipTimerRef.current) clearTimeout(rowTipTimerRef.current);
+      if (allTipTimerRef.current) clearTimeout(allTipTimerRef.current);
+    };
+  }, []);
 
   /** 键盘离开「保存为」区域时收起（鼠标由 onMouseLeave 处理） */
   useEffect(() => {
@@ -174,30 +195,47 @@ export function PasswordGeneratorPanel({ copy }: { copy: Copy }) {
     setEachRequired(true);
     setBatchCount(PASSWORD_BATCH_DEFAULT);
     setErrorKey(null);
-    setCopyHint(null);
+    setRowCopyTip(null);
+    setAllCopyTip(null);
+    if (rowTipTimerRef.current) clearTimeout(rowTipTimerRef.current);
+    if (allTipTimerRef.current) clearTimeout(allTipTimerRef.current);
   };
 
   const copyAll = async () => {
     if (passwords.length === 0) return;
     const text = passwords.join("\n");
+    if (allTipTimerRef.current) clearTimeout(allTipTimerRef.current);
     try {
       await navigator.clipboard.writeText(text);
-      setCopyHint(copy.copied);
-      window.setTimeout(() => setCopyHint(null), 2000);
+      setAllCopyTip("ok");
+      allTipTimerRef.current = setTimeout(() => {
+        setAllCopyTip(null);
+        allTipTimerRef.current = null;
+      }, 2000);
     } catch {
-      setCopyHint(copy.copyFailed);
-      window.setTimeout(() => setCopyHint(null), 2500);
+      setAllCopyTip("err");
+      allTipTimerRef.current = setTimeout(() => {
+        setAllCopyTip(null);
+        allTipTimerRef.current = null;
+      }, 2500);
     }
   };
 
-  const copyOne = async (line: string) => {
+  const copyOne = async (line: string, index: number) => {
+    if (rowTipTimerRef.current) clearTimeout(rowTipTimerRef.current);
     try {
       await navigator.clipboard.writeText(line);
-      setCopyHint(copy.copied);
-      window.setTimeout(() => setCopyHint(null), 2000);
+      setRowCopyTip({ index, error: false });
+      rowTipTimerRef.current = setTimeout(() => {
+        setRowCopyTip(null);
+        rowTipTimerRef.current = null;
+      }, 2000);
     } catch {
-      setCopyHint(copy.copyFailed);
-      window.setTimeout(() => setCopyHint(null), 2500);
+      setRowCopyTip({ index, error: true });
+      rowTipTimerRef.current = setTimeout(() => {
+        setRowCopyTip(null);
+        rowTipTimerRef.current = null;
+      }, 2500);
     }
   };
 
@@ -462,15 +500,29 @@ export function PasswordGeneratorPanel({ copy }: { copy: Copy }) {
                   </div>
                 ) : null}
               </div>
-              <button
-                type="button"
-                onClick={copyAll}
-                disabled={passwords.length === 0}
-                className={cn(toolbarBtnSecondary, "disabled:pointer-events-none disabled:opacity-40")}
-              >
-                <IconClipboard className="size-3 shrink-0" />
-                {copy.copyAllAction}
-              </button>
+              <div className="relative inline-flex">
+                <button
+                  type="button"
+                  onClick={() => void copyAll()}
+                  disabled={passwords.length === 0}
+                  className={cn(toolbarBtnSecondary, "disabled:pointer-events-none disabled:opacity-40")}
+                >
+                  <IconClipboard className="size-3 shrink-0" />
+                  {copy.copyAllAction}
+                </button>
+                {allCopyTip ? (
+                  <span
+                    role="status"
+                    aria-live="polite"
+                    className={cn(
+                      "pointer-events-none absolute left-1/2 top-full z-30 mt-1.5 -translate-x-1/2 whitespace-nowrap rounded-md px-2 py-1 text-[11px] font-medium shadow-md ring-1",
+                      copyBubbleTone(allCopyTip === "ok"),
+                    )}
+                  >
+                    {allCopyTip === "ok" ? copy.copySuccessBubble : copy.copyFailedBubble}
+                  </span>
+                ) : null}
+              </div>
             </div>
           </div>
           <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden p-3 sm:p-4">
@@ -499,21 +551,35 @@ export function PasswordGeneratorPanel({ copy }: { copy: Copy }) {
                         </span>
                         {p}
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => void copyOne(p)}
-                        className={cn(
-                          "inline-flex shrink-0 cursor-pointer items-center gap-1 whitespace-nowrap rounded-md border border-zinc-200 bg-white px-2 py-1.5 font-sans text-xs font-medium text-text-secondary transition-colors",
-                          "hover:border-zinc-300 hover:bg-zinc-50 hover:text-text",
-                          "dark:border-zinc-600 dark:bg-zinc-900 dark:hover:border-zinc-500 dark:hover:bg-zinc-800",
-                          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
-                        )}
-                        aria-label={`${copy.copyOneAction} ${i + 1}`}
-                        title={copy.copyOneAction}
-                      >
-                        <IconClipboard className="size-3.5 shrink-0" />
-                        {copy.copyOneAction}
-                      </button>
+                      <div className="relative shrink-0 self-center">
+                        <button
+                          type="button"
+                          onClick={() => void copyOne(p, i)}
+                          className={cn(
+                            "inline-flex shrink-0 cursor-pointer items-center gap-1 whitespace-nowrap rounded-md border border-zinc-200 bg-white px-2 py-1.5 font-sans text-xs font-medium text-text-secondary transition-colors",
+                            "hover:border-zinc-300 hover:bg-zinc-50 hover:text-text",
+                            "dark:border-zinc-600 dark:bg-zinc-900 dark:hover:border-zinc-500 dark:hover:bg-zinc-800",
+                            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
+                          )}
+                          aria-label={`${copy.copyOneAction} ${i + 1}`}
+                          title={copy.copyOneAction}
+                        >
+                          <IconClipboard className="size-3.5 shrink-0" />
+                          {copy.copyOneAction}
+                        </button>
+                        {rowCopyTip?.index === i ? (
+                          <span
+                            role="status"
+                            aria-live="polite"
+                            className={cn(
+                              "pointer-events-none absolute right-full top-1/2 z-30 mr-2 -translate-y-1/2 whitespace-nowrap rounded-md px-2 py-1 text-[11px] font-medium shadow-md ring-1",
+                              copyBubbleTone(!rowCopyTip.error),
+                            )}
+                          >
+                            {rowCopyTip.error ? copy.copyFailedBubble : copy.copySuccessBubble}
+                          </span>
+                        ) : null}
+                      </div>
                     </li>
                   ))
                 )}
@@ -526,11 +592,6 @@ export function PasswordGeneratorPanel({ copy }: { copy: Copy }) {
               </p>
             ) : null}
 
-            {copyHint ? (
-              <p className="m-0 shrink-0 text-xs text-text-secondary" role="status">
-                {copyHint}
-              </p>
-            ) : null}
           </div>
         </section>
       </div>

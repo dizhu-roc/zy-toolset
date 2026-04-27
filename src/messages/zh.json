@@ -252,6 +252,8 @@
       "resetAction": "恢复默认",
       "copyAllAction": "全部复制",
       "copyOneAction": "复制",
+      "copySuccessBubble": "已复制",
+      "copyFailedBubble": "复制失败",
       "saveAsAction": "保存为",
       "saveAsTxt": "文本 (.txt)",
       "saveAsCsv": "表格 (.csv)",

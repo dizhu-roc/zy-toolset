@@ -252,6 +252,8 @@
       "resetAction": "初期設定に戻す",
       "copyAllAction": "すべてコピー",
       "copyOneAction": "コピー",
+      "copySuccessBubble": "コピーしました",
+      "copyFailedBubble": "失敗",
       "saveAsAction": "保存形式",
       "saveAsTxt": "テキスト (.txt)",
       "saveAsCsv": "CSV (.csv)",
