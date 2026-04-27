@@ -28,7 +28,10 @@ const PREVIEW_HEIGHT_PX = 216;
 /** 裁剪框边缘/角的可拖动命中宽度（CSS px） */
 const CROP_EDGE_HIT_PX = 10;
 
-/** 右侧预览列顺序：导出尺寸从大到小 */
+/** 右侧「结果预览」整块固定高度（标题栏 + 内边距 + 2×3 网格） */
+const ICO_RESULT_PREVIEW_SECTION_HEIGHT_REM = 12;
+
+/** 右侧预览顺序：导出尺寸从大到小；每排 3 个（共 2 排） */
 const ICO_PREVIEW_ORDER_DESC = [...ICO_OUTPUT_SIZES].sort((a, b) => b - a);
 
 const CORNER_OPTIONS = [0, 10, 20, 40, 60, 100] as const;
@@ -92,12 +95,12 @@ function sizeLabel(copy: Copy, s: IcoOutputSize): string {
       return copy.size16;
     case 32:
       return copy.size32;
-    case 48:
-      return copy.size48;
     case 64:
       return copy.size64;
-    case 180:
-      return copy.size180;
+    case 128:
+      return copy.size128;
+    case 256:
+      return copy.size256;
     case 512:
       return copy.size512;
     default: {
@@ -273,9 +276,9 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
   const [sizes, setSizes] = useState<Record<IcoOutputSize, boolean>>({
     16: true,
     32: true,
-    48: false,
     64: true,
-    180: false,
+    128: false,
+    256: false,
     512: false,
   });
   const [cornerPercent, setCornerPercent] = useState<number>(0);
@@ -980,12 +983,28 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
       >
         <section
           className={cn(
-            "flex min-h-[12rem] flex-1 flex-col gap-2 rounded-lg border border-zinc-200/90 bg-white p-4 shadow-sm",
+            "flex flex-col overflow-hidden rounded-lg border border-zinc-200/90 bg-white shadow-sm",
             "dark:border-zinc-700/90 dark:bg-zinc-900",
           )}
+          style={{
+            height: `${ICO_RESULT_PREVIEW_SECTION_HEIGHT_REM}rem`,
+            minHeight: `${ICO_RESULT_PREVIEW_SECTION_HEIGHT_REM}rem`,
+            maxHeight: `${ICO_RESULT_PREVIEW_SECTION_HEIGHT_REM}rem`,
+          }}
         >
-          <h3 className="m-0 text-sm font-medium text-text">{copy.previewBlockTitle}</h3>
-          <div className="grid min-h-0 w-full flex-1 grid-cols-6 content-end gap-2">
+          <h3
+            className={cn(
+              "m-0 flex shrink-0 items-center border-b border-zinc-200/90 px-3 py-2.5 text-xs font-semibold tracking-wide text-text-secondary",
+              "bg-zinc-50/95 dark:border-zinc-700/80 dark:bg-zinc-800/95 dark:text-zinc-200/95",
+            )}
+          >
+            {copy.previewBlockTitle}
+          </h3>
+          <div
+            className={cn(
+              "grid min-h-0 w-full flex-1 grid-cols-3 grid-rows-2 gap-x-3 gap-y-3 px-9 py-2.5 sm:px-11",
+            )}
+          >
             {ICO_PREVIEW_ORDER_DESC.map((s) => {
               const url = previewBySize[s];
               const active = sizes[s] && url;
@@ -993,16 +1012,17 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
               return (
                 <div
                   key={s}
-                  className="flex min-w-0 flex-col items-center justify-end gap-1.5"
+                  className="grid h-full min-h-0 min-w-0 w-full grid-rows-[minmax(0,1fr)_auto] justify-items-center gap-1.5"
                 >
-                  <div
-                    className={cn(
-                      "flex aspect-square w-full min-w-0 items-center justify-center overflow-hidden rounded-md",
-                      active
-                        ? "ring-1 ring-orange-200/80 dark:ring-orange-800/60"
-                        : "border border-dashed border-zinc-300/90 bg-zinc-100/90 dark:border-zinc-600 dark:bg-zinc-800/80",
-                    )}
-                  >
+                  <div className="flex min-h-0 w-full items-center justify-center self-stretch">
+                    <div
+                      className={cn(
+                        "aspect-square max-h-full w-full max-w-full min-w-0 overflow-hidden rounded-md",
+                        active
+                          ? "ring-1 ring-orange-200/80 dark:ring-orange-800/60"
+                          : "border border-dashed border-zinc-300/90 bg-zinc-100/90 dark:border-zinc-600 dark:bg-zinc-800/80",
+                      )}
+                    >
                     {active ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
@@ -1017,6 +1037,7 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
                         pulsing={pending}
                       />
                     )}
+                    </div>
                   </div>
                   <span className="w-full shrink-0 text-center text-[10px] font-medium tabular-nums leading-none text-text-muted">
                     {s}×{s}
