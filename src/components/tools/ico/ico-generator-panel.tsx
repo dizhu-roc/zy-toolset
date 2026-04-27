@@ -28,7 +28,39 @@ const PREVIEW_HEIGHT_PX = 216;
 /** 裁剪框边缘/角的可拖动命中宽度（CSS px） */
 const CROP_EDGE_HIT_PX = 10;
 
+/** 右侧预览列顺序：导出尺寸从大到小 */
+const ICO_PREVIEW_ORDER_DESC = [...ICO_OUTPUT_SIZES].sort((a, b) => b - a);
+
 const CORNER_OPTIONS = [0, 10, 20, 40, 60, 100] as const;
+
+function IcoPreviewSlotPlaceholder({
+  className,
+  pulsing,
+}: {
+  className?: string;
+  pulsing?: boolean;
+}) {
+  return (
+    <svg
+      className={cn(
+        "text-zinc-400/90 dark:text-zinc-500",
+        pulsing && "animate-pulse",
+        className,
+      )}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.4}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <rect x="3.5" y="5.5" width="17" height="13" rx="1.75" />
+      <path d="M4 16.5 8.5 12l3.2 3.2L15 12l5 4.5" />
+      <circle cx="8" cy="9.5" r="1.15" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
 
 const neutralCard = cn(
   "rounded-lg border border-zinc-200/90 bg-white shadow-sm",
@@ -224,6 +256,14 @@ function applyResizeZone(
   return clampFullCrop({ sx, sy, s }, iw, ih, minS);
 }
 
+function revokePreviewMap(m: Partial<Record<IcoOutputSize, string>>) {
+  for (const u of Object.values(m)) {
+    if (u) {
+      URL.revokeObjectURL(u);
+    }
+  }
+}
+
 export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
   const uploadId = useId();
   const [file, setFile] = useState<File | null>(null);
@@ -239,7 +279,9 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
     512: false,
   });
   const [cornerPercent, setCornerPercent] = useState<number>(0);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewBySize, setPreviewBySize] = useState<
+    Partial<Record<IcoOutputSize, string>>
+  >({});
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -253,12 +295,13 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
     [sizes],
   );
 
+  const sizesRef = useRef(sizes);
+  sizesRef.current = sizes;
+
   const revokePreview = useCallback(() => {
-    setPreviewUrl((prev) => {
-      if (prev) {
-        URL.revokeObjectURL(prev);
-      }
-      return null;
+    setPreviewBySize((prev) => {
+      revokePreviewMap(prev);
+      return {};
     });
   }, []);
 
@@ -359,28 +402,56 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
     }
 
     let cancelled = false;
-    const maxSize = Math.max(...selectedList);
     const c = clampCrop(crop, natural.w, natural.h);
 
     const run = () => {
       void (async () => {
+        const next: Partial<Record<IcoOutputSize, string>> = {};
         try {
-          const blob = await renderIconPng(img, c, maxSize, cornerPercent);
-          if (cancelled) {
-            return;
-          }
-          const url = URL.createObjectURL(blob);
-          setPreviewUrl((prev) => {
-            if (prev) {
-              URL.revokeObjectURL(prev);
+          for (const s of ICO_OUTPUT_SIZES) {
+            if (!sizesRef.current[s]) {
+              continue;
             }
-            return url;
-          });
+            const blob = await renderIconPng(img, c, s, cornerPercent);
+            if (cancelled) {
+              revokePreviewMap(next);
+              return;
+            }
+            if (!sizesRef.current[s]) {
+              continue;
+            }
+            next[s] = URL.createObjectURL(blob);
+          }
         } catch {
+          revokePreviewMap(next);
           if (!cancelled) {
             setError(copy.errorRender);
           }
+          return;
         }
+        if (cancelled) {
+          revokePreviewMap(next);
+          return;
+        }
+        setPreviewBySize((prev) => {
+          const out: Partial<Record<IcoOutputSize, string>> = {};
+          for (const s of ICO_OUTPUT_SIZES) {
+            if (!sizesRef.current[s]) {
+              continue;
+            }
+            if (next[s]) {
+              out[s] = next[s]!;
+            }
+          }
+          for (const s of ICO_OUTPUT_SIZES) {
+            const oldU = prev[s];
+            const newU = out[s];
+            if (oldU && oldU !== newU) {
+              URL.revokeObjectURL(oldU);
+            }
+          }
+          return out;
+        });
       })();
     };
 
@@ -550,7 +621,7 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
     "bg-[#F9690E]/11 text-[#b45309]/88 dark:bg-[#F9690E]/14 dark:text-orange-100/90",
   );
 
-  const downloadZip = useCallback(async () => {
+  const downloadPackage = useCallback(async () => {
     setError(null);
     if (!file || !natural || !crop || !imgRef.current) {
       setError(copy.errorNoImage);
@@ -566,53 +637,22 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
       const c = clampCrop(crop, natural.w, natural.h);
       const JSZip = (await import("jszip")).default;
       const zip = new JSZip();
-      const ordered = [...selectedList].sort((a, b) => a - b);
-      for (const size of ordered) {
-        const blob = await renderIconPng(img, c, size, cornerPercent);
-        zip.file(`icon-${size}x${size}.png`, blob);
+      const orderedAsc = [...selectedList].sort((a, b) => a - b);
+      const orderedDesc = [...selectedList].sort((a, b) => b - a);
+      const blobBySize: Partial<Record<IcoOutputSize, Blob>> = {};
+      for (const size of orderedAsc) {
+        blobBySize[size] = await renderIconPng(img, c, size, cornerPercent);
+        zip.file(`icon-${size}x${size}.png`, blobBySize[size]!);
       }
+      const pngs: Uint8Array[] = [];
+      for (const size of orderedDesc) {
+        pngs.push(await blobToUint8Array(blobBySize[size]!));
+      }
+      const icoBytes = encodeIcoFromPngs(pngs);
+      zip.file("favicon.ico", new Uint8Array(icoBytes));
       const zblob = await zip.generateAsync({ type: "blob" });
       const base = file.name.replace(/\.[^.]+$/, "") || "icon";
       downloadBlob(`${base}-icons.zip`, zblob);
-    } catch {
-      setError(copy.errorGeneric);
-    } finally {
-      setBusy(false);
-    }
-  }, [
-    file,
-    natural,
-    crop,
-    selectedList,
-    cornerPercent,
-    copy.errorNoImage,
-    copy.errorNoSize,
-    copy.errorGeneric,
-  ]);
-
-  const downloadIco = useCallback(async () => {
-    setError(null);
-    if (!file || !natural || !crop || !imgRef.current) {
-      setError(copy.errorNoImage);
-      return;
-    }
-    if (selectedList.length === 0) {
-      setError(copy.errorNoSize);
-      return;
-    }
-    setBusy(true);
-    try {
-      const img = imgRef.current;
-      const c = clampCrop(crop, natural.w, natural.h);
-      const ordered = [...selectedList].sort((a, b) => b - a);
-      const pngs: Uint8Array[] = [];
-      for (const size of ordered) {
-        const blob = await renderIconPng(img, c, size, cornerPercent);
-        pngs.push(await blobToUint8Array(blob));
-      }
-      const icoBytes = encodeIcoFromPngs(pngs);
-      const blob = new Blob([new Uint8Array(icoBytes)], { type: "image/x-icon" });
-      downloadBlob("favicon.ico", blob);
     } catch {
       setError(copy.errorGeneric);
     } finally {
@@ -936,90 +976,132 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
       </div>
 
       <aside
-        className={cn(
-          "flex min-h-0 min-w-0 flex-col gap-4 rounded-lg border border-zinc-200/90 bg-white p-4 shadow-sm",
-          "dark:border-zinc-700/90 dark:bg-zinc-900",
-        )}
+        className="flex h-full min-h-0 min-w-0 flex-col gap-4"
       >
-        <div>
-          <h3 className="m-0 text-sm font-medium text-text">{copy.previewSectionTitle}</h3>
-          <p className="mt-1 text-xs text-text-muted">{copy.previewHint}</p>
-        </div>
-
-        <div className="flex min-h-[12rem] items-center justify-center rounded-md border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-600 dark:bg-zinc-800/80">
-          {previewUrl && selectedList.length > 0 ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={previewUrl}
-              alt=""
-              className="max-h-56 max-w-full object-contain"
-            />
-          ) : (
-            <span className="text-center text-sm text-text-muted">{copy.previewPlaceholder}</span>
+        <section
+          className={cn(
+            "flex min-h-[12rem] flex-1 flex-col gap-2 rounded-lg border border-zinc-200/90 bg-white p-4 shadow-sm",
+            "dark:border-zinc-700/90 dark:bg-zinc-900",
           )}
-        </div>
-
-        <div className="flex flex-wrap gap-2">
-          <button
-            type="button"
-            disabled={busy || !file || selectedList.length === 0}
-            onClick={() => void downloadZip()}
-            className={cn(
-              "inline-flex h-8 items-center rounded-md px-3 text-xs font-semibold text-white transition-colors",
-              "bg-[#F9690E] hover:bg-[#ea580c] active:bg-[#c2410c]",
-              "shadow-sm shadow-orange-900/15 disabled:cursor-not-allowed disabled:opacity-50",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F9690E]/45 focus-visible:ring-offset-1 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-900",
-            )}
-          >
-            {busy ? copy.busy : copy.downloadZip}
-          </button>
-          <button
-            type="button"
-            disabled={busy || !file || selectedList.length === 0}
-            onClick={() => void downloadIco()}
-            className={cn(
-              "inline-flex h-8 items-center rounded-md border border-zinc-200 bg-white px-3 text-xs font-medium text-text-secondary transition-colors",
-              "hover:border-zinc-300 hover:bg-zinc-50 hover:text-text",
-              "disabled:cursor-not-allowed disabled:opacity-50",
-              "dark:border-zinc-600 dark:bg-zinc-900 dark:hover:border-zinc-500 dark:hover:bg-zinc-800",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400/35 focus-visible:ring-offset-1 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-900",
-            )}
-          >
-            {busy ? copy.busy : copy.downloadIco}
-          </button>
-        </div>
-
-        <dl className="m-0 space-y-3 text-sm">
-          <div>
-            <dt className="text-xs font-medium uppercase tracking-wide text-text-muted">
-              {copy.summaryFile}
-            </dt>
-            <dd className="mt-0.5 break-all text-text">{file?.name ?? copy.summaryEmpty}</dd>
+        >
+          <h3 className="m-0 text-sm font-medium text-text">{copy.previewBlockTitle}</h3>
+          <div className="grid min-h-0 w-full flex-1 grid-cols-6 content-end gap-2">
+            {ICO_PREVIEW_ORDER_DESC.map((s) => {
+              const url = previewBySize[s];
+              const active = sizes[s] && url;
+              const pending = sizes[s] && !url;
+              return (
+                <div
+                  key={s}
+                  className="flex min-w-0 flex-col items-center justify-end gap-1.5"
+                >
+                  <div
+                    className={cn(
+                      "flex aspect-square w-full min-w-0 items-center justify-center overflow-hidden rounded-md",
+                      active
+                        ? "ring-1 ring-orange-200/80 dark:ring-orange-800/60"
+                        : "border border-dashed border-zinc-300/90 bg-zinc-100/90 dark:border-zinc-600 dark:bg-zinc-800/80",
+                    )}
+                  >
+                    {active ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={url}
+                        alt=""
+                        draggable={false}
+                        className="h-full w-full object-contain"
+                      />
+                    ) : (
+                      <IcoPreviewSlotPlaceholder
+                        className="h-[58%] w-[58%]"
+                        pulsing={pending}
+                      />
+                    )}
+                  </div>
+                  <span className="w-full shrink-0 text-center text-[10px] font-medium tabular-nums leading-none text-text-muted">
+                    {s}×{s}
+                  </span>
+                </div>
+              );
+            })}
           </div>
-          <div>
-            <dt className="text-xs font-medium uppercase tracking-wide text-text-muted">
-              {copy.summarySizes}
-            </dt>
-            <dd className="mt-0.5 text-text">
-              {selectedList.length > 0
-                ? selectedList
-                    .slice()
+        </section>
+
+        <section
+          className={cn(
+            "rounded-lg border border-zinc-200/90 bg-white p-4 shadow-sm",
+            "dark:border-zinc-700/90 dark:bg-zinc-900",
+          )}
+        >
+          <h3 className="m-0 text-sm font-medium text-text">{copy.fileInfoBlockTitle}</h3>
+          <div className="mt-3 flex flex-col gap-3 text-sm">
+            <div className="flex min-w-0 flex-row flex-wrap items-baseline gap-x-2 gap-y-1">
+              <span className="shrink-0 text-xs font-medium text-text-muted">
+                {copy.summaryFile}
+              </span>
+              <span className="min-w-0 flex-1 break-all text-sm text-text">
+                {file?.name ?? copy.summaryEmpty}
+              </span>
+            </div>
+            <div className="flex min-w-0 flex-row flex-wrap items-center gap-x-2 gap-y-1.5">
+              <span className="shrink-0 text-xs font-medium text-text-muted">
+                {copy.summarySizes}
+              </span>
+              <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1.5">
+                {selectedList.length > 0 ? (
+                  [...selectedList]
                     .sort((a, b) => a - b)
-                    .map((s) => `${s}×${s}`)
-                    .join(", ")
-                : copy.summaryNoneSizes}
-            </dd>
+                    .map((sz) => (
+                      <span
+                        key={sz}
+                        className={cn(pillBase, pillActive, "inline-flex cursor-default select-none")}
+                      >
+                        {sizeLabel(copy, sz)}
+                      </span>
+                    ))
+                ) : (
+                  <span
+                    className={cn(pillBase, pillInactive, "inline-flex cursor-default select-none")}
+                  >
+                    {copy.summaryNoneSizes}
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className="flex min-w-0 flex-row flex-wrap items-center gap-x-2 gap-y-1.5">
+              <span className="shrink-0 text-xs font-medium text-text-muted">
+                {copy.summaryRadius}
+              </span>
+              <span
+                className={cn(pillBase, pillActive, "inline-flex cursor-default select-none")}
+              >
+                {cornerPercent}
+                {copy.radiusPercentSuffix}
+              </span>
+            </div>
           </div>
-          <div>
-            <dt className="text-xs font-medium uppercase tracking-wide text-text-muted">
-              {copy.summaryRadius}
-            </dt>
-            <dd className="mt-0.5 text-text">
-              {cornerPercent}
-              {copy.radiusPercentSuffix}
-            </dd>
-          </div>
-        </dl>
+        </section>
+
+        <section
+          className={cn(
+            "overflow-hidden rounded-lg border border-zinc-200/90 bg-white p-0 shadow-sm",
+            "dark:border-zinc-700/90 dark:bg-zinc-900",
+          )}
+        >
+          <button
+            type="button"
+            disabled={busy || !file || selectedList.length === 0}
+            onClick={() => void downloadPackage()}
+            className={cn(
+              "flex min-h-11 w-full items-center justify-center px-4 py-3 text-sm font-semibold text-white transition-colors",
+              "bg-[#F9690E] hover:bg-[#ea580c] active:bg-[#c2410c]",
+              "shadow-none disabled:cursor-not-allowed disabled:opacity-50",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#F9690E]/55",
+            )}
+          >
+            {busy ? copy.busy : copy.downloadPackage}
+          </button>
+        </section>
       </aside>
     </div>
   );
