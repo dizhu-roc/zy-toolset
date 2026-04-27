@@ -279,6 +279,7 @@
       "cropSectionTitle": "裁剪（固定 1:1）",
       "cropHint": "图片在预览区内固定不动，仅可拖动蓝色线框。裁剪区域为图源内可放置的最大正方形。",
       "cropDragLabel": "拖动裁剪框",
+      "cropResizeHandleLabel": "拖动边缘或角缩放裁剪区域（保持正方形）",
       "cropEmpty": "请先上传图片以开始裁剪。",
       "sizesTitle": "输出尺寸",
       "size16": "16×16",

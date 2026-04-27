@@ -279,6 +279,7 @@
       "cropSectionTitle": "Crop (1:1)",
       "cropHint": "The photo stays fixed; drag the blue square to choose what becomes the icon. The crop uses the largest square that fits your image.",
       "cropDragLabel": "Drag to move crop",
+      "cropResizeHandleLabel": "Drag an edge or corner to resize the crop (square)",
       "cropEmpty": "Upload an image to start cropping.",
       "sizesTitle": "Output sizes",
       "size16": "16×16",

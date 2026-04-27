@@ -25,6 +25,9 @@ type Copy = Messages["tools"]["icoGenerator"];
 /** 回显区高度（较上一版再增加一半：144 × 1.5） */
 const PREVIEW_HEIGHT_PX = 216;
 
+/** 裁剪框边缘/角的可拖动命中宽度（CSS px） */
+const CROP_EDGE_HIT_PX = 10;
+
 const CORNER_OPTIONS = [0, 10, 20, 40, 60, 100] as const;
 
 const neutralCard = cn(
@@ -99,6 +102,128 @@ function clampCrop(crop: SourceCrop, iw: number, ih: number): SourceCrop {
   };
 }
 
+/** 1:1 裁剪边长下限（源图像素） */
+function minCropSide(iw: number, ih: number): number {
+  return Math.max(8, Math.min(32, Math.floor((Math.min(iw, ih) * 3) / 100)));
+}
+
+type CropResizeZone = "nw" | "ne" | "sw" | "se" | "n" | "s" | "e" | "w";
+
+type CropPointerDrag =
+  | {
+      kind: "move";
+      iw: number;
+      ih: number;
+      startClientX: number;
+      startClientY: number;
+      startSx: number;
+      startSy: number;
+      startS: number;
+      scale: number;
+    }
+  | {
+      kind: "resize";
+      zone: CropResizeZone;
+      iw: number;
+      ih: number;
+      offsetX: number;
+      offsetY: number;
+      scale: number;
+      minS: number;
+      sx0: number;
+      sy0: number;
+      s0: number;
+    };
+
+function clampFullCrop(c: SourceCrop, iw: number, ih: number, minS: number): SourceCrop {
+  let { sx, sy, s } = c;
+  s = Math.max(minS, Math.min(s, iw, ih));
+  sx = Math.min(Math.max(0, sx), iw - minS);
+  sy = Math.min(Math.max(0, sy), ih - minS);
+  s = Math.min(s, iw - sx, ih - sy);
+  s = Math.max(minS, s);
+  sx = Math.min(Math.max(0, sx), iw - s);
+  sy = Math.min(Math.max(0, sy), ih - s);
+  return { sx, sy, s };
+}
+
+function applyResizeZone(
+  zone: CropResizeZone,
+  sx0: number,
+  sy0: number,
+  s0: number,
+  srcX: number,
+  srcY: number,
+  iw: number,
+  ih: number,
+  minS: number,
+): SourceCrop {
+  let sx = sx0;
+  let sy = sy0;
+  let s = s0;
+  const brx0 = sx0 + s0;
+  const bry0 = sy0 + s0;
+
+  switch (zone) {
+    case "se":
+      s = Math.floor(Math.min(srcX - sx0, srcY - sy0));
+      sx = sx0;
+      sy = sy0;
+      break;
+    case "nw": {
+      s = Math.floor(Math.min(brx0 - srcX, bry0 - srcY));
+      sx = brx0 - s;
+      sy = bry0 - s;
+      break;
+    }
+    case "ne": {
+      s = Math.floor(Math.min(srcX - sx0, bry0 - srcY));
+      sx = sx0;
+      sy = bry0 - s;
+      break;
+    }
+    case "sw": {
+      s = Math.floor(Math.min(brx0 - srcX, srcY - sy0));
+      sx = brx0 - s;
+      sy = sy0;
+      break;
+    }
+    case "n": {
+      const newSy = Math.round(Math.min(Math.max(0, srcY), bry0 - minS));
+      s = bry0 - newSy;
+      sx = sx0;
+      sy = newSy;
+      break;
+    }
+    case "s": {
+      s = Math.round(Math.max(minS, Math.min(srcY, ih) - sy0));
+      sx = sx0;
+      sy = sy0;
+      break;
+    }
+    case "e": {
+      s = Math.round(Math.max(minS, Math.min(srcX, iw) - sx0));
+      sx = sx0;
+      sy = sy0;
+      break;
+    }
+    case "w": {
+      const newSx = Math.round(Math.min(Math.max(0, srcX), brx0 - minS));
+      s = brx0 - newSx;
+      sx = newSx;
+      sy = sy0;
+      break;
+    }
+    default: {
+      const _z: never = zone;
+      void _z;
+      return clampFullCrop({ sx: sx0, sy: sy0, s: s0 }, iw, ih, minS);
+    }
+  }
+
+  return clampFullCrop({ sx, sy, s }, iw, ih, minS);
+}
+
 export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
   const uploadId = useId();
   const [file, setFile] = useState<File | null>(null);
@@ -121,13 +246,7 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(0);
   const imgRef = useRef<HTMLImageElement>(null);
-  const dragRef = useRef<{
-    startClientX: number;
-    startClientY: number;
-    startSx: number;
-    startSy: number;
-    scale: number;
-  } | null>(null);
+  const cropDragRef = useRef<CropPointerDrag | null>(null);
 
   const selectedList = useMemo(
     () => ICO_OUTPUT_SIZES.filter((s) => sizes[s]),
@@ -164,6 +283,7 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
     return () => ro.disconnect();
   }, [imgSrc]);
 
+  /** 预览区用 contain：整图按比例落在框内，与导出用的 source 坐标同一 scale 映射 */
   const layout = useMemo(() => {
     if (!natural || containerWidth < 8) {
       return null;
@@ -171,7 +291,7 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
     const W = containerWidth;
     const H = PREVIEW_HEIGHT_PX;
     const { w: iw, h: ih } = natural;
-    const scale = Math.max(W / iw, H / ih);
+    const scale = Math.min(W / iw, H / ih);
     const dispW = iw * scale;
     const dispH = ih * scale;
     const offsetX = (W - dispW) / 2;
@@ -279,54 +399,128 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
     revokePreview,
   ]);
 
-  const onPointerDownCrop = useCallback(
-    (e: React.PointerEvent) => {
-      if (!layout || !crop || !natural) {
+  const detachCropWindowListeners = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    return () => {
+      detachCropWindowListeners.current?.();
+    };
+  }, []);
+
+  const beginCropInteraction = useCallback(
+    (zone: CropResizeZone | "move", e: React.PointerEvent) => {
+      if (!layout || !crop || !natural || !containerRef.current) {
         return;
       }
       e.preventDefault();
-      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-      dragRef.current = {
-        startClientX: e.clientX,
-        startClientY: e.clientY,
-        startSx: crop.sx,
-        startSy: crop.sy,
+      const iw = natural.w;
+      const ih = natural.h;
+      const minS = minCropSide(iw, ih);
+
+      if (zone === "move") {
+        cropDragRef.current = {
+          kind: "move",
+          iw,
+          ih,
+          startClientX: e.clientX,
+          startClientY: e.clientY,
+          startSx: crop.sx,
+          startSy: crop.sy,
+          startS: crop.s,
+          scale: layout.scale,
+        };
+        const onMove = (ev: PointerEvent) => {
+          const d = cropDragRef.current;
+          if (!d || d.kind !== "move") {
+            return;
+          }
+          const dSx = Math.round((ev.clientX - d.startClientX) / d.scale);
+          const dSy = Math.round((ev.clientY - d.startClientY) / d.scale);
+          setCrop(
+            clampCrop(
+              {
+                s: d.startS,
+                sx: d.startSx + dSx,
+                sy: d.startSy + dSy,
+              },
+              d.iw,
+              d.ih,
+            ),
+          );
+        };
+        const onEnd = () => {
+          window.removeEventListener("pointermove", onMove);
+          window.removeEventListener("pointerup", onEnd);
+          window.removeEventListener("pointercancel", onEnd);
+          cropDragRef.current = null;
+          detachCropWindowListeners.current = null;
+        };
+        window.addEventListener("pointermove", onMove);
+        window.addEventListener("pointerup", onEnd);
+        window.addEventListener("pointercancel", onEnd);
+        detachCropWindowListeners.current = () => {
+          window.removeEventListener("pointermove", onMove);
+          window.removeEventListener("pointerup", onEnd);
+          window.removeEventListener("pointercancel", onEnd);
+          cropDragRef.current = null;
+        };
+        return;
+      }
+
+      cropDragRef.current = {
+        kind: "resize",
+        zone,
+        iw,
+        ih,
+        offsetX: layout.offsetX,
+        offsetY: layout.offsetY,
         scale: layout.scale,
+        minS,
+        sx0: crop.sx,
+        sy0: crop.sy,
+        s0: crop.s,
+      };
+      const onMove = (ev: PointerEvent) => {
+        const d = cropDragRef.current;
+        if (!d || d.kind !== "resize" || !containerRef.current) {
+          return;
+        }
+        const rect = containerRef.current.getBoundingClientRect();
+        const srcX = (ev.clientX - rect.left - d.offsetX) / d.scale;
+        const srcY = (ev.clientY - rect.top - d.offsetY) / d.scale;
+        setCrop(
+          applyResizeZone(
+            d.zone,
+            d.sx0,
+            d.sy0,
+            d.s0,
+            srcX,
+            srcY,
+            d.iw,
+            d.ih,
+            d.minS,
+          ),
+        );
+      };
+      const onEnd = () => {
+        window.removeEventListener("pointermove", onMove);
+        window.removeEventListener("pointerup", onEnd);
+        window.removeEventListener("pointercancel", onEnd);
+        cropDragRef.current = null;
+        detachCropWindowListeners.current = null;
+      };
+      window.addEventListener("pointermove", onMove);
+      window.addEventListener("pointerup", onEnd);
+      window.addEventListener("pointercancel", onEnd);
+      detachCropWindowListeners.current = () => {
+        window.removeEventListener("pointermove", onMove);
+        window.removeEventListener("pointerup", onEnd);
+        window.removeEventListener("pointercancel", onEnd);
+        cropDragRef.current = null;
       };
     },
     [layout, crop, natural],
   );
-
-  const onPointerMoveCrop = useCallback(
-    (e: React.PointerEvent) => {
-      const d = dragRef.current;
-      if (!d || !natural || !crop) {
-        return;
-      }
-      const dx = e.clientX - d.startClientX;
-      const dy = e.clientY - d.startClientY;
-      const dSx = Math.round(dx / d.scale);
-      const dSy = Math.round(dy / d.scale);
-      const next = clampCrop(
-        {
-          s: crop.s,
-          sx: d.startSx + dSx,
-          sy: d.startSy + dSy,
-        },
-        natural.w,
-        natural.h,
-      );
-      setCrop(next);
-    },
-    [natural, crop],
-  );
-
-  const onPointerUpCrop = useCallback((e: React.PointerEvent) => {
-    if ((e.currentTarget as HTMLElement).hasPointerCapture(e.pointerId)) {
-      (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
-    }
-    dragRef.current = null;
-  }, []);
 
   const toggleSize = (s: IcoOutputSize) => {
     setSizes((prev) => ({ ...prev, [s]: !prev[s] }));
@@ -508,7 +702,7 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
         <div className={cn("overflow-hidden p-0", neutralCard)}>
           <div
             ref={containerRef}
-            className="relative w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800"
+            className="relative isolate w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800"
             style={{ height: PREVIEW_HEIGHT_PX }}
           >
             {imgSrc ? (
@@ -520,7 +714,7 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
                   alt=""
                   draggable={false}
                   onLoad={onImgLoad}
-                  className="pointer-events-none absolute select-none"
+                  className="pointer-events-none absolute z-0 select-none"
                   style={{
                     ...imgStyle,
                     maxWidth: "none",
@@ -528,21 +722,149 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
                   }}
                 />
                 {overlayStyle ? (
-                  <button
-                    type="button"
-                    aria-label={copy.cropDragLabel}
-                    className={cn(
-                      "absolute cursor-move touch-none rounded-sm border-2 border-white/95 bg-transparent",
-                      "shadow-[0_0_0_1px_rgba(0,0,0,0.45)] ring-2 ring-[#F9690E]/85 ring-offset-1 ring-offset-orange-100/50",
-                      "dark:ring-offset-zinc-900",
-                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ea580c] focus-visible:ring-offset-2",
-                    )}
+                  <div
+                    className="absolute z-10 touch-none"
                     style={overlayStyle}
-                    onPointerDown={onPointerDownCrop}
-                    onPointerMove={onPointerMoveCrop}
-                    onPointerUp={onPointerUpCrop}
-                    onPointerCancel={onPointerUpCrop}
-                  />
+                  >
+                    <div
+                      className={cn(
+                        "pointer-events-none absolute inset-0 z-0 rounded-sm border-2 border-[#F9690E]",
+                        "shadow-md ring-2 ring-white/90 ring-offset-0",
+                        "dark:border-orange-400 dark:ring-zinc-700",
+                      )}
+                      aria-hidden
+                    />
+                    <div
+                      className={cn(
+                        "pointer-events-none absolute inset-0 z-[5] rounded-sm",
+                        "bg-orange-500/10 dark:bg-orange-400/15",
+                      )}
+                      aria-hidden
+                    />
+                    <button
+                      type="button"
+                      aria-label={copy.cropDragLabel}
+                      className={cn(
+                        "absolute z-[15] cursor-move rounded-sm border-0 bg-transparent p-0",
+                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ea580c] focus-visible:ring-offset-1",
+                      )}
+                      style={{
+                        top: CROP_EDGE_HIT_PX,
+                        left: CROP_EDGE_HIT_PX,
+                        right: CROP_EDGE_HIT_PX,
+                        bottom: CROP_EDGE_HIT_PX,
+                      }}
+                      onPointerDown={(e) => beginCropInteraction("move", e)}
+                    />
+                    <button
+                      type="button"
+                      aria-label={copy.cropResizeHandleLabel}
+                      className="absolute left-0 top-0 z-30 cursor-nwse-resize border-0 bg-transparent p-0 opacity-0"
+                      style={{
+                        width: CROP_EDGE_HIT_PX,
+                        height: CROP_EDGE_HIT_PX,
+                      }}
+                      onPointerDown={(e) => {
+                        e.stopPropagation();
+                        beginCropInteraction("nw", e);
+                      }}
+                    />
+                    <button
+                      type="button"
+                      aria-label={copy.cropResizeHandleLabel}
+                      className="absolute right-0 top-0 z-30 cursor-nesw-resize border-0 bg-transparent p-0 opacity-0"
+                      style={{
+                        width: CROP_EDGE_HIT_PX,
+                        height: CROP_EDGE_HIT_PX,
+                      }}
+                      onPointerDown={(e) => {
+                        e.stopPropagation();
+                        beginCropInteraction("ne", e);
+                      }}
+                    />
+                    <button
+                      type="button"
+                      aria-label={copy.cropResizeHandleLabel}
+                      className="absolute bottom-0 left-0 z-30 cursor-nesw-resize border-0 bg-transparent p-0 opacity-0"
+                      style={{
+                        width: CROP_EDGE_HIT_PX,
+                        height: CROP_EDGE_HIT_PX,
+                      }}
+                      onPointerDown={(e) => {
+                        e.stopPropagation();
+                        beginCropInteraction("sw", e);
+                      }}
+                    />
+                    <button
+                      type="button"
+                      aria-label={copy.cropResizeHandleLabel}
+                      className="absolute bottom-0 right-0 z-30 cursor-nwse-resize border-0 bg-transparent p-0 opacity-0"
+                      style={{
+                        width: CROP_EDGE_HIT_PX,
+                        height: CROP_EDGE_HIT_PX,
+                      }}
+                      onPointerDown={(e) => {
+                        e.stopPropagation();
+                        beginCropInteraction("se", e);
+                      }}
+                    />
+                    <button
+                      type="button"
+                      aria-label={copy.cropResizeHandleLabel}
+                      className="absolute left-0 right-0 top-0 z-20 cursor-ns-resize border-0 bg-transparent p-0 opacity-0"
+                      style={{
+                        height: CROP_EDGE_HIT_PX,
+                        left: CROP_EDGE_HIT_PX,
+                        right: CROP_EDGE_HIT_PX,
+                      }}
+                      onPointerDown={(e) => {
+                        e.stopPropagation();
+                        beginCropInteraction("n", e);
+                      }}
+                    />
+                    <button
+                      type="button"
+                      aria-label={copy.cropResizeHandleLabel}
+                      className="absolute bottom-0 left-0 right-0 z-20 cursor-ns-resize border-0 bg-transparent p-0 opacity-0"
+                      style={{
+                        height: CROP_EDGE_HIT_PX,
+                        left: CROP_EDGE_HIT_PX,
+                        right: CROP_EDGE_HIT_PX,
+                      }}
+                      onPointerDown={(e) => {
+                        e.stopPropagation();
+                        beginCropInteraction("s", e);
+                      }}
+                    />
+                    <button
+                      type="button"
+                      aria-label={copy.cropResizeHandleLabel}
+                      className="absolute bottom-0 right-0 top-0 z-20 cursor-ew-resize border-0 bg-transparent p-0 opacity-0"
+                      style={{
+                        width: CROP_EDGE_HIT_PX,
+                        top: CROP_EDGE_HIT_PX,
+                        bottom: CROP_EDGE_HIT_PX,
+                      }}
+                      onPointerDown={(e) => {
+                        e.stopPropagation();
+                        beginCropInteraction("e", e);
+                      }}
+                    />
+                    <button
+                      type="button"
+                      aria-label={copy.cropResizeHandleLabel}
+                      className="absolute bottom-0 left-0 top-0 z-20 cursor-ew-resize border-0 bg-transparent p-0 opacity-0"
+                      style={{
+                        width: CROP_EDGE_HIT_PX,
+                        top: CROP_EDGE_HIT_PX,
+                        bottom: CROP_EDGE_HIT_PX,
+                      }}
+                      onPointerDown={(e) => {
+                        e.stopPropagation();
+                        beginCropInteraction("w", e);
+                      }}
+                    />
+                  </div>
                 ) : null}
               </>
             ) : (

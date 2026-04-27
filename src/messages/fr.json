@@ -279,6 +279,7 @@
       "cropSectionTitle": "Recadrage (1:1)",
       "cropHint": "L’image reste fixe ; faites glisser le cadre bleu. La zone est le plus grand carré contenu dans l’image.",
       "cropDragLabel": "Déplacer le cadre de recadrage",
+      "cropResizeHandleLabel": "Glisser un bord ou un coin pour redimensionner (carré)",
       "cropEmpty": "Importez une image pour commencer.",
       "sizesTitle": "Tailles de sortie",
       "size16": "16×16",

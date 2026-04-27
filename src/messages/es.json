@@ -279,6 +279,7 @@
       "cropSectionTitle": "Recorte (1:1)",
       "cropHint": "La foto permanece fija; arrastra el marco azul. El recorte es el mayor cuadrado que cabe en la imagen.",
       "cropDragLabel": "Arrastrar recorte",
+      "cropResizeHandleLabel": "Arrastra un borde o una esquina para redimensionar (cuadrado)",
       "cropEmpty": "Sube una imagen para empezar.",
       "sizesTitle": "Tamaños de salida",
       "size16": "16×16",
