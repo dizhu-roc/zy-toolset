@@ -1,6 +1,6 @@
 # 文件转 Base64：按通用工作流梳理
 
-本文按《[文本Base64编码-设计结论与工作流.md](./文本Base64编码-设计结论与工作流.md)》中的**四维度通用工作流**整理「文件 → Base64」能力：功能范围、页面结构、SEO 与说明文案。可与站内路由 `tools/base64/file-encode`（`Base64Workbench` 默认 `file` Tab）及实现代码对照阅读。
+本文按《[新工具通用设计工作流.md](../generator/新工具通用设计工作流.md)》中的**四维度通用工作流**整理「文件 → Base64」能力：功能范围、页面结构、SEO 与说明文案。可与站内路由 `tools/base64/file-encode`（`Base64Workbench` 默认 `file` Tab）及实现代码对照阅读。
 
 ---
 
@@ -108,4 +108,4 @@
 
 ---
 
-*与《文本Base64编码-设计结论与工作流.md》中通用工作流章节一一对应；实现细节以 `src/components/tools/base64/base64-workbench.tsx` 为准。*
+*与《新工具通用设计工作流》四维度检查表一一对应；实现细节以 `src/components/tools/base64/base64-workbench.tsx` 为准。*

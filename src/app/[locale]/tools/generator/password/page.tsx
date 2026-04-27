@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { HomeToolIcon } from "@/components/icons/home-tool-icons";
 import { ToolPageLayout } from "@/components/layout/tool-page-layout";
+import { PasswordGeneratorPanel } from "@/components/tools/password/password-generator-panel";
 import { getMessages } from "@/i18n/dictionaries";
 import { isLocale, type Locale } from "@/i18n/config";
 import { hrefForLocale } from "@/lib/localized-path";
@@ -35,8 +37,17 @@ export default async function GeneratorPasswordPage({ params }: Props) {
 
   return (
     <ToolPageLayout
+      heroCompact
+      titleIcon={
+        <HomeToolIcon id="passwordGenerator" className="size-8 text-text-secondary sm:size-9" />
+      }
       title={tc.pageTitle}
-      description={tc.pageDescription}
+      description={
+        <>
+          <p className="m-0">{tc.pageDescription}</p>
+          <p className="m-0 mt-1.5 text-xs text-text-muted leading-relaxed">{tc.introP1}</p>
+        </>
+      }
       ancillary={
         <p>
           <Link
@@ -48,7 +59,7 @@ export default async function GeneratorPasswordPage({ params }: Props) {
         </p>
       }
     >
-      <p className="max-w-prose text-text-secondary leading-relaxed">{tc.body}</p>
+      <PasswordGeneratorPanel copy={tc} />
     </ToolPageLayout>
   );
 }
