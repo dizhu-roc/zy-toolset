@@ -295,7 +295,7 @@ export function PasswordGeneratorPanel({ copy }: { copy: Copy }) {
               </div>
             </div>
 
-            <fieldset className="m-0 min-w-0 space-y-2.5 border-0 p-0">
+            <fieldset className="m-0 min-w-0 space-y-3.5 border-0 p-0">
               <legend className="sr-only">{copy.charsetLegend}</legend>
               <label className="flex cursor-pointer items-center gap-2.5 text-sm text-text">
                 <input
