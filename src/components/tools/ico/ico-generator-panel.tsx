@@ -13,6 +13,7 @@ import {
   toolCardSurfaceClass,
   toolChromeStandalonePrimaryButtonClass,
   toolSectionBarTitlePlainClass,
+  toolSectionHeadingIconClass,
   toolSectionTitleBarClass,
 } from "@/lib/ui/tool-surface";
 import { cn } from "@/lib/utils";
@@ -74,6 +75,15 @@ function IconTrayDownload({ className }: { className?: string }) {
         strokeLinejoin="round"
         d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
       />
+    </svg>
+  );
+}
+
+function IconPanelTitle({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
+      <rect x="4" y="5" width="16" height="14" rx="2.5" strokeWidth={1.8} />
+      <path d="M8 9h8M8 13h5" strokeWidth={1.8} strokeLinecap="round" />
     </svg>
   );
 }
@@ -1002,7 +1012,10 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
           )}
         >
           <div className={toolSectionTitleBarClass}>
-            <h3 className={cn(toolSectionBarTitlePlainClass, "m-0 w-full")}>{copy.previewBlockTitle}</h3>
+            <h3 className={cn(toolSectionBarTitlePlainClass, "m-0 flex w-full items-center gap-2")}>
+              <IconPanelTitle className={toolSectionHeadingIconClass} />
+              <span className="min-w-0 truncate">{copy.previewBlockTitle}</span>
+            </h3>
           </div>
           <div
             className={cn(

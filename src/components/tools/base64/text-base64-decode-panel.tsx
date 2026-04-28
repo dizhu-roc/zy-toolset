@@ -4,7 +4,6 @@ import { useCallback, useEffect, useId, useRef, useState } from "react";
 import type { Messages } from "@/i18n/dictionaries";
 import {
   base64ToBytes,
-  extensionForMime,
   sniffLikelyBinaryKind,
   tryParseDataUrl,
   tryUtf8Decode,
@@ -66,8 +65,7 @@ function buildDecodedDownloadFilename(mime: string): string {
   const d = new Date();
   const p = (n: number) => String(n).padStart(2, "0");
   const stamp = `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}`;
-  const ext = extensionForMime(mime);
-  return `decoded-${stamp}${ext}`;
+  return `base64decode-${stamp}.txt`;
 }
 
 function IconTrash({ className }: { className?: string }) {
@@ -133,6 +131,7 @@ export function TextBase64DecodePanel({ copy }: { copy: PageCopy }) {
   const [autoDecode, setAutoDecode] = useState(true);
   const [copyHint, setCopyHint] = useState<string | null>(null);
   const [uploadHint, setUploadHint] = useState<string | null>(null);
+  const outputTextareaRef = useRef<HTMLTextAreaElement>(null);
 
   const runDecode = useCallback(
     (source: "auto" | "manual") => {
@@ -221,6 +220,8 @@ export function TextBase64DecodePanel({ copy }: { copy: PageCopy }) {
 
   const copyOutput = async () => {
     if (!output) return;
+    outputTextareaRef.current?.focus();
+    outputTextareaRef.current?.select();
     try {
       await navigator.clipboard.writeText(output);
       setCopyHint(copy.copied);
@@ -306,9 +307,9 @@ export function TextBase64DecodePanel({ copy }: { copy: PageCopy }) {
               <LineNumberedField
                 value={input}
                 onChange={setInput}
-                mono
                 placeholder={copy.inputPlaceholder}
                 ariaLabel={copy.inputColumnTitle}
+                textClassName="text-sm leading-6"
               />
             </div>
           </div>
@@ -353,7 +354,7 @@ export function TextBase64DecodePanel({ copy }: { copy: PageCopy }) {
               </ToolTitleBarTextButton>
             </div>
           </div>
-          <div className="flex min-h-0 flex-1 flex-col bg-white dark:bg-zinc-900">
+          <div className="flex min-h-0 flex-1 flex-col bg-zinc-100 dark:bg-zinc-900">
             <div className="flex min-h-0 flex-1 flex-col">
               {outputFailureText ? (
                 <div
@@ -367,7 +368,16 @@ export function TextBase64DecodePanel({ copy }: { copy: PageCopy }) {
                   {outputFailureText}
                 </div>
               ) : (
-                <LineNumberedField value={output} readOnly showGutter={false} ariaLabel={copy.outputColumnTitle} />
+                <LineNumberedField
+                  value={output}
+                  readOnly
+                  showGutter={false}
+                  placeholder={copy.outputPlaceholder}
+                  ariaLabel={copy.outputColumnTitle}
+                  className="bg-zinc-100 dark:bg-zinc-900"
+                  textClassName="text-sm leading-6"
+                  textareaRef={outputTextareaRef}
+                />
               )}
             </div>
           </div>

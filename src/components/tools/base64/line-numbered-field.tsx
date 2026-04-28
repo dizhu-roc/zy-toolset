@@ -5,6 +5,7 @@ import {
   useEffect,
   useLayoutEffect,
   useMemo,
+  type RefObject,
   useRef,
   useState,
 } from "react";
@@ -85,6 +86,9 @@ export function LineNumberedField({
   placeholder,
   maxLength,
   ariaLabel,
+  className,
+  textClassName,
+  textareaRef,
 }: {
   value: string;
   onChange?: (next: string) => void;
@@ -94,6 +98,9 @@ export function LineNumberedField({
   placeholder?: string;
   maxLength?: number;
   ariaLabel: string;
+  className?: string;
+  textClassName?: string;
+  textareaRef?: RefObject<HTMLTextAreaElement | null>;
 }) {
   const taRef = useRef<HTMLTextAreaElement>(null);
   const gutterInnerRef = useRef<HTMLPreElement>(null);
@@ -141,19 +148,29 @@ export function LineNumberedField({
   }, [value, gutterNumbers, syncGutterToTextarea, showGutter]);
 
   const syncedFont = mono ? "font-mono" : "font-sans";
+  const editorTextClass = textClassName ?? EDITOR_LINE;
+
+  useEffect(() => {
+    if (!textareaRef) return;
+    textareaRef.current = taRef.current;
+    return () => {
+      textareaRef.current = null;
+    };
+  }, [textareaRef]);
 
   return (
     <div
       className={cn(
         "flex min-h-0 flex-1 overflow-hidden bg-white dark:bg-zinc-950",
         showGutter ? "flex-row" : "flex-col",
+        className,
       )}
     >
       {showGutter ? (
         <div
           className={cn(
             "relative m-0 min-h-0 w-[2.625rem] shrink-0 overflow-hidden border-r border-zinc-200/90 bg-zinc-100 py-2 pr-1.5 pl-0 dark:border-zinc-600 dark:bg-zinc-800/90",
-            EDITOR_LINE,
+            editorTextClass,
           )}
           aria-hidden
         >
@@ -161,7 +178,7 @@ export function LineNumberedField({
             ref={gutterInnerRef}
             className={cn(
               "m-0 block w-full select-none text-right tabular-nums text-zinc-400 will-change-transform dark:text-zinc-500",
-              EDITOR_LINE,
+              editorTextClass,
               syncedFont,
             )}
           >
@@ -183,7 +200,7 @@ export function LineNumberedField({
         className={cn(
           "min-h-0 min-w-0 w-full flex-1 resize-none overflow-x-hidden overflow-y-auto border-0 bg-transparent py-2 pr-4 pl-3 text-text outline-none focus-visible:ring-0",
           "whitespace-pre-wrap break-all [overflow-wrap:anywhere]",
-          EDITOR_LINE,
+          editorTextClass,
           syncedFont,
         )}
       />

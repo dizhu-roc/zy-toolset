@@ -31,11 +31,11 @@ import {
 /** 桌面专用：左右卡片固定总高，正文在 textarea 内滚动 */
 const EDITOR_PANEL_HEIGHT_CLASS = "h-[34rem]";
 
-/** `base64-output-YYYYMMDDHHmmss.txt`（本地时间） */
+/** `base64encode-YYYYMMDDHHmmss.txt`（本地时间） */
 function buildBase64DownloadFilename(): string {
   const d = new Date();
   const p = (n: number) => String(n).padStart(2, "0");
-  return `base64-output-${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}.txt`;
+  return `base64encode-${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}.txt`;
 }
 
 type Copy = Messages["tools"]["base64TextEncode"];
@@ -101,8 +101,9 @@ function IconArrowDownTray({ className }: { className?: string }) {
 
 function IconEncode({ className }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="M13 10V3L4 14h7v7l9-11h-7z" />
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
+      <path d="M4 12h14" strokeWidth={2} strokeLinecap="round" />
+      <path d="m13 7 5 5-5 5" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -307,6 +308,7 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
   const [copyHint, setCopyHint] = useState<string | null>(null);
   const [uploadHint, setUploadHint] = useState<string | null>(null);
   const inputRef = useRef(input);
+  const outputTextareaRef = useRef<HTMLTextAreaElement>(null);
   inputRef.current = input;
 
   useEffect(() => {
@@ -336,6 +338,8 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
 
   const copyOutput = async () => {
     if (!output) return;
+    outputTextareaRef.current?.focus();
+    outputTextareaRef.current?.select();
     try {
       await navigator.clipboard.writeText(output);
       setCopyHint(copy.copied);
@@ -422,6 +426,7 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
               onChange={setInput}
               placeholder={copy.inputPlaceholder}
               ariaLabel={copy.inputColumnTitle}
+              textClassName="text-sm leading-6"
             />
           </div>
         </div>
@@ -477,7 +482,11 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
               value={output}
               readOnly
               showGutter={false}
+              placeholder={copy.outputPlaceholder}
               ariaLabel={copy.outputColumnTitle}
+              className="bg-zinc-100 dark:bg-zinc-900"
+              textClassName="text-sm leading-6"
+              textareaRef={outputTextareaRef}
             />
           </div>
         </div>

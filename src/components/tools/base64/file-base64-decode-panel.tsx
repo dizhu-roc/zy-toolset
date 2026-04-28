@@ -29,7 +29,7 @@ import { TextFileUploadButton } from "@/components/tools/base64/text-file-upload
 
 type Copy = Messages["tools"]["base64FileDecode"];
 
-const PANEL_FIXED_H = "h-[36rem] sm:h-[38rem]";
+const PANEL_FIXED_H = "h-[31rem] sm:h-[33rem]";
 
 function isStructuredBinaryMime(m: string): boolean {
   const x = mainMime(m);
@@ -83,6 +83,26 @@ function IconArrowDownTray({ className }: { className?: string }) {
         strokeLinejoin="round"
         d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
       />
+    </svg>
+  );
+}
+
+function IconInfo({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
+      <circle cx="12" cy="12" r="9" strokeWidth={1.8} />
+      <path d="M12 10.25v6" strokeWidth={1.8} strokeLinecap="round" />
+      <circle cx="12" cy="7.2" r="1.1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+function IconPreview({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
+      <rect x="3.5" y="5" width="17" height="14" rx="2.5" strokeWidth={1.8} />
+      <circle cx="9" cy="10" r="1.4" fill="currentColor" stroke="none" />
+      <path d="m7 16 3.2-3.2 2.4 2.4 2.8-2.8L17 14" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -304,8 +324,11 @@ export function FileBase64DecodePanel({
             ) : null}
 
             <div className="shrink-0 overflow-hidden rounded-md border border-zinc-200/90 dark:border-zinc-700/80">
-              <div className={cn(toolSectionTitleBarClass, "justify-between py-2")}>
-                <span className={cn(toolSectionBarTitlePlainClass, "min-w-0")}>{copy.fileInfoBlockTitle}</span>
+              <div className={cn(toolSectionTitleBarClass, "justify-between")}>
+                <span className={cn(toolSectionBarTitlePlainClass, "flex min-w-0 items-center gap-2")}>
+                  <IconInfo className={toolSectionHeadingIconClass} />
+                  <span className="min-w-0 truncate">{copy.fileInfoBlockTitle}</span>
+                </span>
                 <button
                   type="button"
                   onClick={downloadFile}
@@ -354,8 +377,11 @@ export function FileBase64DecodePanel({
               role="region"
               aria-label={copy.previewSectionTitle}
             >
-              <div className="shrink-0 border-b border-sky-200/60 px-3 py-2 dark:border-sky-900/40">
-                <p className="m-0 text-xs font-semibold text-sky-950 dark:text-sky-100">{copy.previewSectionTitle}</p>
+              <div className={cn(toolSectionTitleBarClass, "border-sky-200/60 dark:border-sky-900/40")}>
+                <p className={cn(toolSectionBarTitlePlainClass, "flex min-w-0 items-center gap-2 text-sky-950 dark:text-sky-100")}>
+                  <IconPreview className={toolSectionHeadingIconClass} />
+                  <span className="min-w-0 truncate">{copy.previewSectionTitle}</span>
+                </p>
               </div>
               <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-0">
                 {!preview ? (

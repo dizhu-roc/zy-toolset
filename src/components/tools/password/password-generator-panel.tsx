@@ -24,6 +24,7 @@ import {
   toolColumnCardClass,
   toolRangeInputClass,
   toolSectionBarTitlePlainClass,
+  toolSectionHeadingIconClass,
   toolSectionTitleActionsClass,
   toolSectionTitleBarClass,
 } from "@/lib/ui/tool-surface";
@@ -98,6 +99,15 @@ function IconArrowUturnLeft({ className }: { className?: string }) {
         strokeLinejoin="round"
         d="M4 9h10.5a5.5 5.5 0 0 1 0 11H13"
       />
+    </svg>
+  );
+}
+
+function IconPanelTitle({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
+      <rect x="4" y="5" width="16" height="14" rx="2.5" strokeWidth={1.8} />
+      <path d="M8 9h8M8 13h5" strokeWidth={1.8} strokeLinecap="round" />
     </svg>
   );
 }
@@ -290,8 +300,9 @@ export function PasswordGeneratorPanel({ copy }: { copy: Copy }) {
       >
         <section className={cn(panelShellClass, "flex flex-col lg:h-full")} aria-labelledby={optionsRegionId}>
           <div className={cn(toolSectionTitleBarClass, "items-center")}>
-            <h2 id={optionsRegionId} className={cn(toolSectionBarTitlePlainClass, "flex-1")}>
-              {copy.optionsTitle}
+            <h2 id={optionsRegionId} className={cn(toolSectionBarTitlePlainClass, "flex flex-1 items-center gap-2")}>
+              <IconPanelTitle className={toolSectionHeadingIconClass} />
+              <span className="min-w-0 truncate">{copy.optionsTitle}</span>
             </h2>
             <div className={cn(toolSectionTitleActionsClass, "gap-1.5")}>
               <ToolTitleBarTextButton variant="primary" icon={<IconRefresh className="opacity-95" />} onClick={regenerate}>
@@ -452,10 +463,11 @@ export function PasswordGeneratorPanel({ copy }: { copy: Copy }) {
           <div className={cn(toolSectionTitleBarClass, "items-center")}>
             <h2
               id={resultRegionId}
-              className={cn(toolSectionBarTitlePlainClass, "min-w-0 flex-1 truncate pr-2")}
+              className={cn(toolSectionBarTitlePlainClass, "flex min-w-0 flex-1 items-center gap-2 truncate pr-2")}
               title={copy.resultTitle}
             >
-              {copy.resultTitle}
+              <IconPanelTitle className={toolSectionHeadingIconClass} />
+              <span className="min-w-0 truncate">{copy.resultTitle}</span>
             </h2>
             <div className={cn(toolSectionTitleActionsClass, "gap-1.5")}>
               <div

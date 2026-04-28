@@ -45,7 +45,7 @@ export default async function GeneratorPasswordPage({ params }: Props) {
       description={
         <>
           <p className="m-0">{tc.pageDescription}</p>
-          <p className="m-0 mt-1.5 text-xs text-text-muted leading-relaxed">{tc.introP1}</p>
+          <p className="m-0 text-xs text-text-muted leading-relaxed">{tc.introP1}</p>
         </>
       }
       ancillary={
