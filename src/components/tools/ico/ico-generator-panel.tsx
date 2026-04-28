@@ -286,6 +286,8 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
   const [containerSize, setContainerSize] = useState({ w: 0, h: 0 });
   const imgRef = useRef<HTMLImageElement>(null);
   const cropDragRef = useRef<CropPointerDrag | null>(null);
+  const uploadDragDepthRef = useRef(0);
+  const [uploadDragOver, setUploadDragOver] = useState(false);
 
   const selectedList = useMemo(
     () => ICO_OUTPUT_SIZES.filter((s) => sizes[s]),
@@ -567,28 +569,14 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
     setSizes((prev) => ({ ...prev, [s]: !prev[s] }));
   };
 
-  const onUploadZoneDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
-
-  const onUploadZoneDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const f = e.dataTransfer.files?.[0];
-    if (f) {
-      onFile(f);
-    }
-  };
-
   const pillBase =
-    "rounded-md px-3 py-1 text-xs font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F9690E]/22";
+    "rounded-md px-3 py-1 text-xs font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1576BB]/25";
   const pillInactive = cn(
     "bg-zinc-100 text-text-secondary hover:bg-zinc-200/90",
     "dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700/90",
   );
   const pillActive = cn(
-    "bg-[#F9690E]/11 text-[#b45309]/88 dark:bg-[#F9690E]/14 dark:text-orange-100/90",
+    "bg-[#1576BB]/12 text-[#125d99] dark:bg-[#1576BB]/20 dark:text-sky-200",
   );
 
   const downloadPackage = useCallback(async () => {
@@ -684,24 +672,58 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
         />
         <label
           htmlFor={uploadId}
-          onDragOver={onUploadZoneDragOver}
-          onDrop={onUploadZoneDrop}
+          onDragEnter={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadDragDepthRef.current += 1;
+            setUploadDragOver(true);
+          }}
+          onDragLeave={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadDragDepthRef.current -= 1;
+            if (uploadDragDepthRef.current <= 0) {
+              uploadDragDepthRef.current = 0;
+              setUploadDragOver(false);
+            }
+          }}
+          onDragOver={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            e.dataTransfer.dropEffect = "copy";
+          }}
+          onDrop={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadDragDepthRef.current = 0;
+            setUploadDragOver(false);
+            const f = e.dataTransfer.files?.[0];
+            if (f) {
+              onFile(f);
+            }
+          }}
           className={cn(
-            "flex min-h-[13rem] shrink-0 cursor-pointer flex-col items-center justify-center gap-3 rounded-xl px-4 py-10 text-center",
-            "bg-gradient-to-br from-[#F9690E]/14 via-[#ffb380]/10 to-amber-50/70",
-            "hover:from-[#F9690E]/20 hover:via-[#ffc090]/14 hover:to-amber-50/80",
-            "dark:from-[#F9690E]/12 dark:via-orange-950/25 dark:to-zinc-900",
-            "dark:hover:from-[#F9690E]/18 dark:hover:via-orange-950/32 dark:hover:to-zinc-900",
-            "shadow-inner shadow-white/40 transition-[background,box-shadow] duration-200 dark:shadow-inner dark:shadow-black/25",
-            "focus-within:ring-2 focus-within:ring-[#F9690E]/30 focus-within:ring-offset-2 focus-within:ring-offset-orange-50/90 dark:focus-within:ring-offset-zinc-900",
+            "flex min-h-[13rem] shrink-0 cursor-pointer flex-col items-center justify-center gap-3 rounded-lg px-4 py-10 text-center transition-colors",
+            "overflow-hidden border border-zinc-200/90 dark:border-zinc-600/50",
+            "outline-none focus-within:ring-2 focus-within:ring-[#1576BB]/30",
+            uploadDragOver
+              ? "bg-sky-100 dark:bg-sky-900/55"
+              : "bg-sky-50 dark:bg-sky-950/45",
           )}
         >
-          <IconImageUpload className="size-11 shrink-0 text-[#F9690E]/75 dark:text-orange-400/85" />
+          <IconImageUpload
+            className={cn(
+              "size-11 shrink-0",
+              file
+                ? "text-[#125d99] dark:text-[#3d93c9]"
+                : "text-zinc-500 dark:text-zinc-400",
+            )}
+          />
           <span
             className={cn(
               "inline-flex items-center justify-center rounded-md px-4 py-1.5 text-xs font-semibold",
-              "bg-white/92 text-[#b45309] shadow-md shadow-orange-900/8",
-              "ring-1 ring-orange-200/50 dark:bg-zinc-900/75 dark:text-orange-200/95 dark:ring-orange-800/40",
+              "bg-white text-[#125d99] shadow-sm shadow-zinc-900/5",
+              "ring-1 ring-zinc-200/90 dark:bg-zinc-900/90 dark:text-[#3d93c9] dark:ring-zinc-600/60",
             )}
           >
             {copy.uploadChooseButton}
@@ -746,16 +768,16 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
                   >
                     <div
                       className={cn(
-                        "pointer-events-none absolute inset-0 z-0 rounded-sm border-2 border-[#F9690E]",
+                        "pointer-events-none absolute inset-0 z-0 rounded-sm border-2 border-[#1576BB]",
                         "shadow-md ring-2 ring-white/90 ring-offset-0",
-                        "dark:border-orange-400 dark:ring-zinc-700",
+                        "dark:border-sky-400 dark:ring-zinc-700",
                       )}
                       aria-hidden
                     />
                     <div
                       className={cn(
                         "pointer-events-none absolute inset-0 z-[5] rounded-sm",
-                        "bg-orange-500/10 dark:bg-orange-400/15",
+                        "bg-[#1576BB]/10 dark:bg-sky-400/12",
                       )}
                       aria-hidden
                     />
@@ -764,7 +786,7 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
                       aria-label={copy.cropDragLabel}
                       className={cn(
                         "absolute z-[15] cursor-move rounded-sm border-0 bg-transparent p-0",
-                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ea580c] focus-visible:ring-offset-1",
+                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1576BB] focus-visible:ring-offset-1",
                       )}
                       style={{
                         top: CROP_EDGE_HIT_PX,
@@ -902,7 +924,7 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
               "dark:border-zinc-600/70 dark:bg-zinc-800/50",
             )}
           >
-            <p className="m-0 mb-2 text-xs font-medium text-orange-950/55 dark:text-orange-200/65">
+            <p className="m-0 mb-2 text-xs font-medium text-text-secondary">
               {copy.sizesTitle}
             </p>
             <div className="flex flex-wrap gap-1.5">
@@ -925,7 +947,7 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
               "dark:border-zinc-600/70 dark:bg-zinc-800/50",
             )}
           >
-            <p className="m-0 mb-2 text-xs font-medium text-orange-950/55 dark:text-orange-200/65">
+            <p className="m-0 mb-2 text-xs font-medium text-text-secondary">
               {copy.radiusTitle}
             </p>
             <div className="flex flex-wrap gap-1.5">
@@ -961,22 +983,22 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
       <aside className="flex h-full min-h-0 min-w-0 flex-col gap-4 lg:min-h-0">
         <section
           className={cn(
-            "flex min-h-[12rem] flex-1 flex-col overflow-hidden rounded-lg border border-zinc-200/90 bg-zinc-100/90 shadow-sm",
-            "dark:border-zinc-700/90 dark:bg-zinc-800/80",
+            "flex min-h-[12rem] flex-1 flex-col overflow-hidden rounded-lg border border-zinc-200/90 bg-white shadow-sm",
+            "dark:border-zinc-700/90 dark:bg-zinc-900",
           )}
         >
           <h3
             className={cn(
               "m-0 flex min-h-[3.25rem] shrink-0 items-center border-b border-zinc-200/90 px-3 py-3.5 text-xs font-semibold tracking-wide text-text-secondary",
-              "bg-zinc-100/90 dark:border-zinc-700/80 dark:bg-zinc-800/80 dark:text-zinc-200/95",
+              "bg-zinc-100 dark:border-zinc-600 dark:bg-zinc-800/95 dark:text-zinc-200/95",
             )}
           >
             {copy.previewBlockTitle}
           </h3>
           <div
             className={cn(
-              "flex min-h-0 w-full flex-1 flex-col bg-zinc-100/90 px-6 py-4 sm:px-8",
-              "dark:bg-zinc-800/80",
+              "flex min-h-0 w-full flex-1 flex-col bg-[#f0f7fc] px-6 py-4 sm:px-8",
+              "dark:bg-sky-950/35",
             )}
           >
             {!imgSrc ? (
@@ -991,7 +1013,7 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
                   className={cn(
                     "flex aspect-square w-full max-h-full min-h-0 max-w-full min-w-0 items-center justify-center overflow-hidden rounded-md bg-transparent",
                     resultPreview
-                      ? "ring-1 ring-orange-200/80 dark:ring-orange-800/60"
+                      ? "ring-1 ring-sky-200/90 dark:ring-sky-800/50"
                       : "border border-dashed border-zinc-300/90 dark:border-zinc-600",
                   )}
                 >
@@ -1082,9 +1104,9 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
             onClick={() => void downloadPackage()}
             className={cn(
               "flex min-h-11 w-full items-center justify-center px-4 py-3 text-sm font-semibold text-white transition-colors",
-              "bg-[#F9690E] hover:bg-[#ea580c] active:bg-[#c2410c]",
-              "shadow-none disabled:cursor-not-allowed disabled:opacity-50",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#F9690E]/55",
+              "bg-[#1576BB] hover:bg-[#125d99] active:bg-[#0f4a6a]",
+              "shadow-none disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[#1576BB]",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white/25",
             )}
           >
             {busy ? copy.busy : copy.downloadPackage}
