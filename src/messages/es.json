@@ -91,7 +91,7 @@
       "outputPlaceholder": "Introduce el texto original y aquí aparecerá el resultado codificado.",
       "autoEncode": "Codificar automáticamente",
       "generate": "Codificar",
-      "clearAll": "Borrar todo",
+      "clearAll": "Borrar",
       "outputFormatLabel": "Formato de salida",
       "formatPlain": "Raw",
       "formatBase64Url": "Safe URL",

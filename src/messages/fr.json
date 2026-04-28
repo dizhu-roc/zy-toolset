@@ -91,7 +91,7 @@
       "outputPlaceholder": "Saisissez le texte source, et le résultat encodé s’affichera ici.",
       "autoEncode": "Encodage automatique",
       "generate": "Encoder",
-      "clearAll": "Tout effacer",
+      "clearAll": "Effacer",
       "outputFormatLabel": "Format de sortie",
       "formatPlain": "Raw",
       "formatBase64Url": "Safe URL",

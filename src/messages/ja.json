@@ -91,7 +91,7 @@
       "outputPlaceholder": "元のテキストを入力すると、エンコード結果がここに表示されます。",
       "autoEncode": "自動エンコード",
       "generate": "エンコード",
-      "clearAll": "すべてクリア",
+      "clearAll": "クリア",
       "outputFormatLabel": "出力形式",
       "formatPlain": "Raw",
       "formatBase64Url": "Safe URL",
