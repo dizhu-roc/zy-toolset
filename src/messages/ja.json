@@ -294,6 +294,7 @@
       "radiusTitle": "角丸率",
       "radiusPercentSuffix": "%",
       "previewBlockTitle": "結果プレビュー",
+      "resultPreviewEmpty": "まだ画像がありません。アップロードするとここに結果が表示されます。",
       "fileInfoBlockTitle": "ファイル情報",
       "downloadPackage": "zip をダウンロード",
       "summaryFile": "ファイル",

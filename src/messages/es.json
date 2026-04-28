@@ -294,6 +294,7 @@
       "radiusTitle": "Esquinas redondeadas",
       "radiusPercentSuffix": "%",
       "previewBlockTitle": "Vista previa del resultado",
+      "resultPreviewEmpty": "Aún no hay imagen. Sube una para ver el resultado aquí.",
       "fileInfoBlockTitle": "Información del archivo",
       "downloadPackage": "Descargar zip",
       "summaryFile": "Archivo",

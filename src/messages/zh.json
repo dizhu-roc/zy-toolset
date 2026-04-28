@@ -294,6 +294,7 @@
       "radiusTitle": "圆角率",
       "radiusPercentSuffix": "%",
       "previewBlockTitle": "结果预览",
+      "resultPreviewEmpty": "当前还没有图片，上传图片后即可显示结果。",
       "fileInfoBlockTitle": "文件信息",
       "downloadPackage": "下载 zip",
       "summaryFile": "文件名",

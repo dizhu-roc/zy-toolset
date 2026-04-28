@@ -294,6 +294,7 @@
       "radiusTitle": "Corner radius",
       "radiusPercentSuffix": "%",
       "previewBlockTitle": "Result preview",
+      "resultPreviewEmpty": "No image yet. Upload an image to see the result here.",
       "fileInfoBlockTitle": "File details",
       "downloadPackage": "Download zip",
       "summaryFile": "File",

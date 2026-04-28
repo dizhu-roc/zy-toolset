@@ -961,61 +961,57 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
       <aside className="flex h-full min-h-0 min-w-0 flex-col gap-4 lg:min-h-0">
         <section
           className={cn(
-            "flex min-h-[12rem] flex-1 flex-col overflow-hidden rounded-lg border border-zinc-200/90 bg-white shadow-sm",
-            "dark:border-zinc-700/90 dark:bg-zinc-900",
+            "flex min-h-[12rem] flex-1 flex-col overflow-hidden rounded-lg border border-zinc-200/90 bg-zinc-100/90 shadow-sm",
+            "dark:border-zinc-700/90 dark:bg-zinc-800/80",
           )}
         >
           <h3
             className={cn(
-              "m-0 flex shrink-0 items-center border-b border-zinc-200/90 px-3 py-2.5 text-xs font-semibold tracking-wide text-text-secondary",
-              "bg-zinc-50/95 dark:border-zinc-700/80 dark:bg-zinc-800/95 dark:text-zinc-200/95",
+              "m-0 flex min-h-[3.25rem] shrink-0 items-center border-b border-zinc-200/90 px-3 py-3.5 text-xs font-semibold tracking-wide text-text-secondary",
+              "bg-zinc-100/90 dark:border-zinc-700/80 dark:bg-zinc-800/80 dark:text-zinc-200/95",
             )}
           >
             {copy.previewBlockTitle}
           </h3>
           <div
             className={cn(
-              "flex min-h-0 w-full flex-1 flex-col items-center justify-center gap-2.5 px-8 py-4 sm:px-10",
+              "flex min-h-0 w-full flex-1 flex-col bg-zinc-100/90 px-6 py-4 sm:px-8",
+              "dark:bg-zinc-800/80",
             )}
           >
-            <div className="flex w-full min-w-0 max-w-sm flex-1 flex-col items-center justify-center gap-1.5">
-              <div
-                className={cn(
-                  "flex aspect-square w-full max-h-full min-h-0 max-w-full min-w-0 items-center justify-center overflow-hidden rounded-md",
-                  resultPreview
-                    ? "ring-1 ring-orange-200/80 dark:ring-orange-800/60"
-                    : "border border-dashed border-zinc-300/90 bg-zinc-100/90 dark:border-zinc-600 dark:bg-zinc-800/80",
-                )}
-              >
-                {resultPreview ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={resultPreview.url}
-                    alt=""
-                    draggable={false}
-                    className="h-full w-full object-contain"
-                  />
-                ) : (
-                  <IcoPreviewSlotPlaceholder
-                    className="h-[50%] w-[50%] sm:h-[40%] sm:w-[40%]"
-                    pulsing={resultPreviewPending}
-                  />
-                )}
+            {!imgSrc ? (
+              <div className="flex flex-1 flex-col items-center justify-center px-2">
+                <p className="m-0 max-w-sm text-center text-xs leading-relaxed text-text-muted">
+                  {copy.resultPreviewEmpty}
+                </p>
               </div>
-              {resultPreview ? (
-                <span className="w-full shrink-0 text-center text-xs font-medium tabular-nums leading-none text-text-muted">
-                  {sizeLabel(copy, 512)}
-                </span>
-              ) : resultPreviewPending ? (
-                <span className="w-full shrink-0 text-center text-xs font-medium tabular-nums leading-none text-text-muted/70">
-                  {sizeLabel(copy, 512)}
-                </span>
-              ) : (
-                <span className="w-full shrink-0 text-center text-[10px] font-medium text-text-muted">
-                  {copy.summaryEmpty}
-                </span>
-              )}
-            </div>
+            ) : (
+              <div className="flex min-h-0 w-full max-w-sm flex-1 flex-col items-center justify-center self-center">
+                <div
+                  className={cn(
+                    "flex aspect-square w-full max-h-full min-h-0 max-w-full min-w-0 items-center justify-center overflow-hidden rounded-md bg-transparent",
+                    resultPreview
+                      ? "ring-1 ring-orange-200/80 dark:ring-orange-800/60"
+                      : "border border-dashed border-zinc-300/90 dark:border-zinc-600",
+                  )}
+                >
+                  {resultPreview ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={resultPreview.url}
+                      alt=""
+                      draggable={false}
+                      className="h-full w-full object-contain"
+                    />
+                  ) : (
+                    <IcoPreviewSlotPlaceholder
+                      className="h-[50%] w-[50%] sm:h-[40%] sm:w-[40%]"
+                      pulsing={resultPreviewPending}
+                    />
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </section>
 

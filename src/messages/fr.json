@@ -294,6 +294,7 @@
       "radiusTitle": "Coins arrondis",
       "radiusPercentSuffix": " %",
       "previewBlockTitle": "Aperçu du résultat",
+      "resultPreviewEmpty": "Aucune image pour l’instant. Importez une image pour voir l’aperçu ici.",
       "fileInfoBlockTitle": "Détails du fichier",
       "downloadPackage": "Télécharger zip",
       "summaryFile": "Fichier",
