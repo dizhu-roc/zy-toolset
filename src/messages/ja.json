@@ -295,7 +295,7 @@
       "radiusPercentSuffix": "%",
       "previewBlockTitle": "結果プレビュー",
       "fileInfoBlockTitle": "ファイル情報",
-      "downloadPackage": "ZIP をダウンロード（PNG 各サイズ + favicon.ico）",
+      "downloadPackage": "zip をダウンロード",
       "summaryFile": "ファイル",
       "summarySizes": "サイズ",
       "summaryRadius": "角丸率",

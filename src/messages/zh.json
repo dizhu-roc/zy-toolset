@@ -295,7 +295,7 @@
       "radiusPercentSuffix": "%",
       "previewBlockTitle": "结果预览",
       "fileInfoBlockTitle": "文件信息",
-      "downloadPackage": "下载 ZIP（含各尺寸 PNG 与 favicon.ico）",
+      "downloadPackage": "下载 zip",
       "summaryFile": "文件名",
       "summarySizes": "已选尺寸",
       "summaryRadius": "圆角率",

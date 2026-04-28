@@ -277,10 +277,8 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
     512: false,
   });
   const [cornerPercent, setCornerPercent] = useState<number>(0);
-  const [preview, setPreview] = useState<{
-    url: string;
-    size: IcoOutputSize;
-  } | null>(null);
+  /** 右侧结果预览固定为 512×512 渲染，与 ZIP 内勾选尺寸无关 */
+  const [resultPreview, setResultPreview] = useState<{ url: string } | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -294,18 +292,8 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
     [sizes],
   );
 
-  const previewTargetSize = useMemo((): IcoOutputSize | null => {
-    if (selectedList.length === 0) {
-      return null;
-    }
-    return Math.max(...selectedList) as IcoOutputSize;
-  }, [selectedList]);
-
-  const sizesRef = useRef(sizes);
-  sizesRef.current = sizes;
-
-  const revokePreview = useCallback(() => {
-    setPreview((p) => {
+  const revokeResultPreview = useCallback(() => {
+    setResultPreview((p) => {
       if (p) {
         URL.revokeObjectURL(p.url);
       }
@@ -318,9 +306,9 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
       if (imgSrc) {
         URL.revokeObjectURL(imgSrc);
       }
-      revokePreview();
+      revokeResultPreview();
     };
-  }, [imgSrc, revokePreview]);
+  }, [imgSrc, revokeResultPreview]);
 
   useLayoutEffect(() => {
     const el = containerRef.current;
@@ -362,7 +350,7 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
   const onFile = useCallback(
     (f: File | null) => {
       setError(null);
-      revokePreview();
+      revokeResultPreview();
       if (imgSrc) {
         URL.revokeObjectURL(imgSrc);
       }
@@ -385,7 +373,7 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
       setFile(f);
       setImgSrc(url);
     },
-    [copy.errorBadType, copy.errorTooLarge, imgSrc, revokePreview],
+    [copy.errorBadType, copy.errorTooLarge, imgSrc, revokeResultPreview],
   );
 
   const onImgLoad = useCallback(() => {
@@ -411,31 +399,16 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
     if (!img.complete || img.naturalWidth === 0) {
       return;
     }
-    if (previewTargetSize == null) {
-      const clearId = window.setTimeout(() => {
-        revokePreview();
-      }, 0);
-      return () => window.clearTimeout(clearId);
-    }
 
     let cancelled = false;
     const c = clampCrop(crop, natural.w, natural.h);
-    const size = previewTargetSize;
 
     const run = () => {
       void (async () => {
         let newObjectUrl: string | null = null;
         try {
-          const blob = await renderIconPng(img, c, size, cornerPercent);
+          const blob = await renderIconPng(img, c, 512, cornerPercent);
           if (cancelled) {
-            return;
-          }
-          const still = ICO_OUTPUT_SIZES.filter((s) => sizesRef.current[s]);
-          if (still.length === 0) {
-            return;
-          }
-          const currentMax = Math.max(...still) as IcoOutputSize;
-          if (currentMax !== size) {
             return;
           }
           newObjectUrl = URL.createObjectURL(blob);
@@ -451,11 +424,11 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
           }
           return;
         }
-        setPreview((prev) => {
+        setResultPreview((prev) => {
           if (prev) {
             URL.revokeObjectURL(prev.url);
           }
-          return { url: newObjectUrl!, size };
+          return { url: newObjectUrl! };
         });
       })();
     };
@@ -465,15 +438,7 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
       cancelled = true;
       window.clearTimeout(t);
     };
-  }, [
-    imgSrc,
-    natural,
-    crop,
-    cornerPercent,
-    previewTargetSize,
-    copy.errorRender,
-    revokePreview,
-  ]);
+  }, [imgSrc, natural, crop, cornerPercent, copy.errorRender]);
 
   const detachCropWindowListeners = useRef<(() => void) | null>(null);
 
@@ -704,7 +669,7 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
   }, [layout]);
 
   const resultPreviewPending =
-    Boolean(imgSrc && natural && previewTargetSize) && !preview;
+    Boolean(imgSrc && natural && crop) && !resultPreview;
 
   return (
     <div className="grid min-h-0 min-w-0 items-stretch gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:gap-6">
@@ -1017,15 +982,15 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
               <div
                 className={cn(
                   "flex aspect-square w-full max-h-full min-h-0 max-w-full min-w-0 items-center justify-center overflow-hidden rounded-md",
-                  preview
+                  resultPreview
                     ? "ring-1 ring-orange-200/80 dark:ring-orange-800/60"
                     : "border border-dashed border-zinc-300/90 bg-zinc-100/90 dark:border-zinc-600 dark:bg-zinc-800/80",
                 )}
               >
-                {preview ? (
+                {resultPreview ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
-                    src={preview.url}
+                    src={resultPreview.url}
                     alt=""
                     draggable={false}
                     className="h-full w-full object-contain"
@@ -1037,13 +1002,13 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
                   />
                 )}
               </div>
-              {preview ? (
+              {resultPreview ? (
                 <span className="w-full shrink-0 text-center text-xs font-medium tabular-nums leading-none text-text-muted">
-                  {sizeLabel(copy, preview.size)}
+                  {sizeLabel(copy, 512)}
                 </span>
-              ) : resultPreviewPending && previewTargetSize != null ? (
+              ) : resultPreviewPending ? (
                 <span className="w-full shrink-0 text-center text-xs font-medium tabular-nums leading-none text-text-muted/70">
-                  {sizeLabel(copy, previewTargetSize)}
+                  {sizeLabel(copy, 512)}
                 </span>
               ) : (
                 <span className="w-full shrink-0 text-center text-[10px] font-medium text-text-muted">
