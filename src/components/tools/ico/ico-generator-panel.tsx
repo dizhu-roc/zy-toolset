@@ -9,7 +9,12 @@ import {
   blobToUint8Array,
   renderIconPng,
 } from "@/lib/ico-render";
-import { toolCardSurfaceClass } from "@/lib/ui/tool-surface";
+import {
+  toolCardSurfaceClass,
+  toolChromeStandalonePrimaryButtonClass,
+  toolSectionBarTitlePlainClass,
+  toolSectionTitleBarClass,
+} from "@/lib/ui/tool-surface";
 import { cn } from "@/lib/utils";
 import {
   useCallback,
@@ -56,6 +61,19 @@ function IcoPreviewSlotPlaceholder({
       <rect x="3.5" y="5.5" width="17" height="13" rx="1.75" />
       <path d="M4 16.5 8.5 12l3.2 3.2L15 12l5 4.5" />
       <circle cx="8" cy="9.5" r="1.15" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+function IconTrayDownload({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
+      <path
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+      />
     </svg>
   );
 }
@@ -983,14 +1001,9 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
             "dark:border-zinc-700/90 dark:bg-zinc-900",
           )}
         >
-          <h3
-            className={cn(
-              "m-0 flex min-h-[3.25rem] shrink-0 items-center border-b border-zinc-200/90 px-3 py-3.5 text-xs font-semibold tracking-wide text-text-secondary",
-              "bg-zinc-100 dark:border-zinc-600 dark:bg-zinc-800/95 dark:text-zinc-200/95",
-            )}
-          >
-            {copy.previewBlockTitle}
-          </h3>
+          <div className={toolSectionTitleBarClass}>
+            <h3 className={cn(toolSectionBarTitlePlainClass, "m-0 w-full")}>{copy.previewBlockTitle}</h3>
+          </div>
           <div
             className={cn(
               "flex min-h-0 w-full flex-1 flex-col bg-[#f0f7fc] px-6 py-4 sm:px-8",
@@ -1039,7 +1052,7 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
             "dark:border-zinc-700/90 dark:bg-zinc-900",
           )}
         >
-          <h3 className="m-0 text-sm font-medium text-text">{copy.fileInfoBlockTitle}</h3>
+          <h3 className={cn(toolSectionBarTitlePlainClass, "m-0 block")}>{copy.fileInfoBlockTitle}</h3>
           <div className="mt-3 flex flex-col gap-3 text-sm">
             <div className="flex min-w-0 flex-row flex-wrap items-baseline gap-x-2 gap-y-1">
               <span className="shrink-0 text-xs font-medium text-text-muted">
@@ -1099,12 +1112,12 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
             disabled={busy || !file || selectedList.length === 0}
             onClick={() => void downloadPackage()}
             className={cn(
-              "flex min-h-11 w-full items-center justify-center px-4 py-3 text-sm font-semibold text-white transition-colors",
-              "bg-[#1576BB] hover:bg-[#125d99] active:bg-[#0f4a6a]",
-              "shadow-none disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[#1576BB]",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white/25",
+              toolChromeStandalonePrimaryButtonClass,
+              "w-full rounded-none font-semibold shadow-none",
+              "focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white/25 focus-visible:ring-offset-0",
             )}
           >
+            <IconTrayDownload className="size-4 shrink-0" />
             {busy ? copy.busy : copy.downloadPackage}
           </button>
         </section>

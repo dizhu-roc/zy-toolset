@@ -106,10 +106,10 @@
     },
     "base64FileEncode": {
       "metaTitle": "Archivo a Base64",
-      "metaDescription": "Codifica cualquier archivo local en Base64 o Data URL en el navegador. No se sube nada.",
+      "metaDescription": "Codifica archivos locales a Base64 o Data URL en el navegador, sin subidas.",
       "pageTitle": "Archivo a Base64",
-      "pageDescription": "Convierte un archivo de tu equipo en Base64 o en un data:…;base64,…. El procesado ocurre en esta pestaña.",
-      "pageDescriptionHintBefore": "Si quieres codificar texto escrito o pegado (UTF-8), usa ",
+      "pageDescription": "Convierte un archivo local a Base64 o data: URL; solo en esta pestaña.",
+      "pageDescriptionHintBefore": "Texto UTF-8: ",
       "textEncodeLinkLabel": "Texto a Base64",
       "pageDescriptionHintAfter": ".",
       "inputColumnTitle": "Archivo",

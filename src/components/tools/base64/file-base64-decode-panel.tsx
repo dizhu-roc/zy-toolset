@@ -12,11 +12,15 @@ import {
 } from "@/lib/file-base64-decode";
 import { tryUtf8Decode } from "@/lib/base64";
 import {
+  toolChromeTitleBarOutlineButtonClass,
+  toolChromeTitleBarPrimaryButtonClass,
   toolColumnCardClass,
   toolPageCrossLinkClass,
-  toolPrimaryToolbarButtonClass,
-  toolSecondaryToolbarButtonClass,
-  toolTitleBarClass,
+  toolSectionBarTitlePlainClass,
+  toolSectionHeadingClass,
+  toolSectionHeadingIconClass,
+  toolSectionTitleActionsClass,
+  toolSectionTitleBarClass,
 } from "@/lib/ui/tool-surface";
 import { cn } from "@/lib/utils";
 import { IconColumnSourceText } from "@/components/tools/base64/base64-text-column-icons";
@@ -231,15 +235,12 @@ export function FileBase64DecodePanel({
           className={cn(panelShellClass, PANEL_FIXED_H, "flex flex-col")}
           aria-labelledby={inputId}
         >
-          <div className={cn(toolTitleBarClass, "items-center")}>
-            <h2
-              id={inputId}
-              className="flex min-w-0 flex-1 items-center gap-2 text-sm font-semibold text-text"
-            >
-              <IconColumnSourceText className="size-4 shrink-0 text-text-secondary" />
+          <div className={cn(toolSectionTitleBarClass, "items-center")}>
+            <h2 id={inputId} className={toolSectionHeadingClass}>
+              <IconColumnSourceText className={toolSectionHeadingIconClass} />
               <span className="min-w-0 truncate">{copy.inputColumnTitle}</span>
             </h2>
-            <div className="ml-auto flex shrink-0 flex-wrap items-center justify-end gap-1.5">
+            <div className={cn(toolSectionTitleActionsClass, "gap-1.5")}>
               <TextFileUploadButton
                 label={copy.uploadTextFile}
                 title={copy.uploadTextFileTooltip}
@@ -253,7 +254,7 @@ export function FileBase64DecodePanel({
               <button
                 type="button"
                 onClick={runPreview}
-                className={cn(toolPrimaryToolbarButtonClass, "h-7 gap-1")}
+                className={cn(toolChromeTitleBarPrimaryButtonClass, "gap-1")}
               >
                 <IconDecode className="size-3 shrink-0 opacity-95" />
                 {copy.decodePreviewAction}
@@ -261,7 +262,7 @@ export function FileBase64DecodePanel({
               <button
                 type="button"
                 onClick={clearAll}
-                className={cn(toolSecondaryToolbarButtonClass, "h-7 gap-1")}
+                className={cn(toolChromeTitleBarOutlineButtonClass, "gap-1")}
               >
                 <IconTrash className="size-3 shrink-0" />
                 {copy.clearAll}
@@ -303,15 +304,15 @@ export function FileBase64DecodePanel({
             ) : null}
 
             <div className="shrink-0 overflow-hidden rounded-md border border-zinc-200/90 dark:border-zinc-700/80">
-              <div className="flex items-center justify-between gap-2 border-b border-zinc-200/90 bg-zinc-100 px-3 py-2.5 dark:border-zinc-700/80 dark:bg-zinc-800/95">
-                <span className="min-w-0 text-xs font-semibold text-text">{copy.fileInfoBlockTitle}</span>
+              <div className={cn(toolSectionTitleBarClass, "justify-between py-2")}>
+                <span className={cn(toolSectionBarTitlePlainClass, "min-w-0")}>{copy.fileInfoBlockTitle}</span>
                 <button
                   type="button"
                   onClick={downloadFile}
                   disabled={!preview}
                   className={cn(
-                    toolPrimaryToolbarButtonClass,
-                    "h-7 gap-1 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40",
+                    toolChromeTitleBarPrimaryButtonClass,
+                    "gap-1 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40",
                   )}
                 >
                   <IconArrowDownTray className="size-3.5 shrink-0" />

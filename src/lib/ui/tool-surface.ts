@@ -28,31 +28,79 @@ export const toolColumnCardFullBleedClass = cn(
   toolCardSurfaceClass,
 );
 
-/** 列顶栏（标题行） */
-export const toolTitleBarClass =
-  "flex flex-wrap items-center gap-2 border-b border-zinc-200/90 bg-zinc-100 px-3 py-2 sm:px-4 dark:border-zinc-600 dark:bg-zinc-800/95";
-
-/** 主操作按钮（全宽或大块） */
-export const toolPrimaryButtonClass = cn(
-  "inline-flex items-center justify-center font-medium text-white transition-colors",
-  "bg-[#1576BB] hover:bg-[#125d99] active:bg-[#0f4a6a]",
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
-  "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-[#1576BB]",
+/**
+ * 工具区块标题栏（列顶）：统一高度、背景与底边分割。
+ * 标题文字请配合 {@link toolSectionHeadingClass}。
+ */
+export const toolSectionTitleBarClass = cn(
+  "flex min-h-[2.75rem] shrink-0 flex-wrap items-center gap-2 border-b border-zinc-200/90 bg-zinc-100 px-3 py-2 sm:px-4",
+  "dark:border-zinc-600 dark:bg-zinc-800/95",
 );
 
-/** 工具条内小颗主按钮（高度由调用方用 `h-7` 或与 `px-3 py-1.5` 等组合指定） */
-export const toolPrimaryToolbarButtonClass = cn(
-  "inline-flex shrink-0 cursor-pointer items-center gap-1 rounded-md px-2 text-xs font-medium text-white transition-colors",
+/** 标题栏内主标题（H2/H3）：字号与色值统一 */
+export const toolSectionHeadingClass =
+  "flex min-w-0 flex-1 items-center gap-2 text-sm font-semibold leading-snug text-text";
+
+/** 无列图标时的单行标题（ICO 预览栏、文件信息条等） */
+export const toolSectionBarTitlePlainClass =
+  "m-0 min-w-0 text-sm font-semibold leading-snug text-text";
+
+/** 标题栏标题左侧图标 */
+export const toolSectionHeadingIconClass = "size-4 shrink-0 text-text-secondary";
+
+/** 标题栏右侧操作按钮组容器（勿 shrink，避免主标题 flex-1 把按钮挤到裁切） */
+export const toolSectionTitleActionsClass =
+  "ml-auto flex shrink-0 flex-wrap items-center justify-end gap-2";
+
+/** @deprecated 使用 {@link toolSectionTitleBarClass} */
+export const toolTitleBarClass = toolSectionTitleBarClass;
+
+/** 标题栏内：主按钮（蓝底 #1576BB，图标 + 文案，固定栏高） */
+export const toolChromeTitleBarPrimaryButtonClass = cn(
+  "inline-flex h-8 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-md px-2.5 text-xs font-medium text-white transition-colors",
   "bg-[#1576BB] hover:bg-[#125d99]",
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
   "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-[#1576BB]",
 );
 
-export const toolSecondaryToolbarButtonClass = cn(
-  "inline-flex shrink-0 cursor-pointer items-center gap-1 rounded-md border border-zinc-200 bg-white px-2 text-xs font-medium text-text-secondary transition-colors",
+/** 标题栏内：线框按钮（图标 + 文案，与主按钮同高） */
+export const toolChromeTitleBarOutlineButtonClass = cn(
+  "inline-flex h-8 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-md border border-zinc-200 bg-white px-2.5 text-xs font-medium text-text-secondary transition-colors",
   "hover:border-zinc-300 hover:bg-zinc-50 hover:text-text",
-  "dark:border-zinc-600 dark:bg-zinc-900 dark:hover:border-zinc-500 dark:hover:bg-zinc-800",
+  "dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-50",
+  "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40",
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
+);
+
+/** @deprecated 使用 {@link toolChromeTitleBarPrimaryButtonClass} */
+export const toolPrimaryToolbarButtonClass = toolChromeTitleBarPrimaryButtonClass;
+
+/** @deprecated 使用 {@link toolChromeTitleBarOutlineButtonClass} */
+export const toolSecondaryToolbarButtonClass = toolChromeTitleBarOutlineButtonClass;
+
+/** 独立大块区域：主按钮（图标 + 文案，min-h-10） */
+export const toolChromeStandalonePrimaryButtonClass = cn(
+  "inline-flex min-h-10 w-full cursor-pointer items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium text-white transition-colors sm:w-auto",
+  "bg-[#1576BB] hover:bg-[#125d99] active:bg-[#0f4a6a]",
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
+  "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-[#1576BB]",
+);
+
+/** 独立大块区域：次要按钮（图标 + 文案） */
+export const toolChromeStandaloneSecondaryButtonClass = cn(
+  "inline-flex min-h-10 w-full cursor-pointer items-center justify-center gap-2 rounded-md border border-zinc-200 bg-transparent px-4 py-2.5 text-sm font-medium text-text-secondary transition-colors sm:w-auto",
+  "hover:border-zinc-300 hover:bg-zinc-50 hover:text-text",
+  "dark:border-zinc-600 dark:hover:border-zinc-500 dark:hover:bg-zinc-800/80",
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
+  "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40",
+);
+
+/** 主操作按钮（仅样式基类；全宽下载等可与独立类组合） */
+export const toolPrimaryButtonClass = cn(
+  "inline-flex items-center justify-center font-medium text-white transition-colors",
+  "bg-[#1576BB] hover:bg-[#125d99] active:bg-[#0f4a6a]",
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
+  "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-[#1576BB]",
 );
 
 /** 工具页 Hero 内交叉链接（encode ↔ decode） */
@@ -65,3 +113,13 @@ export const toolCheckboxClass =
 
 /** range 控件与主色一致 */
 export const toolRangeInputClass = "min-w-0 flex-1 accent-[#1576BB]";
+
+/**
+ * 复制结果浮动提示（成功 / 失败）的背景与 ring，与密码工具内联气泡一致。
+ * 与按钮 `relative` 容器搭配：`absolute left-1/2 top-full -translate-x-1/2 mt-1.5 …`
+ */
+export function copyResultBubbleClassName(success: boolean) {
+  return success
+    ? "bg-zinc-800 text-white ring-zinc-600/40 dark:bg-zinc-600 dark:ring-zinc-500/40"
+    : "bg-red-700 text-white ring-red-600/50";
+}

@@ -46,16 +46,14 @@ export default async function Base64FileEncodePage({ params }: Props) {
       }
       title={p.pageTitle}
       description={
-        <>
-          <p className="m-0">{p.pageDescription}</p>
-          <p className="m-0 text-xs text-text-muted leading-relaxed">
-            {p.pageDescriptionHintBefore}
-            <Link href={textEncodeHref} className={toolPageCrossLinkClass}>
-              {p.textEncodeLinkLabel}
-            </Link>
-            {p.pageDescriptionHintAfter}
-          </p>
-        </>
+        <p className="m-0 text-sm leading-relaxed text-text-secondary">
+          {p.pageDescription}{" "}
+          {p.pageDescriptionHintBefore}
+          <Link href={textEncodeHref} className={toolPageCrossLinkClass}>
+            {p.textEncodeLinkLabel}
+          </Link>
+          {p.pageDescriptionHintAfter}
+        </p>
       }
       ancillary={
         <p>

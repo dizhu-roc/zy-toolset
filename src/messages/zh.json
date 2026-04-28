@@ -106,10 +106,10 @@
     },
     "base64FileEncode": {
       "metaTitle": "文件转 Base64",
-      "metaDescription": "在浏览器内将本地任意文件编码为 Base64 或 Data URL，内容不上传。",
+      "metaDescription": "在浏览器将本地文件编码为 Base64 或 Data URL，不上传。",
       "pageTitle": "文件转 Base64",
-      "pageDescription": "将本机文件转为 Base64 字符串，或带 data: 前缀的 Data URL；处理过程停留在当前浏览器标签页。",
-      "pageDescriptionHintBefore": "若要对输入的纯文本做 UTF-8 再编码，请使用 ",
+      "pageDescription": "本机文件转 Base64 或 Data URL，仅在本页处理。",
+      "pageDescriptionHintBefore": "纯文本请用 ",
       "textEncodeLinkLabel": "文本转 Base64",
       "pageDescriptionHintAfter": "。",
       "inputColumnTitle": "源文件",

@@ -106,10 +106,10 @@
     },
     "base64FileEncode": {
       "metaTitle": "ファイルを Base64 に",
-      "metaDescription": "ローカルファイルを Base64 または Data URL に変換します。ブラウザ内でのみ処理され、アップロードしません。",
+      "metaDescription": "ローカルファイルを Base64 / Data URL に。ブラウザ内のみ、送信しません。",
       "pageTitle": "ファイルを Base64 に",
-      "pageDescription": "端末上のファイルを Base64 文字列、または data: 付きの Data URL に変換します。処理はこのタブ内だけで行われます。",
-      "pageDescriptionHintBefore": "入力したプレーンテキストを UTF-8 でエンコードする場合は ",
+      "pageDescription": "端末のファイルを Base64 または Data URL へ。処理はこのタブのみ。",
+      "pageDescriptionHintBefore": "プレーンテキストは ",
       "textEncodeLinkLabel": "テキストを Base64 に",
       "pageDescriptionHintAfter": " を使用してください。",
       "inputColumnTitle": "元ファイル",

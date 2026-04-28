@@ -14,13 +14,18 @@ import {
   generatePasswordBatch,
   mergeCharset,
 } from "@/lib/password-generate";
+import { ToolTitleBarTextButton } from "@/components/ui/tool-title-bar-text-button";
 import {
+  copyResultBubbleClassName,
   toolCheckboxClass,
+  toolChromeStandalonePrimaryButtonClass,
+  toolChromeStandaloneSecondaryButtonClass,
+  toolChromeTitleBarOutlineButtonClass,
   toolColumnCardClass,
-  toolPrimaryToolbarButtonClass,
   toolRangeInputClass,
-  toolSecondaryToolbarButtonClass,
-  toolTitleBarClass,
+  toolSectionBarTitlePlainClass,
+  toolSectionTitleActionsClass,
+  toolSectionTitleBarClass,
 } from "@/lib/ui/tool-surface";
 import { cn } from "@/lib/utils";
 
@@ -30,12 +35,6 @@ const panelShellClass = cn(
   "min-h-0 min-w-0",
   toolColumnCardClass,
 );
-
-function copyBubbleTone(ok: boolean) {
-  return ok
-    ? "bg-zinc-800 text-white ring-zinc-600/40 dark:bg-zinc-600 dark:ring-zinc-500/40"
-    : "bg-red-700 text-white ring-red-600/50";
-}
 
 function IconRefresh({ className }: { className?: string }) {
   return (
@@ -72,6 +71,33 @@ function IconChevronDown({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
       <path strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" d="m6 9 6 6 6-6" />
+    </svg>
+  );
+}
+
+function IconArrowDownTray({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
+      <path
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+      />
+    </svg>
+  );
+}
+
+function IconArrowUturnLeft({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
+      <path strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" d="M9 14 4 9l5-5" />
+      <path
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M4 9h10.5a5.5 5.5 0 0 1 0 11H13"
+      />
     </svg>
   );
 }
@@ -254,27 +280,6 @@ export function PasswordGeneratorPanel({ copy }: { copy: Copy }) {
         ? copy.errorEmptyPool
         : null;
 
-  const toolbarRegenerate = (
-    <button
-      type="button"
-      onClick={regenerate}
-      className={cn(toolPrimaryToolbarButtonClass, "h-7")}
-    >
-      <IconRefresh className="size-3 shrink-0 opacity-95" />
-      {copy.regenerateAction}
-    </button>
-  );
-
-  const toolbarReset = (
-    <button
-      type="button"
-      onClick={resetDefaults}
-      className={cn(toolSecondaryToolbarButtonClass, "h-7")}
-    >
-      {copy.resetAction}
-    </button>
-  );
-
   return (
     <div>
       <div
@@ -284,13 +289,17 @@ export function PasswordGeneratorPanel({ copy }: { copy: Copy }) {
         )}
       >
         <section className={cn(panelShellClass, "flex flex-col lg:h-full")} aria-labelledby={optionsRegionId}>
-          <div className={cn(toolTitleBarClass, "items-center")}>
-            <h2 id={optionsRegionId} className="m-0 min-w-0 flex-1 text-sm font-semibold text-text">
+          <div className={cn(toolSectionTitleBarClass, "items-center")}>
+            <h2 id={optionsRegionId} className={cn(toolSectionBarTitlePlainClass, "flex-1")}>
               {copy.optionsTitle}
             </h2>
-            <div className="ml-auto flex shrink-0 flex-wrap items-center justify-end gap-1.5">
-              {toolbarRegenerate}
-              {toolbarReset}
+            <div className={cn(toolSectionTitleActionsClass, "gap-1.5")}>
+              <ToolTitleBarTextButton variant="primary" icon={<IconRefresh className="opacity-95" />} onClick={regenerate}>
+                {copy.regenerateAction}
+              </ToolTitleBarTextButton>
+              <ToolTitleBarTextButton variant="outline" icon={<IconArrowUturnLeft />} onClick={resetDefaults}>
+                {copy.resetAction}
+              </ToolTitleBarTextButton>
             </div>
           </div>
           <div className="flex min-h-0 flex-1 flex-col gap-4 p-3 sm:p-4">
@@ -422,25 +431,17 @@ export function PasswordGeneratorPanel({ copy }: { copy: Copy }) {
               <button
                 type="button"
                 onClick={regenerate}
-                className={cn(
-                  "inline-flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium text-white transition-colors sm:flex-initial",
-                  "bg-[#1576BB] hover:bg-[#125d99]",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
-                )}
+                className={cn(toolChromeStandalonePrimaryButtonClass, "flex-1 gap-2 sm:flex-initial [&>svg]:size-4")}
               >
-                <IconRefresh className="size-4 shrink-0 opacity-95" />
+                <IconRefresh className="opacity-95" />
                 {copy.regenerateAction}
               </button>
               <button
                 type="button"
                 onClick={resetDefaults}
-                className={cn(
-                  "inline-flex cursor-pointer items-center justify-center rounded-md border border-zinc-200 bg-transparent px-3 py-2 text-sm font-medium text-text-secondary transition-colors",
-                  "hover:border-zinc-300 hover:bg-zinc-50 hover:text-text",
-                  "dark:border-zinc-600 dark:hover:border-zinc-500 dark:hover:bg-zinc-800/80",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
-                )}
+                className={cn(toolChromeStandaloneSecondaryButtonClass, "gap-2 [&>svg]:size-4")}
               >
+                <IconArrowUturnLeft />
                 {copy.resetAction}
               </button>
             </div>
@@ -448,11 +449,15 @@ export function PasswordGeneratorPanel({ copy }: { copy: Copy }) {
         </section>
 
         <section className={cn(panelShellClass, "flex flex-col lg:h-full")} aria-labelledby={resultRegionId}>
-          <div className={cn(toolTitleBarClass, "items-center")}>
-            <h2 id={resultRegionId} className="m-0 min-w-0 flex-1 text-sm font-semibold text-text">
+          <div className={cn(toolSectionTitleBarClass, "items-center")}>
+            <h2
+              id={resultRegionId}
+              className={cn(toolSectionBarTitlePlainClass, "min-w-0 flex-1 truncate pr-2")}
+              title={copy.resultTitle}
+            >
               {copy.resultTitle}
             </h2>
-            <div className="ml-auto flex shrink-0 flex-wrap items-center justify-end gap-1.5">
+            <div className={cn(toolSectionTitleActionsClass, "gap-1.5")}>
               <div
                 ref={saveMenuRef}
                 className="relative inline-block"
@@ -466,11 +471,12 @@ export function PasswordGeneratorPanel({ copy }: { copy: Copy }) {
                   aria-haspopup="menu"
                   onFocus={() => passwords.length > 0 && setSaveMenuOpen(true)}
                   className={cn(
-                    toolSecondaryToolbarButtonClass,
-                    "h-7 disabled:pointer-events-none disabled:opacity-40",
+                    toolChromeTitleBarOutlineButtonClass,
+                    "max-w-none gap-1 px-2 disabled:pointer-events-none disabled:opacity-40 sm:px-2.5",
                   )}
                 >
-                  {copy.saveAsAction}
+                  <IconArrowDownTray className="size-3.5 shrink-0" />
+                  <span className="min-w-0 whitespace-nowrap">{copy.saveAsAction}</span>
                   <IconChevronDown className="size-3 shrink-0 opacity-80" />
                 </button>
                 {saveMenuOpen ? (
@@ -506,12 +512,12 @@ export function PasswordGeneratorPanel({ copy }: { copy: Copy }) {
                   onClick={() => void copyAll()}
                   disabled={passwords.length === 0}
                   className={cn(
-                    toolSecondaryToolbarButtonClass,
-                    "h-7 disabled:pointer-events-none disabled:opacity-40",
+                    toolChromeTitleBarOutlineButtonClass,
+                    "max-w-none gap-1 px-2 disabled:pointer-events-none disabled:opacity-40 sm:px-2.5",
                   )}
                 >
-                  <IconClipboard className="size-3 shrink-0" />
-                  {copy.copyAllAction}
+                  <IconClipboard className="size-3.5 shrink-0" />
+                  <span className="min-w-0 whitespace-nowrap">{copy.copyAllAction}</span>
                 </button>
                 {allCopyTip ? (
                   <span
@@ -519,7 +525,7 @@ export function PasswordGeneratorPanel({ copy }: { copy: Copy }) {
                     aria-live="polite"
                     className={cn(
                       "pointer-events-none absolute left-1/2 top-full z-30 mt-1.5 -translate-x-1/2 whitespace-nowrap rounded-md px-2 py-1 text-[11px] font-medium shadow-md ring-1",
-                      copyBubbleTone(allCopyTip === "ok"),
+                      copyResultBubbleClassName(allCopyTip === "ok"),
                     )}
                   >
                     {allCopyTip === "ok" ? copy.copySuccessBubble : copy.copyFailedBubble}
@@ -576,7 +582,7 @@ export function PasswordGeneratorPanel({ copy }: { copy: Copy }) {
                             aria-live="polite"
                             className={cn(
                               "pointer-events-none absolute right-full top-1/2 z-30 mr-2 -translate-y-1/2 whitespace-nowrap rounded-md px-2 py-1 text-[11px] font-medium shadow-md ring-1",
-                              copyBubbleTone(!rowCopyTip.error),
+                              copyResultBubbleClassName(!rowCopyTip.error),
                             )}
                           >
                             {rowCopyTip.error ? copy.copyFailedBubble : copy.copySuccessBubble}

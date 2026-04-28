@@ -106,10 +106,10 @@
     },
     "base64FileEncode": {
       "metaTitle": "File to Base64",
-      "metaDescription": "Encode any local file to Base64 or a Data URL in your browser. Nothing is uploaded.",
+      "metaDescription": "Encode local files to Base64 or a Data URL in the browser. Client-side only; no upload.",
       "pageTitle": "File to Base64",
-      "pageDescription": "Turn a file from your device into Base64 or a data:…;base64,… string. Processing stays in your browser.",
-      "pageDescriptionHintBefore": "To encode typed or pasted text as UTF-8, use ",
+      "pageDescription": "Local file → Base64 or a data: URL, processed in this tab only.",
+      "pageDescriptionHintBefore": "For UTF-8 text input, use ",
       "textEncodeLinkLabel": "Text to Base64",
       "pageDescriptionHintAfter": ".",
       "inputColumnTitle": "File",

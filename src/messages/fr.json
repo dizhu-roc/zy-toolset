@@ -106,10 +106,10 @@
     },
     "base64FileEncode": {
       "metaTitle": "Fichier vers Base64",
-      "metaDescription": "Encodez un fichier local en Base64 ou en Data URL dans le navigateur. Aucun envoi au serveur.",
+      "metaDescription": "Encodez un fichier local en Base64 ou Data URL dans le navigateur, sans envoi serveur.",
       "pageTitle": "Fichier vers Base64",
-      "pageDescription": "Transformez un fichier de votre appareil en Base64 ou en data:…;base64,…. Le traitement reste dans cet onglet.",
-      "pageDescriptionHintBefore": "Pour encoder du texte saisi ou collé (UTF-8), utilisez ",
+      "pageDescription": "Fichier local → Base64 ou data: URL, uniquement dans cet onglet.",
+      "pageDescriptionHintBefore": "Texte UTF-8 : ",
       "textEncodeLinkLabel": "Texte vers Base64",
       "pageDescriptionHintAfter": ".",
       "inputColumnTitle": "Fichier source",

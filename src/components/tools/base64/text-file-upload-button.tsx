@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { toolChromeTitleBarOutlineButtonClass } from "@/lib/ui/tool-surface";
 import { cn } from "@/lib/utils";
 
 /**
@@ -218,13 +219,7 @@ export function TextFileUploadButton({
         aria-label={label}
         disabled={disabled}
         onClick={() => inputRef.current?.click()}
-        className={cn(
-          "inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-md border border-zinc-200 bg-white px-2.5 py-1.5 text-xs font-medium text-zinc-600 transition-colors",
-          "hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-900",
-          "dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-50",
-          "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
-        )}
+        className={cn(toolChromeTitleBarOutlineButtonClass, "max-w-full text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-50")}
       >
         <IconUpload className="size-3.5 shrink-0" />
         <span className="max-w-[7rem] truncate sm:max-w-[9rem]">{label}</span>

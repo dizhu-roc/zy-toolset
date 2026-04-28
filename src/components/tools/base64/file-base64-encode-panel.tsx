@@ -7,11 +7,17 @@ import { cn } from "@/lib/utils";
 import { IconColumnBase64Text } from "@/components/tools/base64/base64-text-column-icons";
 import { LineNumberedField } from "@/components/tools/base64/line-numbered-field";
 import { isPlausibleTextUpload } from "@/components/tools/base64/text-file-upload-button";
+import { ToolTitleBarTextButton } from "@/components/ui/tool-title-bar-text-button";
 import {
   toolCheckboxClass,
+  toolChromeStandalonePrimaryButtonClass,
+  toolChromeStandaloneSecondaryButtonClass,
   toolColumnCardFullBleedClass,
-  toolPrimaryButtonClass,
-  toolTitleBarClass,
+  toolSectionBarTitlePlainClass,
+  toolSectionHeadingClass,
+  toolSectionHeadingIconClass,
+  toolSectionTitleActionsClass,
+  toolSectionTitleBarClass,
 } from "@/lib/ui/tool-surface";
 
 const MAX_FILE_BYTES = 8 * 1024 * 1024;
@@ -403,7 +409,7 @@ function DataUrlSwitch({
       title={ariaLabel}
       onClick={() => onChange(!checked)}
       className={cn(
-        "inline-flex shrink-0 items-center gap-1.5 rounded-md border px-2 py-1",
+        "inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md border px-2",
         "border-zinc-200 bg-white text-text-secondary dark:border-zinc-600 dark:bg-zinc-900",
         "hover:border-zinc-300 dark:hover:border-zinc-500",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
@@ -424,37 +430,6 @@ function DataUrlSwitch({
           )}
         />
       </span>
-    </button>
-  );
-}
-
-function ToolbarIconButton({
-  label,
-  onClick,
-  disabled,
-  children,
-}: {
-  label: string;
-  onClick: () => void;
-  disabled?: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      title={label}
-      aria-label={label}
-      disabled={disabled}
-      onClick={onClick}
-      className={cn(
-        "inline-flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-md border border-zinc-200 bg-white text-zinc-600 transition-colors",
-        "hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-900",
-        "dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-50",
-        "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
-      )}
-    >
-      {children}
     </button>
   );
 }
@@ -666,8 +641,8 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
             )}
             aria-live="polite"
           >
-            <div className="border-b border-zinc-200/80 bg-zinc-100/70 px-3 py-2 text-xs font-medium text-text-secondary dark:border-zinc-600/40 dark:bg-zinc-800/60">
-              {copy.fileInfoTitle}
+            <div className={toolSectionTitleBarClass}>
+              <p className={cn(toolSectionBarTitlePlainClass, "w-full")}>{copy.fileInfoTitle}</p>
             </div>
             <div className="bg-zinc-50/40 px-3 py-3 dark:bg-zinc-800/25">
               <dl className="m-0 grid min-w-0 grid-cols-[max-content_minmax(0,1fr)] items-center gap-x-2 gap-y-1.5 text-sm">
@@ -737,24 +712,19 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
                 type="button"
                 onClick={() => void encode()}
                 className={cn(
-                  toolPrimaryButtonClass,
-                  "flex-[2] basis-0 inline-flex min-h-10 min-w-0 cursor-pointer justify-center gap-1.5 rounded-md px-4 py-2.5 text-sm",
+                  toolChromeStandalonePrimaryButtonClass,
+                  "flex-[2] basis-0 [&>svg]:size-4",
                 )}
               >
-                <IconEncode className="size-3.5 shrink-0 opacity-95" />
+                <IconEncode className="opacity-95" />
                 {copy.encodeAction}
               </button>
               <button
                 type="button"
                 onClick={clearAll}
-                className={cn(
-                  "flex-[1] basis-0 inline-flex min-h-10 min-w-0 cursor-pointer items-center justify-center gap-1.5 rounded-md border border-zinc-200 bg-transparent px-4 py-2.5 text-sm font-medium text-text-secondary transition-colors",
-                  "hover:border-zinc-300 hover:bg-zinc-50 hover:text-text",
-                  "dark:border-zinc-600 dark:hover:border-zinc-500 dark:hover:bg-zinc-800/80",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
-                )}
+                className={cn(toolChromeStandaloneSecondaryButtonClass, "flex-[1] basis-0 [&>svg]:size-4")}
               >
-                <IconTrash className="size-3.5 shrink-0" />
+                <IconTrash />
                 {copy.clearAll}
               </button>
             </div>
@@ -762,35 +732,29 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
         </div>
 
         <section className={outputColClass} aria-labelledby={outputId}>
-          <div className={toolTitleBarClass}>
-            <h2
-              id={outputId}
-              className="flex min-w-0 flex-1 items-center gap-2 text-sm font-semibold text-text"
-            >
-              <IconColumnBase64Text className="size-4 shrink-0 text-text-secondary" />
+          <div className={toolSectionTitleBarClass}>
+            <h2 id={outputId} className={toolSectionHeadingClass}>
+              <IconColumnBase64Text className={toolSectionHeadingIconClass} />
               <span className="min-w-0 truncate">{copy.outputColumnTitle}</span>
             </h2>
-            <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
+            <div className={toolSectionTitleActionsClass}>
               <DataUrlSwitch
                 checked={dataUrl}
                 onChange={setDataUrl}
                 label={copy.dataUrlToggleLabel}
                 ariaLabel={copy.asDataUrl}
               />
-              <ToolbarIconButton
-                label={copy.copyOutput}
+              <ToolTitleBarTextButton
+                variant="outline"
+                disabled={!out}
+                icon={<IconClipboard />}
                 onClick={copyOut}
-                disabled={!out}
               >
-                <IconClipboard className="size-4" />
-              </ToolbarIconButton>
-              <ToolbarIconButton
-                label={copy.saveAs}
-                onClick={saveAs}
-                disabled={!out}
-              >
-                <IconArrowDownTray className="size-4" />
-              </ToolbarIconButton>
+                {copy.copyOutput}
+              </ToolTitleBarTextButton>
+              <ToolTitleBarTextButton variant="outline" disabled={!out} icon={<IconArrowDownTray />} onClick={saveAs}>
+                {copy.saveAs}
+              </ToolTitleBarTextButton>
             </div>
           </div>
           <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-white dark:bg-zinc-900">

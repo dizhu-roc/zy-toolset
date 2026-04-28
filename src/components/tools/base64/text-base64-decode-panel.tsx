@@ -16,11 +16,15 @@ import {
 } from "@/components/tools/base64/base64-text-column-icons";
 import { LineNumberedField } from "@/components/tools/base64/line-numbered-field";
 import { TextFileUploadButton } from "@/components/tools/base64/text-file-upload-button";
+import { ToolTitleBarTextButton } from "@/components/ui/tool-title-bar-text-button";
 import {
+  copyResultBubbleClassName,
   toolCheckboxClass,
   toolColumnCardClass,
-  toolPrimaryToolbarButtonClass,
-  toolTitleBarClass,
+  toolSectionHeadingClass,
+  toolSectionHeadingIconClass,
+  toolSectionTitleActionsClass,
+  toolSectionTitleBarClass,
 } from "@/lib/ui/tool-surface";
 
 const EDITOR_PANEL_HEIGHT_CLASS = "h-[34rem]";
@@ -115,37 +119,6 @@ function IconDecode({ className }: { className?: string }) {
     <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
       <path d="M8 5v14l11-7z" transform="rotate(180 12 12)" />
     </svg>
-  );
-}
-
-function ToolbarIconButton({
-  label,
-  onClick,
-  disabled,
-  children,
-}: {
-  label: string;
-  onClick: () => void;
-  disabled?: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      title={label}
-      aria-label={label}
-      disabled={disabled}
-      onClick={onClick}
-      className={cn(
-        "inline-flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-md border border-zinc-200 bg-white text-zinc-600 transition-colors",
-        "hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-900",
-        "dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-50",
-        "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
-      )}
-    >
-      {children}
-    </button>
   );
 }
 
@@ -280,15 +253,12 @@ export function TextBase64DecodePanel({ copy }: { copy: PageCopy }) {
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-2 gap-5">
         <section className={colClass} aria-labelledby={inputId}>
-          <div className={toolTitleBarClass}>
-            <h2
-              id={inputId}
-              className="flex min-w-0 flex-1 items-center gap-2 text-sm font-semibold text-text"
-            >
-              <IconColumnBase64Text className="size-4 shrink-0 text-text-secondary" />
+          <div className={toolSectionTitleBarClass}>
+            <h2 id={inputId} className={toolSectionHeadingClass}>
+              <IconColumnBase64Text className={toolSectionHeadingIconClass} />
               <span className="min-w-0 truncate">{copy.inputColumnTitle}</span>
             </h2>
-            <div className="ml-auto flex flex-wrap items-center justify-end gap-x-2 gap-y-2">
+            <div className={cn(toolSectionTitleActionsClass, "gap-x-2 gap-y-2")}>
               <TextFileUploadButton
                 label={copy.uploadTextFile}
                 title={copy.uploadTextFileTooltip}
@@ -310,18 +280,17 @@ export function TextBase64DecodePanel({ copy }: { copy: PageCopy }) {
                 />
                 <span>{copy.autoDecode}</span>
               </label>
-              <button
-                type="button"
+              <ToolTitleBarTextButton
+                variant="primary"
                 disabled={decodeDisabled}
-                className={cn(toolPrimaryToolbarButtonClass, "gap-1 px-3 py-1.5")}
+                icon={<IconDecode className="opacity-95" />}
                 onClick={manualDecode}
               >
-                <IconDecode className="size-3.5 shrink-0 opacity-95" />
                 {copy.decodeAction}
-              </button>
-              <ToolbarIconButton label={copy.clearAll} onClick={clearAll}>
-                <IconTrash className="size-4" />
-              </ToolbarIconButton>
+              </ToolTitleBarTextButton>
+              <ToolTitleBarTextButton variant="outline" icon={<IconTrash />} onClick={clearAll}>
+                {copy.clearAll}
+              </ToolTitleBarTextButton>
             </div>
           </div>
           {uploadHint ? (
@@ -342,32 +311,46 @@ export function TextBase64DecodePanel({ copy }: { copy: PageCopy }) {
                 ariaLabel={copy.inputColumnTitle}
               />
             </div>
-            <p className="border-t border-zinc-100 px-4 py-2 text-right text-xs text-text-muted dark:border-zinc-800">
-              {copy.charCount.replace("{n}", String(input.length))}
-            </p>
           </div>
         </section>
 
         <section className={colClass} aria-labelledby={outputId}>
-          <div className={toolTitleBarClass}>
-            <h2
-              id={outputId}
-              className="flex min-w-0 flex-1 items-center gap-2 text-sm font-semibold text-text"
-            >
-              <IconColumnSourceText className="size-4 shrink-0 text-text-secondary" />
+          <div className={toolSectionTitleBarClass}>
+            <h2 id={outputId} className={toolSectionHeadingClass}>
+              <IconColumnSourceText className={toolSectionHeadingIconClass} />
               <span className="min-w-0 truncate">{copy.outputColumnTitle}</span>
             </h2>
-            <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
-              <ToolbarIconButton
-                label={copy.copyOutput}
-                onClick={copyOutput}
-                disabled={!output || outputFailureText !== null}
+            <div className={toolSectionTitleActionsClass}>
+              <div className="relative inline-flex">
+                <ToolTitleBarTextButton
+                  variant="outline"
+                  disabled={!output || outputFailureText !== null}
+                  icon={<IconClipboard />}
+                  onClick={copyOutput}
+                >
+                  {copy.copyOutput}
+                </ToolTitleBarTextButton>
+                {copyHint ? (
+                  <span
+                    role="status"
+                    aria-live="polite"
+                    className={cn(
+                      "pointer-events-none absolute top-full left-1/2 z-30 mt-1.5 -translate-x-1/2 whitespace-nowrap rounded-md px-2 py-1 text-[11px] font-medium shadow-md ring-1",
+                      copyResultBubbleClassName(copyHint === copy.copied),
+                    )}
+                  >
+                    {copyHint}
+                  </span>
+                ) : null}
+              </div>
+              <ToolTitleBarTextButton
+                variant="outline"
+                disabled={!rawBytes}
+                icon={<IconArrowDownTray />}
+                onClick={downloadRaw}
               >
-                <IconClipboard className="size-4" />
-              </ToolbarIconButton>
-              <ToolbarIconButton label={copy.downloadDecoded} onClick={downloadRaw} disabled={!rawBytes}>
-                <IconArrowDownTray className="size-4" />
-              </ToolbarIconButton>
+                {copy.downloadDecoded}
+              </ToolTitleBarTextButton>
             </div>
           </div>
           <div className="flex min-h-0 flex-1 flex-col bg-white dark:bg-zinc-900">
@@ -387,14 +370,6 @@ export function TextBase64DecodePanel({ copy }: { copy: PageCopy }) {
                 <LineNumberedField value={output} readOnly showGutter={false} ariaLabel={copy.outputColumnTitle} />
               )}
             </div>
-            {copyHint ? (
-              <p
-                className="border-t border-zinc-100 px-4 py-2 text-xs text-text-secondary dark:border-zinc-800"
-                role="status"
-              >
-                {copyHint}
-              </p>
-            ) : null}
           </div>
         </section>
       </div>
