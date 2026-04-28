@@ -31,6 +31,13 @@ import {
 /** 桌面专用：左右卡片固定总高，正文在 textarea 内滚动 */
 const EDITOR_PANEL_HEIGHT_CLASS = "h-[34rem]";
 
+function encodeDebounceMs(textLen: number): number {
+  if (textLen > 400_000) return 700;
+  if (textLen > 80_000) return 400;
+  if (textLen > 5_000) return 200;
+  return 120;
+}
+
 /** `base64encode-YYYYMMDDHHmmss.txt`（本地时间） */
 function buildBase64DownloadFilename(): string {
   const d = new Date();
@@ -309,14 +316,48 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
   const [uploadHint, setUploadHint] = useState<string | null>(null);
   const inputRef = useRef(input);
   const outputTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const prevInputRef = useRef(input);
+  const autoEncodeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   inputRef.current = input;
 
   useEffect(() => {
-    if (autoEncode) {
-      setOutput(encodeOutput(input, outputMode));
-    } else if (!input) {
-      setOutput("");
+    if (!autoEncode) {
+      if (autoEncodeTimerRef.current) {
+        clearTimeout(autoEncodeTimerRef.current);
+        autoEncodeTimerRef.current = null;
+      }
+      if (!input) setOutput("");
+      prevInputRef.current = input;
+      return;
     }
+
+    const inputChanged = prevInputRef.current !== input;
+    prevInputRef.current = input;
+
+    if (inputChanged) {
+      if (autoEncodeTimerRef.current) {
+        clearTimeout(autoEncodeTimerRef.current);
+        autoEncodeTimerRef.current = null;
+      }
+      const delay = encodeDebounceMs(input.length);
+      autoEncodeTimerRef.current = setTimeout(() => {
+        autoEncodeTimerRef.current = null;
+        setOutput(encodeOutput(input, outputMode));
+      }, delay);
+    } else {
+      if (autoEncodeTimerRef.current) {
+        clearTimeout(autoEncodeTimerRef.current);
+        autoEncodeTimerRef.current = null;
+      }
+      setOutput(encodeOutput(input, outputMode));
+    }
+
+    return () => {
+      if (autoEncodeTimerRef.current) {
+        clearTimeout(autoEncodeTimerRef.current);
+        autoEncodeTimerRef.current = null;
+      }
+    };
   }, [input, outputMode, autoEncode]);
 
   useEffect(() => {

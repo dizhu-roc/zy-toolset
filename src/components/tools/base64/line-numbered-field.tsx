@@ -77,6 +77,32 @@ export function measureWrappedLineCount(text: string, sample: HTMLTextAreaElemen
   return lines;
 }
 
+const LARGE_TEXT_GUTTER_CHAR_THRESHOLD = 80_000;
+
+function estimateWrappedLinesFromTextarea(el: HTMLTextAreaElement): number {
+  if (el.value === "") return 1;
+  const cs = getComputedStyle(el);
+  let lh = parseFloat(cs.lineHeight);
+  if (!Number.isFinite(lh) || lh <= 0) {
+    const probe = document.createElement("div");
+    probe.style.cssText = [
+      "position:fixed",
+      "left:0",
+      "top:0",
+      "visibility:hidden",
+      "pointer-events:none",
+      "z-index:-1",
+      "white-space:pre",
+      `font:${cs.font}`,
+    ].join(";");
+    probe.textContent = "█";
+    document.documentElement.appendChild(probe);
+    lh = Math.max(1, probe.offsetHeight);
+    document.documentElement.removeChild(probe);
+  }
+  return Math.max(1, Math.round(el.scrollHeight / lh));
+}
+
 export function LineNumberedField({
   value,
   onChange,
@@ -115,7 +141,10 @@ export function LineNumberedField({
     if (!showGutter) return;
     const el = taRef.current;
     if (!el) return;
-    const next = measureWrappedLineCount(value, el);
+    const next =
+      value.length > LARGE_TEXT_GUTTER_CHAR_THRESHOLD
+        ? estimateWrappedLinesFromTextarea(el)
+        : measureWrappedLineCount(value, el);
     setWrappedLines((prev) => (prev === next ? prev : next));
   }, [value, showGutter]);
 
