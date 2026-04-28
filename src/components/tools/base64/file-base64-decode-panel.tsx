@@ -12,6 +12,7 @@ import {
 } from "@/lib/file-base64-decode";
 import { tryUtf8Decode } from "@/lib/base64";
 import {
+  toolCheckboxClass,
   toolChromeTitleBarOutlineButtonClass,
   toolChromeTitleBarPrimaryButtonClass,
   toolColumnCardClass,
@@ -134,6 +135,7 @@ export function FileBase64DecodePanel({
     | "uploadFileRejectNotText";
   const [errorKey, setErrorKey] = useState<ErrKey | null>(null);
   const [errorMbToken, setErrorMbToken] = useState<string | null>(null);
+  const [autoDecode, setAutoDecode] = useState(true);
 
   const mbLimit = String(MAX_FILE_DECODE_BYTES / (1024 * 1024));
 
@@ -182,6 +184,18 @@ export function FileBase64DecodePanel({
     setDownloadName("");
     clearError();
   };
+
+  useEffect(() => {
+    if (!autoDecode) return;
+    const t = input.trim();
+    if (!t) {
+      setPreview(null);
+      setDownloadName("");
+      clearError();
+      return;
+    }
+    runPreview();
+  }, [autoDecode, clearError, input, runPreview]);
 
   const objectUrl = useMemo(() => {
     if (!preview) return null;
@@ -271,6 +285,15 @@ export function FileBase64DecodePanel({
                 }}
                 onInvalid={() => setErrorKey("uploadFileRejectNotText")}
               />
+              <label className="flex cursor-pointer items-center gap-1.5 text-xs text-text-secondary">
+                <input
+                  type="checkbox"
+                  className={toolCheckboxClass}
+                  checked={autoDecode}
+                  onChange={(e) => setAutoDecode(e.target.checked)}
+                />
+                <span>{copy.autoDecode}</span>
+              </label>
               <button
                 type="button"
                 onClick={runPreview}

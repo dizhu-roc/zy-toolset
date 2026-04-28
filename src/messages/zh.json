@@ -175,6 +175,7 @@
       "previewSectionEmptyBody": "请先在左侧点击「解码」。支持时，图片、音视频、PDF 会显示在此；其它格式也可在上方下载后用本机程序打开。",
       "inputPlaceholder": "在此粘贴 Base64、Base64URL 或 data:…;base64,…。",
       "decodePreviewAction": "解码",
+      "autoDecode": "自动解码",
       "downloadAction": "下载文件",
       "clearAll": "清空",
       "uploadTextFile": "上传",
