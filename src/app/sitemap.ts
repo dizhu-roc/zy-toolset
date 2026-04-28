@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { SITEMAP_TOOL_RESTS } from "@/config/tool-registry";
 import { siteUrl } from "@/config/site";
 import { locales } from "@/i18n/config";
 import { localePathnames } from "@/lib/localized-path";
@@ -9,15 +10,7 @@ const STATIC_REST = [
   "privacy",
   "terms",
   "cookies",
-  "tools/base64/text-encode",
-  "tools/base64/text-decode",
-  "tools/base64/file-encode",
-  "tools/base64/file-decode",
-  "tools/generator/password",
-  "tools/generator/ico",
-  "tools/image/compress",
-  "tools/image/crop",
-  "tools/image/resize",
+  ...SITEMAP_TOOL_RESTS,
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

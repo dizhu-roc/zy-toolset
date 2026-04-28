@@ -18,7 +18,7 @@ const CLOSE_DELAY_MS = 140;
 
 const MENU_ICON_CLASS = "size-[1.125rem] shrink-0 text-text-secondary";
 
-export type NavCategoryMenuItem = {
+export type NavDropdownItem = {
   href: string;
   title: string;
   icon: HomeToolIconId;
@@ -27,7 +27,7 @@ export type NavCategoryMenuItem = {
 type Props = {
   category: string;
   categoryAria: string;
-  items: NavCategoryMenuItem[];
+  items: NavDropdownItem[];
 };
 
 function Chevron({ className }: { className?: string }) {
@@ -47,7 +47,10 @@ function Chevron({ className }: { className?: string }) {
   );
 }
 
-export function NavCategoryMenu({ category, categoryAria, items }: Props) {
+/**
+ * 顶栏分类下拉（Base64 多链接、生成器、图片等共用同一交互与样式）。
+ */
+export function NavDropdownMenu({ category, categoryAria, items }: Props) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);

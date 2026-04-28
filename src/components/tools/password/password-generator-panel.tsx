@@ -14,29 +14,21 @@ import {
   generatePasswordBatch,
   mergeCharset,
 } from "@/lib/password-generate";
+import {
+  toolCheckboxClass,
+  toolColumnCardClass,
+  toolPrimaryToolbarButtonClass,
+  toolRangeInputClass,
+  toolSecondaryToolbarButtonClass,
+  toolTitleBarClass,
+} from "@/lib/ui/tool-surface";
 import { cn } from "@/lib/utils";
 
 type Copy = Messages["tools"]["passwordGenerator"];
 
-const titleBarClass =
-  "flex flex-wrap items-center gap-2 border-b border-zinc-200/90 bg-zinc-100 px-3 py-2 sm:px-4 dark:border-zinc-600 dark:bg-zinc-800/95";
-
 const panelShellClass = cn(
-  "flex min-h-0 min-w-0 flex-col overflow-hidden rounded-lg border border-zinc-200/90 bg-white shadow-sm",
-  "dark:border-zinc-700/90 dark:bg-zinc-900",
-);
-
-const toolbarBtnPrimary = cn(
-  "inline-flex h-7 shrink-0 cursor-pointer items-center gap-1 rounded-md px-2 text-xs font-medium text-white transition-colors",
-  "bg-[#1576BB] hover:bg-[#125d99]",
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
-);
-
-const toolbarBtnSecondary = cn(
-  "inline-flex h-7 shrink-0 cursor-pointer items-center gap-1 rounded-md border border-zinc-200 bg-white px-2 text-xs font-medium text-text-secondary transition-colors",
-  "hover:border-zinc-300 hover:bg-zinc-50 hover:text-text",
-  "dark:border-zinc-600 dark:bg-zinc-900 dark:hover:border-zinc-500 dark:hover:bg-zinc-800",
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
+  "min-h-0 min-w-0",
+  toolColumnCardClass,
 );
 
 function copyBubbleTone(ok: boolean) {
@@ -263,14 +255,22 @@ export function PasswordGeneratorPanel({ copy }: { copy: Copy }) {
         : null;
 
   const toolbarRegenerate = (
-    <button type="button" onClick={regenerate} className={toolbarBtnPrimary}>
+    <button
+      type="button"
+      onClick={regenerate}
+      className={cn(toolPrimaryToolbarButtonClass, "h-7")}
+    >
       <IconRefresh className="size-3 shrink-0 opacity-95" />
       {copy.regenerateAction}
     </button>
   );
 
   const toolbarReset = (
-    <button type="button" onClick={resetDefaults} className={toolbarBtnSecondary}>
+    <button
+      type="button"
+      onClick={resetDefaults}
+      className={cn(toolSecondaryToolbarButtonClass, "h-7")}
+    >
       {copy.resetAction}
     </button>
   );
@@ -284,7 +284,7 @@ export function PasswordGeneratorPanel({ copy }: { copy: Copy }) {
         )}
       >
         <section className={cn(panelShellClass, "flex flex-col lg:h-full")} aria-labelledby={optionsRegionId}>
-          <div className={cn(titleBarClass, "items-center")}>
+          <div className={cn(toolTitleBarClass, "items-center")}>
             <h2 id={optionsRegionId} className="m-0 min-w-0 flex-1 text-sm font-semibold text-text">
               {copy.optionsTitle}
             </h2>
@@ -306,7 +306,7 @@ export function PasswordGeneratorPanel({ copy }: { copy: Copy }) {
                   max={PASSWORD_LENGTH_MAX}
                   value={length}
                   onChange={(e) => setLength(Number(e.target.value))}
-                  className="min-w-0 flex-1 accent-[#1576BB]"
+                  className={toolRangeInputClass}
                   aria-labelledby="pw-length-label"
                   aria-valuemin={PASSWORD_LENGTH_MIN}
                   aria-valuemax={PASSWORD_LENGTH_MAX}
@@ -338,7 +338,7 @@ export function PasswordGeneratorPanel({ copy }: { copy: Copy }) {
               <label className="flex cursor-pointer items-center gap-2.5 text-sm text-text">
                 <input
                   type="checkbox"
-                  className="size-3.5 shrink-0 rounded border-zinc-300 accent-[#1576BB] dark:border-zinc-600"
+                  className={toolCheckboxClass}
                   checked={uppercase}
                   onChange={(e) => setUppercase(e.target.checked)}
                 />
@@ -347,7 +347,7 @@ export function PasswordGeneratorPanel({ copy }: { copy: Copy }) {
               <label className="flex cursor-pointer items-center gap-2.5 text-sm text-text">
                 <input
                   type="checkbox"
-                  className="size-3.5 shrink-0 rounded border-zinc-300 accent-[#1576BB] dark:border-zinc-600"
+                  className={toolCheckboxClass}
                   checked={lowercase}
                   onChange={(e) => setLowercase(e.target.checked)}
                 />
@@ -356,7 +356,7 @@ export function PasswordGeneratorPanel({ copy }: { copy: Copy }) {
               <label className="flex cursor-pointer items-center gap-2.5 text-sm text-text">
                 <input
                   type="checkbox"
-                  className="size-3.5 shrink-0 rounded border-zinc-300 accent-[#1576BB] dark:border-zinc-600"
+                  className={toolCheckboxClass}
                   checked={numbers}
                   onChange={(e) => setNumbers(e.target.checked)}
                 />
@@ -365,7 +365,7 @@ export function PasswordGeneratorPanel({ copy }: { copy: Copy }) {
               <label className="flex cursor-pointer items-start gap-2.5 text-sm text-text">
                 <input
                   type="checkbox"
-                  className="mt-0.5 size-3.5 shrink-0 rounded border-zinc-300 accent-[#1576BB] dark:border-zinc-600"
+                  className={cn("mt-0.5", toolCheckboxClass)}
                   checked={symbols}
                   onChange={(e) => setSymbols(e.target.checked)}
                 />
@@ -379,7 +379,7 @@ export function PasswordGeneratorPanel({ copy }: { copy: Copy }) {
             <label className="flex cursor-pointer items-center gap-2.5 text-sm text-text-secondary">
               <input
                 type="checkbox"
-                className="size-3.5 shrink-0 rounded border-zinc-300 accent-[#1576BB] dark:border-zinc-600"
+                className={toolCheckboxClass}
                 checked={eachRequired}
                 onChange={(e) => setEachRequired(e.target.checked)}
               />
@@ -448,7 +448,7 @@ export function PasswordGeneratorPanel({ copy }: { copy: Copy }) {
         </section>
 
         <section className={cn(panelShellClass, "flex flex-col lg:h-full")} aria-labelledby={resultRegionId}>
-          <div className={cn(titleBarClass, "items-center")}>
+          <div className={cn(toolTitleBarClass, "items-center")}>
             <h2 id={resultRegionId} className="m-0 min-w-0 flex-1 text-sm font-semibold text-text">
               {copy.resultTitle}
             </h2>
@@ -466,8 +466,8 @@ export function PasswordGeneratorPanel({ copy }: { copy: Copy }) {
                   aria-haspopup="menu"
                   onFocus={() => passwords.length > 0 && setSaveMenuOpen(true)}
                   className={cn(
-                    toolbarBtnSecondary,
-                    "disabled:pointer-events-none disabled:opacity-40",
+                    toolSecondaryToolbarButtonClass,
+                    "h-7 disabled:pointer-events-none disabled:opacity-40",
                   )}
                 >
                   {copy.saveAsAction}
@@ -505,7 +505,10 @@ export function PasswordGeneratorPanel({ copy }: { copy: Copy }) {
                   type="button"
                   onClick={() => void copyAll()}
                   disabled={passwords.length === 0}
-                  className={cn(toolbarBtnSecondary, "disabled:pointer-events-none disabled:opacity-40")}
+                  className={cn(
+                    toolSecondaryToolbarButtonClass,
+                    "h-7 disabled:pointer-events-none disabled:opacity-40",
+                  )}
                 >
                   <IconClipboard className="size-3 shrink-0" />
                   {copy.copyAllAction}

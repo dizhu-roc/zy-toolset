@@ -9,6 +9,7 @@ import {
   blobToUint8Array,
   renderIconPng,
 } from "@/lib/ico-render";
+import { toolCardSurfaceClass } from "@/lib/ui/tool-surface";
 import { cn } from "@/lib/utils";
 import {
   useCallback,
@@ -58,11 +59,6 @@ function IcoPreviewSlotPlaceholder({
     </svg>
   );
 }
-
-const neutralCard = cn(
-  "rounded-lg border border-zinc-200/90 bg-white shadow-sm",
-  "dark:border-zinc-700/90 dark:bg-zinc-900",
-);
 
 function IconImageUpload({ className }: { className?: string }) {
   return (
@@ -737,7 +733,7 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
         <div
           className={cn(
             "flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden p-0",
-            neutralCard,
+            toolCardSurfaceClass,
           )}
         >
           <div
@@ -916,7 +912,7 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
         </div>
 
         <div
-          className={cn("shrink-0", "flex flex-col gap-3 p-4", neutralCard)}
+          className={cn("shrink-0", "flex flex-col gap-3 p-4", toolCardSurfaceClass)}
         >
           <div
             className={cn(

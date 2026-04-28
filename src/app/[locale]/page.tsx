@@ -1,36 +1,11 @@
 import Link from "next/link";
-import {
-  HomeToolIcon,
-  type HomeToolIconId,
-} from "@/components/icons/home-tool-icons";
-import { getMessages, type Messages } from "@/i18n/dictionaries";
+import { HomeToolIcon } from "@/components/icons/home-tool-icons";
+import { HOME_GRID_TOOL_ENTRIES, TOOL_ROUTES } from "@/config/tool-registry";
+import { getMessages } from "@/i18n/dictionaries";
 import { isLocale, type Locale } from "@/i18n/config";
 import { hrefForLocale } from "@/lib/localized-path";
 
 type Props = { params: Promise<{ locale: string }> };
-
-const HOME_TOOL_ENTRIES: {
-  rest: string;
-  key: keyof Pick<
-    Messages["tools"],
-    | "passwordGenerator"
-    | "icoGenerator"
-    | "imageCompressor"
-    | "imageCropper"
-    | "imageResizer"
-  >;
-  icon: HomeToolIconId;
-}[] = [
-  {
-    rest: "tools/generator/password",
-    key: "passwordGenerator",
-    icon: "passwordGenerator",
-  },
-  { rest: "tools/generator/ico", key: "icoGenerator", icon: "icoGenerator" },
-  { rest: "tools/image/compress", key: "imageCompressor", icon: "imageCompressor" },
-  { rest: "tools/image/crop", key: "imageCropper", icon: "imageCropper" },
-  { rest: "tools/image/resize", key: "imageResizer", icon: "imageResizer" },
-];
 
 const cardClassName =
   "group flex gap-3.5 rounded-lg border border-tool-card-border bg-white p-5 text-text shadow-sm no-underline hover:text-text motion-safe:transition-[transform,box-shadow] motion-safe:duration-500 motion-safe:ease-in-out motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-md";
@@ -42,8 +17,8 @@ export default async function HomePage({ params }: Props) {
   }
   const locale: Locale = raw;
   const t = await getMessages(locale);
-  const textBase64Href = hrefForLocale(locale, "tools/base64/text-encode");
-  const fileBase64Href = hrefForLocale(locale, "tools/base64/file-encode");
+  const textBase64Href = hrefForLocale(locale, TOOL_ROUTES.base64.textEncode);
+  const fileBase64Href = hrefForLocale(locale, TOOL_ROUTES.base64.fileEncode);
 
   return (
     <article className="w-full py-10">
@@ -79,7 +54,7 @@ export default async function HomePage({ params }: Props) {
               </p>
             </div>
           </Link>
-          {HOME_TOOL_ENTRIES.map(({ rest, key, icon }) => {
+          {HOME_GRID_TOOL_ENTRIES.map(({ rest, key, icon }) => {
             const tc = t.tools[key];
             return (
               <Link

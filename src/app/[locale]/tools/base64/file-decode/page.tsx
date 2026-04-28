@@ -4,9 +4,11 @@ import { notFound } from "next/navigation";
 import { HomeToolIcon } from "@/components/icons/home-tool-icons";
 import { ToolPageLayout } from "@/components/layout/tool-page-layout";
 import { FileBase64DecodePanel } from "@/components/tools/base64/file-base64-decode-panel";
+import { TOOL_ROUTES } from "@/config/tool-registry";
 import { getMessages } from "@/i18n/dictionaries";
 import { isLocale, type Locale } from "@/i18n/config";
 import { hrefForLocale } from "@/lib/localized-path";
+import { toolPageCrossLinkClass } from "@/lib/ui/tool-surface";
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -33,8 +35,8 @@ export default async function Base64FileDecodePage({ params }: Props) {
   const locale: Locale = raw;
   const t = await getMessages(locale);
   const privacyHref = hrefForLocale(locale, "privacy");
-  const textDecodeHref = hrefForLocale(locale, "tools/base64/text-decode");
-  const fileEncodeHref = hrefForLocale(locale, "tools/base64/file-encode");
+  const textDecodeHref = hrefForLocale(locale, TOOL_ROUTES.base64.textDecode);
+  const fileEncodeHref = hrefForLocale(locale, TOOL_ROUTES.base64.fileEncode);
   const p = t.tools.base64FileDecode;
 
   return (
@@ -49,10 +51,7 @@ export default async function Base64FileDecodePage({ params }: Props) {
           <p className="m-0">{p.pageDescription}</p>
           <p className="m-0 text-xs text-text-muted leading-relaxed">
             {p.pageHintFileEncodeBefore}
-            <Link
-              href={fileEncodeHref}
-              className="font-medium text-[#1576BB] underline decoration-[#1576BB]/35 underline-offset-2 hover:decoration-[#1576BB]"
-            >
+            <Link href={fileEncodeHref} className={toolPageCrossLinkClass}>
               {p.fileEncodeLinkLabel}
             </Link>
             {p.pageHintFileEncodeAfter}

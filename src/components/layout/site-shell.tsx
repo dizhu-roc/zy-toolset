@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { SiteLogo } from "@/components/brand/site-logo";
+import { TOOL_ROUTES } from "@/config/tool-registry";
 import type { Messages } from "@/i18n/dictionaries";
 import type { Locale } from "@/i18n/config";
 import { hrefForLocale } from "@/lib/localized-path";
 import { cn } from "@/lib/utils";
 import { LocaleSwitcher } from "./locale-switcher";
-import { NavCategoryMenu } from "./nav-category-menu";
-import { NavToolCategories } from "./nav-tool-categories";
+import { NavDropdownMenu } from "./nav-dropdown-menu";
 
 type Props = {
   locale: Locale;
@@ -18,15 +18,16 @@ type Props = {
 
 export function SiteShell({ locale, messages, children, homeMain }: Props) {
   const homeHref = hrefForLocale(locale, "");
-  const base64TextEncodeHref = hrefForLocale(locale, "tools/base64/text-encode");
-  const base64TextDecodeHref = hrefForLocale(locale, "tools/base64/text-decode");
-  const base64FileEncodeHref = hrefForLocale(locale, "tools/base64/file-encode");
-  const base64FileDecodeHref = hrefForLocale(locale, "tools/base64/file-decode");
-  const passwordHref = hrefForLocale(locale, "tools/generator/password");
-  const icoHref = hrefForLocale(locale, "tools/generator/ico");
-  const imageCompressHref = hrefForLocale(locale, "tools/image/compress");
-  const imageCropHref = hrefForLocale(locale, "tools/image/crop");
-  const imageResizeHref = hrefForLocale(locale, "tools/image/resize");
+  const r = TOOL_ROUTES;
+  const base64TextEncodeHref = hrefForLocale(locale, r.base64.textEncode);
+  const base64TextDecodeHref = hrefForLocale(locale, r.base64.textDecode);
+  const base64FileEncodeHref = hrefForLocale(locale, r.base64.fileEncode);
+  const base64FileDecodeHref = hrefForLocale(locale, r.base64.fileDecode);
+  const passwordHref = hrefForLocale(locale, r.generator.password);
+  const icoHref = hrefForLocale(locale, r.generator.ico);
+  const imageCompressHref = hrefForLocale(locale, r.image.compress);
+  const imageCropHref = hrefForLocale(locale, r.image.crop);
+  const imageResizeHref = hrefForLocale(locale, r.image.resize);
 
   return (
     <div className="flex min-h-dvh flex-col">
@@ -43,7 +44,7 @@ export function SiteShell({ locale, messages, children, homeMain }: Props) {
             >
               {messages.nav.home}
             </Link>
-            <NavToolCategories
+            <NavDropdownMenu
               category={messages.nav.categoryBase64}
               categoryAria={messages.nav.categoryBase64MenuAria}
               items={[
@@ -69,7 +70,7 @@ export function SiteShell({ locale, messages, children, homeMain }: Props) {
                 },
               ]}
             />
-            <NavCategoryMenu
+            <NavDropdownMenu
               category={messages.nav.categoryGenerators}
               categoryAria={messages.nav.categoryGeneratorsMenuAria}
               items={[
@@ -85,7 +86,7 @@ export function SiteShell({ locale, messages, children, homeMain }: Props) {
                 },
               ]}
             />
-            <NavCategoryMenu
+            <NavDropdownMenu
               category={messages.nav.categoryImages}
               categoryAria={messages.nav.categoryImagesMenuAria}
               items={[

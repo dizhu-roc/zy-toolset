@@ -11,6 +11,13 @@ import {
   mainMime,
 } from "@/lib/file-base64-decode";
 import { tryUtf8Decode } from "@/lib/base64";
+import {
+  toolColumnCardClass,
+  toolPageCrossLinkClass,
+  toolPrimaryToolbarButtonClass,
+  toolSecondaryToolbarButtonClass,
+  toolTitleBarClass,
+} from "@/lib/ui/tool-surface";
 import { cn } from "@/lib/utils";
 import { IconColumnSourceText } from "@/components/tools/base64/base64-text-column-icons";
 import { LineNumberedField } from "@/components/tools/base64/line-numbered-field";
@@ -76,13 +83,7 @@ function IconArrowDownTray({ className }: { className?: string }) {
   );
 }
 
-const titleBarClass =
-  "flex flex-wrap items-center gap-2 border-b border-zinc-200/90 bg-zinc-100 px-3 py-2 sm:px-4 dark:border-zinc-600 dark:bg-zinc-800/95";
-
-const panelShellClass = cn(
-  "flex min-h-0 min-w-0 flex-col overflow-hidden rounded-lg border border-zinc-200/90 bg-white shadow-sm",
-  "dark:border-zinc-700/90 dark:bg-zinc-900",
-);
+const panelShellClass = cn("min-h-0 min-w-0", toolColumnCardClass);
 
 export function FileBase64DecodePanel({
   copy,
@@ -230,7 +231,7 @@ export function FileBase64DecodePanel({
           className={cn(panelShellClass, PANEL_FIXED_H, "flex flex-col")}
           aria-labelledby={inputId}
         >
-          <div className={cn(titleBarClass, "items-center")}>
+          <div className={cn(toolTitleBarClass, "items-center")}>
             <h2
               id={inputId}
               className="flex min-w-0 flex-1 items-center gap-2 text-sm font-semibold text-text"
@@ -252,11 +253,7 @@ export function FileBase64DecodePanel({
               <button
                 type="button"
                 onClick={runPreview}
-                className={cn(
-                  "inline-flex h-7 shrink-0 cursor-pointer items-center gap-1 rounded-md px-2 text-xs font-medium text-white transition-colors",
-                  "bg-[#1576BB] hover:bg-[#125d99]",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
-                )}
+                className={cn(toolPrimaryToolbarButtonClass, "h-7 gap-1")}
               >
                 <IconDecode className="size-3 shrink-0 opacity-95" />
                 {copy.decodePreviewAction}
@@ -264,12 +261,7 @@ export function FileBase64DecodePanel({
               <button
                 type="button"
                 onClick={clearAll}
-                className={cn(
-                  "inline-flex h-7 shrink-0 cursor-pointer items-center gap-1 rounded-md border border-zinc-200 bg-white px-2 text-xs font-medium text-text-secondary transition-colors",
-                  "hover:border-zinc-300 hover:bg-zinc-50 hover:text-text",
-                  "dark:border-zinc-600 dark:bg-zinc-900 dark:hover:border-zinc-500 dark:hover:bg-zinc-800/80",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
-                )}
+                className={cn(toolSecondaryToolbarButtonClass, "h-7 gap-1")}
               >
                 <IconTrash className="size-3 shrink-0" />
                 {copy.clearAll}
@@ -303,10 +295,7 @@ export function FileBase64DecodePanel({
             {showTextHint ? (
               <p className="m-0 rounded-md border border-zinc-200/90 bg-sky-50/60 px-2.5 py-2 text-xs text-text-secondary dark:border-zinc-600 dark:bg-sky-950/30">
                 {copy.textLikeHintBefore}
-                <Link
-                  href={textDecodeHref}
-                  className="font-medium text-[#1576BB] underline decoration-[#1576BB]/35 underline-offset-2 hover:decoration-[#1576BB]"
-                >
+                <Link href={textDecodeHref} className={toolPageCrossLinkClass}>
                   {copy.textLikeHintLink}
                 </Link>
                 {copy.textLikeHintAfter}
@@ -321,10 +310,8 @@ export function FileBase64DecodePanel({
                   onClick={downloadFile}
                   disabled={!preview}
                   className={cn(
-                    "inline-flex h-7 shrink-0 cursor-pointer items-center gap-1 rounded-md px-2 text-xs font-medium text-white transition-colors",
-                    "bg-[#1576BB] hover:bg-[#125d99]",
-                    "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40",
-                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
+                    toolPrimaryToolbarButtonClass,
+                    "h-7 gap-1 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40",
                   )}
                 >
                   <IconArrowDownTray className="size-3.5 shrink-0" />

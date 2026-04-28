@@ -4,9 +4,11 @@ import { notFound } from "next/navigation";
 import { HomeToolIcon } from "@/components/icons/home-tool-icons";
 import { ToolPageLayout } from "@/components/layout/tool-page-layout";
 import { TextBase64EncodePanel } from "@/components/tools/base64/text-base64-encode-panel";
+import { TOOL_ROUTES } from "@/config/tool-registry";
 import { getMessages } from "@/i18n/dictionaries";
 import { isLocale, type Locale } from "@/i18n/config";
 import { hrefForLocale } from "@/lib/localized-path";
+import { toolPageCrossLinkClass } from "@/lib/ui/tool-surface";
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -33,7 +35,7 @@ export default async function Base64TextEncodePage({ params }: Props) {
   const locale: Locale = raw;
   const t = await getMessages(locale);
   const privacyHref = hrefForLocale(locale, "privacy");
-  const decodeHref = hrefForLocale(locale, "tools/base64/text-decode");
+  const decodeHref = hrefForLocale(locale, TOOL_ROUTES.base64.textDecode);
   const p = t.tools.base64TextEncode;
 
   return (
@@ -48,10 +50,7 @@ export default async function Base64TextEncodePage({ params }: Props) {
           <p className="m-0">{p.pageDescription}</p>
           <p className="m-0 text-xs text-text-muted leading-relaxed">
             {p.pageDescriptionHintBefore}
-            <Link
-              href={decodeHref}
-              className="font-medium text-[#1576BB] underline decoration-[#1576BB]/35 underline-offset-2 hover:decoration-[#1576BB]"
-            >
+            <Link href={decodeHref} className={toolPageCrossLinkClass}>
               {p.decodeLinkLabel}
             </Link>
             {p.pageDescriptionHintAfter}

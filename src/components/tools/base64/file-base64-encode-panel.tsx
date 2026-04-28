@@ -7,15 +7,17 @@ import { cn } from "@/lib/utils";
 import { IconColumnBase64Text } from "@/components/tools/base64/base64-text-column-icons";
 import { LineNumberedField } from "@/components/tools/base64/line-numbered-field";
 import { isPlausibleTextUpload } from "@/components/tools/base64/text-file-upload-button";
+import {
+  toolCheckboxClass,
+  toolColumnCardFullBleedClass,
+  toolPrimaryButtonClass,
+  toolTitleBarClass,
+} from "@/lib/ui/tool-surface";
 
 const MAX_FILE_BYTES = 8 * 1024 * 1024;
 const PREVIEW_TEXT_BYTES = 64 * 1024;
 
-const titleBarClass =
-  "flex flex-wrap items-center gap-2 border-b border-zinc-200/90 bg-zinc-100 px-3 py-2 sm:px-4 dark:border-zinc-600 dark:bg-zinc-800/95";
-const outputColClass = cn(
-  "flex h-full min-h-0 w-full min-w-0 flex-col overflow-hidden rounded-lg border border-zinc-200/90 bg-white shadow-sm dark:border-zinc-700/90 dark:bg-zinc-900",
-);
+const outputColClass = toolColumnCardFullBleedClass;
 
 type Copy = Messages["tools"]["base64FileEncode"];
 
@@ -724,7 +726,7 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
             <label className="flex shrink-0 cursor-pointer items-center gap-2.5 text-sm text-text-secondary sm:pt-0.5">
               <input
                 type="checkbox"
-                className="size-3.5 shrink-0 rounded border-zinc-300 accent-[#1576BB] dark:border-zinc-600"
+                className={toolCheckboxClass}
                 checked={autoEncode}
                 onChange={(e) => setAutoEncode(e.target.checked)}
               />
@@ -735,9 +737,8 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
                 type="button"
                 onClick={() => void encode()}
                 className={cn(
-                  "flex-[2] basis-0 inline-flex min-h-10 min-w-0 cursor-pointer items-center justify-center gap-1.5 rounded-md px-4 py-2.5 text-sm font-medium text-white transition-colors",
-                  "bg-[#1576BB] hover:bg-[#125d99]",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
+                  toolPrimaryButtonClass,
+                  "flex-[2] basis-0 inline-flex min-h-10 min-w-0 cursor-pointer justify-center gap-1.5 rounded-md px-4 py-2.5 text-sm",
                 )}
               >
                 <IconEncode className="size-3.5 shrink-0 opacity-95" />
@@ -761,7 +762,7 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
         </div>
 
         <section className={outputColClass} aria-labelledby={outputId}>
-          <div className={titleBarClass}>
+          <div className={toolTitleBarClass}>
             <h2
               id={outputId}
               className="flex min-w-0 flex-1 items-center gap-2 text-sm font-semibold text-text"

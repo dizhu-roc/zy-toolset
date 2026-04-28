@@ -17,6 +17,12 @@ import {
 } from "@/components/tools/base64/base64-text-column-icons";
 import { LineNumberedField } from "@/components/tools/base64/line-numbered-field";
 import { TextFileUploadButton } from "@/components/tools/base64/text-file-upload-button";
+import {
+  toolCheckboxClass,
+  toolColumnCardClass,
+  toolPrimaryToolbarButtonClass,
+  toolTitleBarClass,
+} from "@/lib/ui/tool-surface";
 
 /** 桌面专用：左右卡片固定总高，正文在 textarea 内滚动 */
 const EDITOR_PANEL_HEIGHT_CLASS = "h-[34rem]";
@@ -378,18 +384,13 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
     URL.revokeObjectURL(url);
   };
 
-  const titleBarClass =
-    "flex flex-wrap items-center gap-2 border-b border-zinc-200/90 bg-zinc-100 px-4 py-2 dark:border-zinc-600 dark:bg-zinc-800/95";
   const encodeDisabled = input.trim() === "";
-  const colClass = cn(
-    "flex flex-col overflow-hidden rounded-lg border border-zinc-200/90 bg-white shadow-sm dark:border-zinc-700/90 dark:bg-zinc-900",
-    EDITOR_PANEL_HEIGHT_CLASS,
-  );
+  const colClass = cn(toolColumnCardClass, EDITOR_PANEL_HEIGHT_CLASS);
 
   return (
     <div className="grid grid-cols-2 gap-5">
       <section className={colClass} aria-labelledby={inputId}>
-        <div className={titleBarClass}>
+        <div className={toolTitleBarClass}>
           <h2
             id={inputId}
             className="flex min-w-0 flex-1 items-center gap-2 text-sm font-semibold text-text"
@@ -413,7 +414,7 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
             <label className="flex cursor-pointer items-center gap-1.5 text-xs text-text-secondary">
               <input
                 type="checkbox"
-                className="size-3.5 rounded border-zinc-300 accent-[#1576BB]"
+                className={toolCheckboxClass}
                 checked={autoEncode}
                 onChange={(e) => setAutoEncode(e.target.checked)}
               />
@@ -422,12 +423,7 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
             <button
               type="button"
               disabled={encodeDisabled}
-              className={cn(
-                "inline-flex cursor-pointer items-center gap-1 rounded-md px-3 py-1.5 text-xs font-medium text-white transition-colors",
-                "bg-[#1576BB] hover:bg-[#125d99]",
-                "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-[#1576BB]",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
-              )}
+              className={cn(toolPrimaryToolbarButtonClass, "gap-1 px-3 py-1.5")}
               onClick={runEncode}
             >
               <IconEncode className="size-3.5 shrink-0 opacity-95" />
@@ -462,7 +458,7 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
       </section>
 
       <section className={colClass} aria-labelledby={outputId}>
-        <div className={titleBarClass}>
+        <div className={toolTitleBarClass}>
           <h2
             id={outputId}
             className="flex min-w-0 flex-1 items-center gap-2 text-sm font-semibold text-text"
