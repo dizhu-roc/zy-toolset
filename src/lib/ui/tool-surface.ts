@@ -55,20 +55,27 @@ export const toolSectionTitleActionsClass =
 /** @deprecated 使用 {@link toolSectionTitleBarClass} */
 export const toolTitleBarClass = toolSectionTitleBarClass;
 
-/** 标题栏内：主按钮（蓝底 #1576BB，图标 + 文案，固定栏高） */
+/** 标题栏内：主按钮（蓝底 #1576BB，图标 + 文案，固定栏高）。默认微抬+浅阴影，悬停归位贴栏。 */
 export const toolChromeTitleBarPrimaryButtonClass = cn(
-  "inline-flex h-8 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-md px-2.5 text-xs font-medium text-white transition-colors",
-  "bg-[#1576BB] hover:bg-[#125d99]",
+  "inline-flex h-8 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-md px-2.5 text-xs font-medium text-white",
+  "transition-[transform,box-shadow,background-color,opacity] duration-150",
+  "translate-y-[-1px] bg-[#1576BB] shadow-[0_4px_12px_rgba(21,118,187,0.22),0_1px_2px_rgba(0,0,0,0.06)]",
+  "hover:translate-y-0 hover:shadow-none hover:bg-[#125d99]",
+  "active:translate-y-0 active:shadow-none",
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
-  "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-[#1576BB]",
+  "disabled:pointer-events-none disabled:cursor-not-allowed disabled:translate-y-0 disabled:shadow-none disabled:opacity-45 disabled:hover:bg-[#1576BB]",
 );
 
-/** 标题栏内：线框按钮（图标 + 文案，与主按钮同高） */
+/** 标题栏内：线框按钮（图标 + 文案，与主按钮同高）。默认微抬+中性阴影，悬停归位贴栏。 */
 export const toolChromeTitleBarOutlineButtonClass = cn(
-  "inline-flex h-8 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-md border border-zinc-200 bg-white px-2.5 text-xs font-medium text-text-secondary transition-colors",
-  "hover:border-zinc-300 hover:bg-zinc-50 hover:text-text",
+  "inline-flex h-8 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-md border border-zinc-200 bg-white px-2.5 text-xs font-medium text-text-secondary",
+  "transition-[transform,box-shadow,background-color,border-color,color,opacity] duration-150",
+  "translate-y-[-1px] shadow-[0_2px_8px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.04)]",
+  "dark:shadow-[0_3px_10px_rgba(0,0,0,0.32)]",
+  "hover:translate-y-0 hover:shadow-none hover:border-zinc-300 hover:bg-zinc-50 hover:text-text",
+  "active:translate-y-0 active:shadow-none",
   "dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-50",
-  "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40",
+  "disabled:pointer-events-none disabled:cursor-not-allowed disabled:translate-y-0 disabled:shadow-none disabled:opacity-40",
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
 );
 

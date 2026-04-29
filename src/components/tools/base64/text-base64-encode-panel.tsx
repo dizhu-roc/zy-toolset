@@ -17,10 +17,10 @@ import {
 } from "@/components/tools/base64/base64-text-column-icons";
 import { LineNumberedField } from "@/components/tools/base64/line-numbered-field";
 import { TextFileUploadButton } from "@/components/tools/base64/text-file-upload-button";
+import { ToolAutoEncodeLiftSwitch } from "@/components/ui/tool-auto-encode-lift-switch";
 import { ToolTitleBarTextButton } from "@/components/ui/tool-title-bar-text-button";
 import {
   copyResultBubbleClassName,
-  toolCheckboxClass,
   toolColumnCardClass,
   toolSectionHeadingClass,
   toolSectionHeadingIconClass,
@@ -426,15 +426,11 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
                 window.setTimeout(() => setUploadHint(null), 5000);
               }}
             />
-            <label className="flex cursor-pointer items-center gap-1.5 text-xs text-text-secondary">
-              <input
-                type="checkbox"
-                className={toolCheckboxClass}
-                checked={autoEncode}
-                onChange={(e) => setAutoEncode(e.target.checked)}
-              />
-              <span>{copy.autoEncode}</span>
-            </label>
+            <ToolAutoEncodeLiftSwitch
+              checked={autoEncode}
+              onChange={setAutoEncode}
+              label={copy.autoEncode}
+            />
             <ToolTitleBarTextButton
               variant="primary"
               disabled={encodeDisabled}
