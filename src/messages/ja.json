@@ -216,7 +216,7 @@
       "outputPlaceholder": "デコード対象を入力すると、結果がここに表示されます。",
       "autoDecode": "自動デコード",
       "decodeAction": "デコード",
-      "clearAll": "すべてクリア",
+      "clearAll": "クリア",
       "copyOutput": "コピー",
       "copied": "クリップボードにコピーしました。",
       "copyFailed": "コピーできませんでした。手動で選択してコピーしてください。",

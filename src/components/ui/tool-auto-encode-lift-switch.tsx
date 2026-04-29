@@ -74,9 +74,14 @@ export function ToolAutoEncodeLiftSwitch({ checked, onChange, label, className }
   );
 }
 
-/** 供同页 Encode 主按钮与 Auto 色系统一（Tailwind 任意值字符串片段）。 */
+/** 供 text-encode / text-decode 主操作按钮与 Auto 开关同系略浅主色。 */
 export const toolTextEncodeSoftPrimaryClass = cn(
   "bg-[#3a9ad8] shadow-[0_4px_12px_rgba(58,154,216,0.2),0_1px_2px_rgba(0,0,0,0.04)]",
   "hover:bg-[#2d8ec8] hover:shadow-none",
   "active:translate-y-0 active:shadow-none",
 );
+
+export const toolBase64SoftPrimaryClass = toolTextEncodeSoftPrimaryClass;
+
+/** 与 Encode/Decode 页 Auto 开关同组件，供命名区分。 */
+export { ToolAutoEncodeLiftSwitch as ToolBarAutoLiftSwitch };

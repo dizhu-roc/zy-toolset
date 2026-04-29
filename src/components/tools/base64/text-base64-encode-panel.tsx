@@ -18,7 +18,7 @@ import {
 import { LineNumberedField } from "@/components/tools/base64/line-numbered-field";
 import { TextFileUploadButton } from "@/components/tools/base64/text-file-upload-button";
 import {
-  toolTextEncodeSoftPrimaryClass,
+  toolBase64SoftPrimaryClass,
   ToolAutoEncodeLiftSwitch,
 } from "@/components/ui/tool-auto-encode-lift-switch";
 import { ToolTitleBarTextButton } from "@/components/ui/tool-title-bar-text-button";
@@ -453,7 +453,7 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
             />
             <ToolTitleBarTextButton
               variant="primary"
-              className={toolTextEncodeSoftPrimaryClass}
+              className={toolBase64SoftPrimaryClass}
               icon={<IconEncode className="opacity-95" />}
               onClick={onEncodeButtonClick}
             >

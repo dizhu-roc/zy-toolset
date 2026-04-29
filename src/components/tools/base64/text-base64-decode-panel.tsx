@@ -15,10 +15,13 @@ import {
 } from "@/components/tools/base64/base64-text-column-icons";
 import { LineNumberedField } from "@/components/tools/base64/line-numbered-field";
 import { TextFileUploadButton } from "@/components/tools/base64/text-file-upload-button";
+import {
+  toolBase64SoftPrimaryClass,
+  ToolBarAutoLiftSwitch,
+} from "@/components/ui/tool-auto-encode-lift-switch";
 import { ToolTitleBarTextButton } from "@/components/ui/tool-title-bar-text-button";
 import {
   copyResultBubbleClassName,
-  toolCheckboxClass,
   toolColumnCardClass,
   toolSectionHeadingClass,
   toolSectionHeadingIconClass,
@@ -131,18 +134,27 @@ export function TextBase64DecodePanel({ copy }: { copy: PageCopy }) {
   const [autoDecode, setAutoDecode] = useState(true);
   const [copyHint, setCopyHint] = useState<string | null>(null);
   const [uploadHint, setUploadHint] = useState<string | null>(null);
+  /** 空输入时点击 Decode，在输出区顶条展示（与 text-encode 一致） */
+  const [outputDecodeEmptyHint, setOutputDecodeEmptyHint] = useState<string | null>(null);
   const outputTextareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (input.trim() !== "") {
+      setOutputDecodeEmptyHint(null);
+    }
+  }, [input]);
 
   const runDecode = useCallback(
     (source: "auto" | "manual") => {
       setOutput("");
       setOutputFailureText(null);
+      setOutputDecodeEmptyHint(null);
       setCopyHint(null);
       setRawBytes(null);
       const trimmed = input.trim();
       if (!trimmed) {
         if (source === "manual") {
-          setOutputFailureText(copy.emptyInputHint);
+          setOutputDecodeEmptyHint(copy.emptyInputHint);
         }
         return;
       }
@@ -198,6 +210,7 @@ export function TextBase64DecodePanel({ copy }: { copy: PageCopy }) {
     if (!t) {
       setOutput("");
       setOutputFailureText(null);
+      setOutputDecodeEmptyHint(null);
       setRawBytes(null);
       setUploadHint(null);
       return;
@@ -213,6 +226,7 @@ export function TextBase64DecodePanel({ copy }: { copy: PageCopy }) {
     setInput("");
     setOutput("");
     setOutputFailureText(null);
+    setOutputDecodeEmptyHint(null);
     setRawBytes(null);
     setCopyHint(null);
     setUploadHint(null);
@@ -246,8 +260,6 @@ export function TextBase64DecodePanel({ copy }: { copy: PageCopy }) {
     URL.revokeObjectURL(url);
   };
 
-  const decodeDisabled = input.trim() === "";
-
   const colClass = cn(toolColumnCardClass, EDITOR_PANEL_HEIGHT_CLASS);
 
   return (
@@ -272,18 +284,14 @@ export function TextBase64DecodePanel({ copy }: { copy: PageCopy }) {
                   window.setTimeout(() => setUploadHint(null), 5000);
                 }}
               />
-              <label className="flex cursor-pointer items-center gap-1.5 text-xs text-text-secondary">
-                <input
-                  type="checkbox"
-                  className={toolCheckboxClass}
-                  checked={autoDecode}
-                  onChange={(e) => setAutoDecode(e.target.checked)}
-                />
-                <span>{copy.autoDecode}</span>
-              </label>
+              <ToolBarAutoLiftSwitch
+                checked={autoDecode}
+                onChange={setAutoDecode}
+                label={copy.autoDecode}
+              />
               <ToolTitleBarTextButton
                 variant="primary"
-                disabled={decodeDisabled}
+                className={toolBase64SoftPrimaryClass}
                 icon={<IconDecode className="opacity-95" />}
                 onClick={manualDecode}
               >
@@ -321,7 +329,7 @@ export function TextBase64DecodePanel({ copy }: { copy: PageCopy }) {
               <IconColumnSourceText className={toolSectionHeadingIconClass} />
               <span className="min-w-0 truncate">{copy.outputColumnTitle}</span>
             </h2>
-            <div className={toolSectionTitleActionsClass}>
+            <div className={cn(toolSectionTitleActionsClass, "gap-x-2 gap-y-2")}>
               <div className="relative inline-flex">
                 <ToolTitleBarTextButton
                   variant="outline"
@@ -355,6 +363,15 @@ export function TextBase64DecodePanel({ copy }: { copy: PageCopy }) {
             </div>
           </div>
           <div className="flex min-h-0 flex-1 flex-col bg-zinc-100 dark:bg-zinc-900">
+            {outputDecodeEmptyHint ? (
+              <p
+                className="m-0 shrink-0 border-b border-red-200/90 bg-red-50/60 px-4 py-2.5 text-base font-medium leading-snug text-red-700 dark:border-red-900/50 dark:bg-red-950/35 dark:text-red-300"
+                role="alert"
+                aria-live="polite"
+              >
+                {outputDecodeEmptyHint}
+              </p>
+            ) : null}
             <div className="flex min-h-0 flex-1 flex-col">
               {outputFailureText ? (
                 <div
