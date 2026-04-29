@@ -103,7 +103,8 @@
       "uploadFileRejectNotText": "Elige un archivo de texto plano (p. ej. .txt, .html, .css, .js, .json, .md). No se admiten Office, PDF ni imágenes habituales.",
       "charCount": "{n} caracteres",
       "copied": "Copiado al portapapeles.",
-      "copyFailed": "No se pudo copiar; selecciona y copia manualmente."
+      "copyFailed": "No se pudo copiar; selecciona y copia manualmente.",
+      "encodeEmptyHint": "Escribe primero texto en el campo."
     },
     "base64FileEncode": {
       "metaTitle": "Archivo a Base64",

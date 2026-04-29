@@ -103,7 +103,8 @@
       "uploadFileRejectNotText": "Choisissez un fichier texte (p. ex. .txt, .html, .css, .js, .json, .md). Office, PDF et images classiques ne sont pas pris en charge ici.",
       "charCount": "{n} caractères",
       "copied": "Copié dans le presse-papiers.",
-      "copyFailed": "Impossible de copier — sélectionnez et copiez manuellement."
+      "copyFailed": "Impossible de copier — sélectionnez et copiez manuellement.",
+      "encodeEmptyHint": "Saisissez d’abord du texte dans le champ."
     },
     "base64FileEncode": {
       "metaTitle": "Fichier vers Base64",

@@ -103,7 +103,8 @@
       "uploadFileRejectNotText": "请选择纯文本类文件（如 .txt、.html、.css、.js、.json 等）。不支持 Office、PDF 或常见图片等格式。",
       "charCount": "{n} 字",
       "copied": "已复制到剪贴板。",
-      "copyFailed": "无法复制，请手动选择并复制。"
+      "copyFailed": "无法复制，请手动选择并复制。",
+      "encodeEmptyHint": "请先在输入框中输入内容。"
     },
     "base64FileEncode": {
       "metaTitle": "文件转 Base64",

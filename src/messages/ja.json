@@ -103,7 +103,8 @@
       "uploadFileRejectNotText": "プレーンテキスト系のファイル（.txt、.html、.css、.js、.json など）を選んでください。Office、PDF、一般的な画像は対象外です。",
       "charCount": "{n} 文字",
       "copied": "クリップボードにコピーしました。",
-      "copyFailed": "コピーできませんでした。手動で選択してコピーしてください。"
+      "copyFailed": "コピーできませんでした。手動で選択してコピーしてください。",
+      "encodeEmptyHint": "先に本文を入力欄に入力してください。"
     },
     "base64FileEncode": {
       "metaTitle": "ファイルを Base64 に",

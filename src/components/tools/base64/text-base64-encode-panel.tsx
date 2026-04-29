@@ -17,7 +17,10 @@ import {
 } from "@/components/tools/base64/base64-text-column-icons";
 import { LineNumberedField } from "@/components/tools/base64/line-numbered-field";
 import { TextFileUploadButton } from "@/components/tools/base64/text-file-upload-button";
-import { ToolAutoEncodeLiftSwitch } from "@/components/ui/tool-auto-encode-lift-switch";
+import {
+  toolTextEncodeSoftPrimaryClass,
+  ToolAutoEncodeLiftSwitch,
+} from "@/components/ui/tool-auto-encode-lift-switch";
 import { ToolTitleBarTextButton } from "@/components/ui/tool-title-bar-text-button";
 import {
   copyResultBubbleClassName,
@@ -318,7 +321,15 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
   const outputTextareaRef = useRef<HTMLTextAreaElement>(null);
   const prevInputRef = useRef(input);
   const autoEncodeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  /** 在输出列展示的「空内容点 Encode」提示，非气泡 */
+  const [outputEncodeEmptyHint, setOutputEncodeEmptyHint] = useState<string | null>(null);
   inputRef.current = input;
+
+  useEffect(() => {
+    if (input.trim() !== "") {
+      setOutputEncodeEmptyHint(null);
+    }
+  }, [input]);
 
   useEffect(() => {
     if (!autoEncode) {
@@ -370,11 +381,21 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
     setOutput(encodeOutput(input, outputMode));
   };
 
+  const onEncodeButtonClick = () => {
+    if (input.trim() === "") {
+      setOutputEncodeEmptyHint(copy.encodeEmptyHint);
+      return;
+    }
+    setOutputEncodeEmptyHint(null);
+    runEncode();
+  };
+
   const clearAll = () => {
     setInput("");
     setOutput("");
     setCopyHint(null);
     setUploadHint(null);
+    setOutputEncodeEmptyHint(null);
   };
 
   const copyOutput = async () => {
@@ -402,7 +423,6 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
     URL.revokeObjectURL(url);
   };
 
-  const encodeDisabled = input.trim() === "";
   const colClass = cn(toolColumnCardClass, EDITOR_PANEL_HEIGHT_CLASS);
 
   return (
@@ -433,9 +453,9 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
             />
             <ToolTitleBarTextButton
               variant="primary"
-              disabled={encodeDisabled}
+              className={toolTextEncodeSoftPrimaryClass}
               icon={<IconEncode className="opacity-95" />}
-              onClick={runEncode}
+              onClick={onEncodeButtonClick}
             >
               {copy.generate}
             </ToolTitleBarTextButton>
@@ -514,6 +534,15 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
           </div>
         </div>
         <div className="flex min-h-0 flex-1 flex-col bg-white dark:bg-zinc-900">
+          {outputEncodeEmptyHint ? (
+            <p
+              className="m-0 shrink-0 border-b border-red-200/90 bg-red-50/60 px-4 py-2.5 text-base font-medium leading-snug text-red-700 dark:border-red-900/50 dark:bg-red-950/35 dark:text-red-300"
+              role="alert"
+              aria-live="polite"
+            >
+              {outputEncodeEmptyHint}
+            </p>
+          ) : null}
           <div className="flex min-h-0 flex-1 flex-col">
             <LineNumberedField
               value={output}

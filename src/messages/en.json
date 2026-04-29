@@ -89,7 +89,7 @@
       "outputColumnTitle": "Base64 text",
       "inputPlaceholder": "Type or paste your text here.",
       "outputPlaceholder": "Enter source text, and the encoded result will appear here.",
-      "autoEncode": "Auto-encode",
+      "autoEncode": "AutoEncode",
       "generate": "Encode",
       "clearAll": "Clear",
       "outputFormatLabel": "Output format",
@@ -103,7 +103,8 @@
       "uploadFileRejectNotText": "Please choose a plain-text file (e.g. .txt, .html, .css, .js, .json, .md). Office, PDF, and most non-text formats are not supported here.",
       "charCount": "{n} characters",
       "copied": "Copied to clipboard.",
-      "copyFailed": "Could not copy — select and copy manually."
+      "copyFailed": "Could not copy — select and copy manually.",
+      "encodeEmptyHint": "Enter some text in the field first."
     },
     "base64FileEncode": {
       "metaTitle": "File to Base64",
@@ -139,7 +140,7 @@
       "maxFileHint": "To keep the page responsive, file size is limited to about {mb} MB.",
       "asDataUrl": "Output as Data URL (uses file MIME when known)",
       "dataUrlToggleLabel": "Data URL",
-      "autoEncode": "Auto-encode",
+      "autoEncode": "AutoEncode",
       "encodeAction": "Encode",
       "clearAll": "Clear",
       "outputColumnTitle": "Base64 output",
