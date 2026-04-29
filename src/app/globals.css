@@ -60,6 +60,8 @@
 @layer base {
   body {
     font-feature-settings: "kern" 1, "liga" 1;
+    letter-spacing: var(--text-tracking-body);
+    line-height: var(--text-leading-body);
   }
 
   :where(a) {
