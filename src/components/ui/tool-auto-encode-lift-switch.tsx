@@ -2,12 +2,12 @@
 
 import { cn } from "@/lib/utils";
 
-/** 文本工具栏：略浅于全站主色 #1576BB，与 text-encode Encode 主按钮同系。 */
+/** 文本工具栏：石墨灰主色，与 Encode 主按钮同系。 */
 const SOFT = {
-  track: "bg-[#3a9ad8]",
+  track: "bg-[#6b7280]",
   /** 开启时容器阴影（品牌色光晕，略轻） */
   ringShadow:
-    "shadow-[0_4px_12px_rgba(58,154,216,0.14),0_1px_2px_rgba(0,0,0,0.04)] dark:shadow-[0_4px_14px_rgba(58,154,216,0.12),0_1px_2px_rgba(0,0,0,0.2)]",
+    "shadow-[0_4px_12px_rgba(55,65,81,0.16),0_1px_2px_rgba(0,0,0,0.04)] dark:shadow-[0_4px_14px_rgba(55,65,81,0.16),0_1px_2px_rgba(0,0,0,0.2)]",
   /** 关闭态：与标题栏线框按钮同系的中性抬起阴影 */
   offLiftShadow:
     "shadow-[0_2px_8px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.04)] dark:shadow-[0_3px_10px_rgba(0,0,0,0.32)]",
@@ -86,8 +86,8 @@ export function ToolAutoEncodeLiftSwitch({
 
 /** 供 text-encode / text-decode 主操作按钮与 Auto 开关同系略浅主色。 */
 export const toolTextEncodeSoftPrimaryClass = cn(
-  "bg-[#3a9ad8] shadow-[0_4px_12px_rgba(58,154,216,0.2),0_1px_2px_rgba(0,0,0,0.04)]",
-  "hover:bg-[#2d8ec8] hover:shadow-none",
+  "bg-[#6b7280] shadow-[0_4px_12px_rgba(55,65,81,0.24),0_1px_2px_rgba(0,0,0,0.04)]",
+  "hover:bg-[#4b5563] hover:shadow-none",
   "active:translate-y-0 active:shadow-none",
 );
 

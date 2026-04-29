@@ -203,7 +203,7 @@ function IconInfo({ className }: { className?: string }) {
 
 const filePreviewBoxClass = cn(
   "h-32 w-full min-w-0 shrink-0 overflow-hidden",
-  "bg-zinc-100 dark:bg-zinc-900",
+  "bg-[#f3f4f6] dark:bg-zinc-900",
 );
 
 function FilePreviewTextBlock({
@@ -388,7 +388,7 @@ function DataUrlSwitch({
       <span
         className={cn(
           "relative inline-flex h-4 w-7 shrink-0 rounded-full transition-colors",
-          checked ? "bg-[#3a9ad8]" : "bg-zinc-300 dark:bg-zinc-600",
+          checked ? "bg-[#6b7280]" : "bg-[#9ca3af] dark:bg-zinc-600",
         )}
         aria-hidden
       >
@@ -534,7 +534,7 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
         className="grid grid-cols-1 gap-5 gap-x-4 sm:gap-x-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:items-stretch"
       >
         <div
-          className="flex h-full min-h-0 min-w-0 flex-col gap-4 overflow-hidden rounded-lg border border-zinc-200/90 dark:border-zinc-600/50"
+          className="flex h-full min-h-0 min-w-0 flex-col gap-4 overflow-hidden rounded-lg border border-[#d1d5db] dark:border-zinc-600/50"
           role="region"
           aria-labelledby={inputRegionId}
         >
@@ -628,12 +628,12 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
               }}
               className={cn(
                 "flex min-h-[9.5rem] shrink-0 cursor-pointer flex-col items-center justify-center gap-2 text-center transition-colors sm:min-h-[10.5rem]",
-                "overflow-hidden rounded-lg border border-zinc-200/90 dark:border-zinc-600/50",
-                "outline-none focus-visible:ring-2 focus-visible:ring-[#1576BB]/30",
+                "overflow-hidden rounded-lg border border-[#d1d5db] dark:border-zinc-600/50",
+                "outline-none focus-visible:ring-2 focus-visible:ring-[#4b5563]/30",
                 isBusy && "cursor-not-allowed opacity-75",
                 dragOver
-                  ? "bg-sky-100 dark:bg-sky-900/55"
-                  : "bg-sky-50 dark:bg-sky-950/45",
+                  ? "bg-[#e5e7eb] dark:bg-zinc-700/70"
+                  : "bg-[#f3f4f6] dark:bg-zinc-800/70",
               )}
             >
               {!file ? (
@@ -649,7 +649,7 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
                     disabled={isBusy}
                     className={cn(
                       "inline-flex h-8 items-center justify-center rounded-md border px-3 text-xs font-medium",
-                      "border-zinc-300 bg-white text-text shadow-sm hover:bg-zinc-50",
+                      "border-[#9ca3af] bg-white text-[#111827] shadow-sm hover:bg-[#f3f4f6]",
                       "dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800",
                       "disabled:cursor-not-allowed disabled:opacity-60",
                     )}
@@ -665,7 +665,7 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
                 </>
               ) : (
                 <div className="flex w-full min-w-0 flex-col items-center justify-center gap-1.5">
-                  <IconUploadZone className="size-7 shrink-0 text-[#125d99] dark:text-[#3d93c9]" />
+                  <IconUploadZone className="size-7 shrink-0 text-[#374151] dark:text-zinc-300" />
                   <p className="m-0 text-sm font-medium text-text-secondary">
                     {copy.dropZoneReplace}
                   </p>
@@ -673,14 +673,14 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
               )}
             </div>
 
-            <div className="min-w-0 overflow-hidden rounded-lg border border-zinc-200/90 dark:border-zinc-600/50">
+            <div className="min-w-0 overflow-hidden rounded-lg border border-[#d1d5db] dark:border-zinc-600/50">
               <FilePreviewPanel file={file} copy={copy} />
             </div>
           </div>
 
           <div
             className={cn(
-              "shrink-0 overflow-hidden rounded-lg border border-zinc-200/80",
+              "shrink-0 overflow-hidden rounded-lg border border-[#d1d5db]",
               "dark:border-zinc-600/40",
             )}
             aria-live="polite"
@@ -691,7 +691,7 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
                 <span className="min-w-0 truncate">{copy.fileInfoTitle}</span>
               </p>
             </div>
-            <div className="bg-zinc-100 px-3 py-3 dark:bg-zinc-900">
+            <div className="bg-white px-3 py-3 dark:bg-zinc-900">
               <dl className="m-0 grid min-w-0 grid-cols-[max-content_minmax(0,1fr)] items-center gap-x-2 gap-y-1.5 text-sm">
                 <dt className="m-0 text-left text-xs text-text-muted">
                   {copy.fileInfoLabelName}
@@ -793,10 +793,10 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
               </ToolTitleBarTextButton>
             </div>
           </div>
-          <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-zinc-100 dark:bg-zinc-900">
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-[#f3f4f6] dark:bg-zinc-900">
             <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
               {isBusy ? (
-                <p className="m-0 border-b border-zinc-200/80 bg-zinc-50 px-3 py-1.5 text-xs text-[#1576BB] dark:border-zinc-700 dark:bg-zinc-800/70">
+                <p className="m-0 border-b border-[#d1d5db] bg-[#f3f4f6] px-3 py-1.5 text-xs text-[#4b5563] dark:border-zinc-700 dark:bg-zinc-800/70">
                   {busyHint}
                 </p>
               ) : null}
@@ -806,7 +806,7 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
                 showGutter={false}
                 placeholder={isBusy ? busyHint : copy.outputPlaceholder}
                 ariaLabel={copy.outputColumnTitle}
-                className="bg-zinc-100 dark:bg-zinc-900"
+                className="bg-[#f3f4f6] dark:bg-zinc-900"
                 textareaRef={outputTextareaRef}
               />
             </div>

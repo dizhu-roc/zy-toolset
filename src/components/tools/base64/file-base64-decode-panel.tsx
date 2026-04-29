@@ -331,17 +331,17 @@ export function FileBase64DecodePanel({
 
             <div
               className={cn(
-                "flex min-h-0 flex-1 flex-col overflow-hidden rounded-md border border-sky-200/70",
-                "bg-[#f0f7fc] dark:border-sky-900/45 dark:bg-sky-950/35",
+                "flex min-h-0 flex-1 flex-col overflow-hidden rounded-md border border-zinc-300/70",
+                "bg-[#f3f4f6] dark:border-zinc-700/70 dark:bg-zinc-800/50",
               )}
               role="region"
               aria-label={copy.previewSectionTitle}
             >
-              <div className={cn(toolSectionTitleBarClass, "border-sky-200/60 dark:border-sky-900/40")}>
+              <div className={cn(toolSectionTitleBarClass, "border-zinc-300/60 dark:border-zinc-700/60")}>
                 <p
                   className={cn(
                     toolSectionBarTitlePlainClass,
-                    "flex min-w-0 flex-1 items-center gap-2 text-sky-950 dark:text-sky-100",
+                    "flex min-w-0 flex-1 items-center gap-2 text-zinc-800 dark:text-zinc-100",
                   )}
                 >
                   <IconPreview className={toolSectionHeadingIconClass} />
@@ -362,7 +362,7 @@ export function FileBase64DecodePanel({
               <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
                 {errorMessage ? (
                   <p
-                    className="m-0 shrink-0 border-b border-sky-200/60 px-3 py-2.5 text-base font-medium leading-snug text-red-600 dark:border-sky-800/50 dark:text-red-400"
+                    className="m-0 shrink-0 border-b border-zinc-300/60 px-3 py-2.5 text-base font-medium leading-snug text-red-600 dark:border-zinc-700/70 dark:text-red-400"
                     role="alert"
                   >
                     {errorMessage}
@@ -371,10 +371,10 @@ export function FileBase64DecodePanel({
                 <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-0">
                   {!preview ? (
                     <div className="flex flex-1 flex-col items-center justify-center gap-2 px-3 py-4 text-center">
-                      <p className="m-0 text-sm font-medium text-sky-950/90 dark:text-sky-100">
+                      <p className="m-0 text-sm font-medium text-zinc-800 dark:text-zinc-100">
                         {copy.previewSectionEmptyTitle}
                       </p>
-                      <p className="m-0 max-w-[20rem] text-xs leading-relaxed text-sky-900/75 dark:text-sky-200/80">
+                      <p className="m-0 max-w-[20rem] text-xs leading-relaxed text-zinc-600 dark:text-zinc-300">
                         {copy.previewSectionEmptyBody}
                       </p>
                     </div>
@@ -401,10 +401,10 @@ export function FileBase64DecodePanel({
                     />
                   ) : (
                     <div className="flex flex-1 flex-col items-center justify-center gap-2 px-3 py-4 text-center">
-                      <p className="m-0 text-sm font-medium text-sky-950/90 dark:text-sky-100">
+                      <p className="m-0 text-sm font-medium text-zinc-800 dark:text-zinc-100">
                         {copy.previewBinaryTitle}
                       </p>
-                      <p className="m-0 max-w-[20rem] text-xs leading-relaxed text-sky-900/75 dark:text-sky-200/80">
+                      <p className="m-0 max-w-[20rem] text-xs leading-relaxed text-zinc-600 dark:text-zinc-300">
                         {copy.unknownTypeHint}
                       </p>
                     </div>
@@ -414,7 +414,7 @@ export function FileBase64DecodePanel({
             </div>
 
             {showTextHint ? (
-              <p className="m-0 shrink-0 rounded-md border border-zinc-200/90 bg-sky-50/60 px-2.5 py-2 text-xs text-text-secondary dark:border-zinc-600 dark:bg-sky-950/30">
+              <p className="m-0 shrink-0 rounded-md border border-zinc-200/90 bg-zinc-100/80 px-2.5 py-2 text-xs text-text-secondary dark:border-zinc-600 dark:bg-zinc-800/50">
                 {copy.textLikeHintBefore}
                 <Link href={textDecodeHref} className={toolPageCrossLinkClass}>
                   {copy.textLikeHintLink}

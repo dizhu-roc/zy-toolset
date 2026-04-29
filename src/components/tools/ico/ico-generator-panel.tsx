@@ -594,13 +594,13 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
   };
 
   const pillBase =
-    "rounded-md px-3 py-1 text-xs font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1576BB]/25";
+    "rounded-md px-3 py-1 text-xs font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4b5563]/25";
   const pillInactive = cn(
     "bg-zinc-100 text-text-secondary hover:bg-zinc-200/90",
     "dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700/90",
   );
   const pillActive = cn(
-    "bg-[#1576BB]/12 text-[#125d99] dark:bg-[#1576BB]/20 dark:text-sky-200",
+    "bg-[#e5e7eb] text-[#374151] dark:bg-zinc-700/80 dark:text-zinc-100",
   );
 
   const downloadPackage = useCallback(async () => {
@@ -729,25 +729,25 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
           className={cn(
             "flex min-h-[13rem] shrink-0 cursor-pointer flex-col items-center justify-center gap-3 rounded-lg px-4 py-10 text-center transition-colors",
             "overflow-hidden border border-zinc-200/90 dark:border-zinc-600/50",
-            "outline-none focus-within:ring-2 focus-within:ring-[#1576BB]/30",
+            "outline-none focus-within:ring-2 focus-within:ring-[#4b5563]/30",
             uploadDragOver
-              ? "bg-sky-100 dark:bg-sky-900/55"
-              : "bg-sky-50 dark:bg-sky-950/45",
+              ? "bg-[#e5e7eb] dark:bg-zinc-700/70"
+              : "bg-[#f3f4f6] dark:bg-zinc-800/70",
           )}
         >
           <IconImageUpload
             className={cn(
               "size-11 shrink-0",
               file
-                ? "text-[#125d99] dark:text-[#3d93c9]"
+                ? "text-[#374151] dark:text-zinc-300"
                 : "text-zinc-500 dark:text-zinc-400",
             )}
           />
           <span
             className={cn(
               "inline-flex items-center justify-center rounded-md px-4 py-1.5 text-xs font-semibold",
-              "bg-white text-[#125d99] shadow-sm shadow-zinc-900/5",
-              "ring-1 ring-zinc-200/90 dark:bg-zinc-900/90 dark:text-[#3d93c9] dark:ring-zinc-600/60",
+              "bg-white text-[#374151] shadow-sm shadow-zinc-900/5",
+              "ring-1 ring-zinc-200/90 dark:bg-zinc-900/90 dark:text-zinc-200 dark:ring-zinc-600/60",
             )}
           >
             {copy.uploadChooseButton}
@@ -766,7 +766,7 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
         >
           <div
             ref={containerRef}
-            className="relative isolate min-h-0 w-full flex-1 overflow-hidden bg-zinc-100 dark:bg-zinc-800"
+            className="relative isolate min-h-0 w-full flex-1 overflow-hidden bg-[#f3f4f6] dark:bg-zinc-800"
             style={{ minHeight: PREVIEW_HEIGHT_PX }}
           >
             {imgSrc ? (
@@ -792,16 +792,16 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
                   >
                     <div
                       className={cn(
-                        "pointer-events-none absolute inset-0 z-0 rounded-sm border-2 border-[#1576BB]",
+                        "pointer-events-none absolute inset-0 z-0 rounded-sm border-2 border-[#4b5563]",
                         "shadow-md ring-2 ring-white/90 ring-offset-0",
-                        "dark:border-sky-400 dark:ring-zinc-700",
+                        "dark:border-zinc-400 dark:ring-zinc-700",
                       )}
                       aria-hidden
                     />
                     <div
                       className={cn(
                         "pointer-events-none absolute inset-0 z-[5] rounded-sm",
-                        "bg-[#1576BB]/10 dark:bg-sky-400/12",
+                        "bg-zinc-500/10 dark:bg-zinc-400/12",
                       )}
                       aria-hidden
                     />
@@ -810,7 +810,7 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
                       aria-label={copy.cropDragLabel}
                       className={cn(
                         "absolute z-[15] cursor-move rounded-sm border-0 bg-transparent p-0",
-                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1576BB] focus-visible:ring-offset-1",
+                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4b5563] focus-visible:ring-offset-1",
                       )}
                       style={{
                         top: CROP_EDGE_HIT_PX,
@@ -1019,8 +1019,8 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
           </div>
           <div
             className={cn(
-              "flex min-h-0 w-full flex-1 flex-col bg-[#f0f7fc] px-6 py-4 sm:px-8",
-              "dark:bg-sky-950/35",
+              "flex min-h-0 w-full flex-1 flex-col bg-[#f3f4f6] px-6 py-4 sm:px-8",
+              "dark:bg-zinc-800/50",
             )}
           >
             {!imgSrc ? (
@@ -1035,7 +1035,7 @@ export function IcoGeneratorPanel({ copy }: { copy: Copy }) {
                   className={cn(
                     "flex aspect-square w-full max-h-full min-h-0 max-w-full min-w-0 items-center justify-center overflow-hidden rounded-md bg-transparent",
                     resultPreview
-                      ? "ring-1 ring-sky-200/90 dark:ring-sky-800/50"
+                      ? "ring-1 ring-zinc-300/90 dark:ring-zinc-600/60"
                       : "border border-dashed border-zinc-300/90 dark:border-zinc-600",
                   )}
                 >

@@ -5,9 +5,9 @@ import { cn } from "@/lib/utils";
  * 集中维护可减少硬编码 hex 散落、方便后续换肤或接入 design token。
  */
 export const toolBrandHex = {
-  primary: "#1576BB",
-  primaryHover: "#125d99",
-  activePress: "#0f4a6a",
+  primary: "#4b5563",
+  primaryHover: "#374151",
+  activePress: "#1f2937",
 } as const;
 
 /** 白底工具卡片外框（与顶栏 shadow 一致） */
@@ -55,15 +55,15 @@ export const toolSectionTitleActionsClass =
 /** @deprecated 使用 {@link toolSectionTitleBarClass} */
 export const toolTitleBarClass = toolSectionTitleBarClass;
 
-/** 标题栏内：主按钮（蓝底 #1576BB，图标 + 文案，固定栏高）。默认微抬+浅阴影，悬停归位贴栏。 */
+/** 标题栏内：主按钮（石墨灰底，图标 + 文案，固定栏高）。默认微抬+浅阴影，悬停归位贴栏。 */
 export const toolChromeTitleBarPrimaryButtonClass = cn(
   "inline-flex h-8 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-md px-2.5 text-xs font-medium text-white",
   "transition-[transform,box-shadow,background-color,opacity] duration-150",
-  "translate-y-[-1px] bg-[#1576BB] shadow-[0_4px_12px_rgba(21,118,187,0.22),0_1px_2px_rgba(0,0,0,0.06)]",
-  "hover:translate-y-0 hover:shadow-none hover:bg-[#125d99]",
+  "translate-y-[-1px] bg-[#4b5563] shadow-[0_4px_12px_rgba(31,41,55,0.24),0_1px_2px_rgba(0,0,0,0.06)]",
+  "hover:translate-y-0 hover:shadow-none hover:bg-[#374151]",
   "active:translate-y-0 active:shadow-none",
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
-  "disabled:pointer-events-none disabled:cursor-not-allowed disabled:translate-y-0 disabled:shadow-none disabled:opacity-45 disabled:hover:bg-[#1576BB]",
+  "disabled:pointer-events-none disabled:cursor-not-allowed disabled:translate-y-0 disabled:shadow-none disabled:opacity-45 disabled:hover:bg-[#4b5563]",
 );
 
 /** 标题栏内：线框按钮（图标 + 文案，与主按钮同高）。默认微抬+中性阴影，悬停归位贴栏。 */
@@ -88,9 +88,9 @@ export const toolSecondaryToolbarButtonClass = toolChromeTitleBarOutlineButtonCl
 /** 独立大块区域：主按钮（图标 + 文案，min-h-10） */
 export const toolChromeStandalonePrimaryButtonClass = cn(
   "inline-flex min-h-10 w-full cursor-pointer items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium text-white transition-colors sm:w-auto",
-  "bg-[#1576BB] hover:bg-[#125d99] active:bg-[#0f4a6a]",
+  "bg-[#4b5563] hover:bg-[#374151] active:bg-[#1f2937]",
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
-  "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-[#1576BB]",
+  "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-[#4b5563]",
 );
 
 /** 独立大块区域：次要按钮（图标 + 文案） */
@@ -105,21 +105,21 @@ export const toolChromeStandaloneSecondaryButtonClass = cn(
 /** 主操作按钮（仅样式基类；全宽下载等可与独立类组合） */
 export const toolPrimaryButtonClass = cn(
   "inline-flex items-center justify-center font-medium text-white transition-colors",
-  "bg-[#1576BB] hover:bg-[#125d99] active:bg-[#0f4a6a]",
+  "bg-[#4b5563] hover:bg-[#374151] active:bg-[#1f2937]",
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
-  "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-[#1576BB]",
+  "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-[#4b5563]",
 );
 
 /** 工具页 Hero 内交叉链接（encode ↔ decode） */
 export const toolPageCrossLinkClass = cn(
-  "font-medium text-[#1576BB] underline decoration-[#1576BB]/35 underline-offset-2 hover:decoration-[#1576BB]",
+  "font-medium text-[#374151] underline decoration-[#374151]/35 underline-offset-2 hover:decoration-[#374151]",
 );
 
 export const toolCheckboxClass =
-  "size-3.5 rounded border-zinc-300 accent-[#1576BB] dark:border-zinc-600";
+  "size-3.5 rounded border-zinc-300 accent-[#4b5563] dark:border-zinc-600";
 
 /** range 控件与主色一致 */
-export const toolRangeInputClass = "min-w-0 flex-1 accent-[#1576BB]";
+export const toolRangeInputClass = "min-w-0 flex-1 accent-[#4b5563]";
 
 /**
  * 复制结果浮动提示（成功 / 失败）的背景与 ring，与密码工具内联气泡一致。

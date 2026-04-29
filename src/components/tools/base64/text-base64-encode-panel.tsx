@@ -269,7 +269,7 @@ function OutputFormatMenu({
               role="listbox"
               className={cn(
                 "fixed z-[200] w-max min-w-0 max-w-[min(11rem,calc(100vw-1.5rem))] rounded-lg border",
-                "border-zinc-200/95 bg-white py-0.5 shadow-lg ring-1 ring-zinc-950/5",
+                "border-[#d1d5db] bg-white py-0.5 shadow-lg ring-1 ring-[#111827]/8",
                 "dark:border-zinc-600 dark:bg-zinc-800 dark:ring-zinc-950/40",
               )}
               style={{ top: place.top, right: place.right }}
@@ -287,8 +287,8 @@ function OutputFormatMenu({
                     className={cn(
                       "flex w-full cursor-pointer items-center whitespace-nowrap px-2 py-1.5 text-left text-xs",
                       selected
-                        ? "bg-zinc-100 font-medium text-text dark:bg-zinc-700/80 dark:text-zinc-50"
-                        : "text-text-secondary hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-700/50",
+                        ? "bg-[#e5e7eb] font-medium text-[#111827] dark:bg-zinc-700/80 dark:text-zinc-50"
+                        : "text-text-secondary hover:bg-[#f3f4f6] dark:text-zinc-300 dark:hover:bg-zinc-700/50",
                     )}
                     onClick={() => {
                       clearCloseTimer();
@@ -476,7 +476,7 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
             {uploadHint}
           </p>
         ) : null}
-        <div className="flex min-h-0 flex-1 flex-col bg-white dark:bg-zinc-900">
+        <div className="flex min-h-0 flex-1 flex-col bg-[#f3f4f6] dark:bg-zinc-900">
           <div className="flex min-h-0 flex-1 flex-col">
             <LineNumberedField
               value={input}
@@ -550,7 +550,7 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
               showGutter={false}
               placeholder={copy.outputPlaceholder}
               ariaLabel={copy.outputColumnTitle}
-              className="bg-zinc-100 dark:bg-zinc-900"
+              className="bg-[#f3f4f6] dark:bg-zinc-900"
               textClassName="text-sm leading-6"
               textareaRef={outputTextareaRef}
             />

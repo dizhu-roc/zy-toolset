@@ -3,29 +3,28 @@
  */
 
 :root {
-  /* 页面与主内容区：更淡的雾蓝灰（近白、微冷灰） */
-  --palette-canvas: #f6f8fc;
-  --palette-main-bg: #f6f8fc;
-  /* 首页工具卡片边框（同步略淡） */
-  --palette-tool-card-border: #d8dfe8;
-  --palette-surface: #fffcf7;
+  /* 石墨灰：白底 + 冷灰层级 */
+  --palette-canvas: #ffffff;
+  --palette-main-bg: #ffffff;
+  --palette-tool-card-border: #d1d5db;
+  --palette-surface: #ffffff;
   --palette-surface-raised: #ffffff;
-  --palette-border: #d9d3c7;
-  --palette-border-strong: #b8b0a2;
+  --palette-border: #d1d5db;
+  --palette-border-strong: #9ca3af;
 
-  --palette-text: #1c1b18;
-  --palette-text-secondary: #4a4740;
-  --palette-text-muted: #6f6a60;
+  --palette-text: #111827;
+  --palette-text-secondary: #374151;
+  --palette-text-muted: #6b7280;
 
-  --palette-accent: #2d6a66;
-  --palette-accent-hover: #245652;
-  --palette-accent-muted: #e8f2f1;
+  --palette-accent: #374151;
+  --palette-accent-hover: #1f2937;
+  --palette-accent-muted: #e5e7eb;
 
   --palette-danger: #a42020;
   --palette-danger-surface: #fcefeb;
 
-  --palette-success: #2f5d2f;
-  --palette-warning: #8a5b00;
+  --palette-success: #166534;
+  --palette-warning: #a16207;
 
   --palette-ui: var(--font-dm-sans), "PingFang SC", "Hiragino Sans GB",
     "Microsoft YaHei", "Noto Sans SC", ui-sans-serif, system-ui, "DM Sans", sans-serif;
@@ -43,51 +42,49 @@
   --radius-md: 6px;
   --radius-lg: 8px;
 
-  --shadow-sm: 0 1px 2px rgb(28 27 24 / 0.06);
-  --shadow-md: 0 4px 12px rgb(28 27 24 / 0.08);
+  --shadow-sm: 0 1px 2px rgb(17 24 39 / 0.08);
+  --shadow-md: 0 4px 12px rgb(17 24 39 / 0.12);
 
   --measure-prose: 42rem;
   /* 顶栏 / main / 页脚统一最大内容宽（1280px @ 16px root） */
   --measure-content: 80rem;
 
-  /* 全站公共底栏：偏暖的灰黑（非纯黑） */
-  --palette-footer-bg: #262524;
-  --palette-footer-border: #3d3c39;
-  --palette-footer-text: #f2f0eb;
-  --palette-footer-text-muted: #b0aca3;
+  --palette-footer-bg: #1f2937;
+  --palette-footer-border: #374151;
+  --palette-footer-text: #f9fafb;
+  --palette-footer-text-muted: #9ca3af;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    /* 深色雾蓝灰底（略提亮一档） */
-    --palette-canvas: #1c232e;
-    --palette-main-bg: #1c232e;
-    --palette-tool-card-border: #4a5a6e;
-    --palette-surface: #1c1b19;
-    --palette-surface-raised: #242220;
-    --palette-border: #3d3935;
-    --palette-border-strong: #524c46;
+    --palette-canvas: #ffffff;
+    --palette-main-bg: #ffffff;
+    --palette-tool-card-border: #374151;
+    --palette-surface: #1f2937;
+    --palette-surface-raised: #273244;
+    --palette-border: #374151;
+    --palette-border-strong: #4b5563;
 
-    --palette-text: #f2efe8;
-    --palette-text-secondary: #c9c4ba;
-    --palette-text-muted: #9c958a;
+    --palette-text: #f9fafb;
+    --palette-text-secondary: #d1d5db;
+    --palette-text-muted: #9ca3af;
 
-    --palette-accent: #6eb8b3;
-    --palette-accent-hover: #8bc9c5;
-    --palette-accent-muted: #1e3331;
+    --palette-accent: #9ca3af;
+    --palette-accent-hover: #e5e7eb;
+    --palette-accent-muted: #374151;
 
     --palette-danger: #e07070;
     --palette-danger-surface: #3a2222;
 
-    --palette-success: #8fce8f;
-    --palette-warning: #e4c46d;
+    --palette-success: #86efac;
+    --palette-warning: #facc15;
 
     --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.35);
     --shadow-md: 0 4px 16px rgb(0 0 0 / 0.45);
 
-    --palette-footer-bg: #141413;
-    --palette-footer-border: #2c2b29;
-    --palette-footer-text: #f0eee8;
-    --palette-footer-text-muted: #9e9a92;
+    --palette-footer-bg: #030712;
+    --palette-footer-border: #1f2937;
+    --palette-footer-text: #f9fafb;
+    --palette-footer-text-muted: #9ca3af;
   }
 }
