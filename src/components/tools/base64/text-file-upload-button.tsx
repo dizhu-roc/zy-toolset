@@ -178,6 +178,7 @@ export function TextFileUploadButton({
   onTextLoaded,
   onInvalid,
   disabled,
+  className,
 }: {
   /** 按钮上可见的短文案 */
   label: string;
@@ -186,6 +187,7 @@ export function TextFileUploadButton({
   onTextLoaded: (text: string) => void;
   onInvalid?: () => void;
   disabled?: boolean;
+  className?: string;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -219,7 +221,11 @@ export function TextFileUploadButton({
         aria-label={label}
         disabled={disabled}
         onClick={() => inputRef.current?.click()}
-        className={cn(toolChromeTitleBarOutlineButtonClass, "max-w-full text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-50")}
+        className={cn(
+          toolChromeTitleBarOutlineButtonClass,
+          "max-w-full text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-50",
+          className,
+        )}
       >
         <IconUpload className="size-3.5 shrink-0" />
         <span className="max-w-[7rem] truncate sm:max-w-[9rem]">{label}</span>

@@ -16,11 +16,6 @@ import {
   IconColumnSourceText,
 } from "@/components/tools/base64/base64-text-column-icons";
 import { LineNumberedField } from "@/components/tools/base64/line-numbered-field";
-import { TextFileUploadButton } from "@/components/tools/base64/text-file-upload-button";
-import {
-  toolBase64SoftPrimaryClass,
-  ToolAutoEncodeLiftSwitch,
-} from "@/components/ui/tool-auto-encode-lift-switch";
 import { ToolTitleBarTextButton } from "@/components/ui/tool-title-bar-text-button";
 import {
   copyResultBubbleClassName,
@@ -34,18 +29,13 @@ import {
 /** 桌面专用：左右卡片固定总高，正文在 textarea 内滚动 */
 const EDITOR_PANEL_HEIGHT_CLASS = "h-[34rem]";
 
-function encodeDebounceMs(textLen: number): number {
-  if (textLen > 400_000) return 700;
-  if (textLen > 80_000) return 400;
-  if (textLen > 5_000) return 200;
-  return 120;
-}
-
-/** `base64encode-YYYYMMDDHHmmss.txt`（本地时间） */
+/** `text-base64-uuid前8位.txt` */
 function buildBase64DownloadFilename(): string {
-  const d = new Date();
-  const p = (n: number) => String(n).padStart(2, "0");
-  return `base64encode-${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}.txt`;
+  const shortId =
+    typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+      ? crypto.randomUUID().replace(/-/g, "").slice(0, 8)
+      : Math.random().toString(16).slice(2, 10).padEnd(8, "0");
+  return `text-base64-${shortId}.txt`;
 }
 
 type Copy = Messages["tools"]["base64TextEncode"];
@@ -112,8 +102,9 @@ function IconArrowDownTray({ className }: { className?: string }) {
 function IconEncode({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
-      <path d="M4 12h14" strokeWidth={2} strokeLinecap="round" />
-      <path d="m13 7 5 5-5 5" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+      <path d="m9 8-4 4 4 4" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+      <path d="m15 8 4 4-4 4" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M12 6 10 18" strokeWidth={2} strokeLinecap="round" />
     </svg>
   );
 }
@@ -314,16 +305,10 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
   const [outputMode, setOutputMode] = useState<TextBase64OutputMode>("standard");
-  const [autoEncode, setAutoEncode] = useState(true);
   const [copyHint, setCopyHint] = useState<string | null>(null);
-  const [uploadHint, setUploadHint] = useState<string | null>(null);
-  const inputRef = useRef(input);
   const outputTextareaRef = useRef<HTMLTextAreaElement>(null);
-  const prevInputRef = useRef(input);
-  const autoEncodeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   /** 在输出列展示的「空内容点 Encode」提示，非气泡 */
   const [outputEncodeEmptyHint, setOutputEncodeEmptyHint] = useState<string | null>(null);
-  inputRef.current = input;
 
   useEffect(() => {
     if (input.trim() !== "") {
@@ -331,51 +316,11 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
     }
   }, [input]);
 
+  // 保持手动编码模式：仅在切换输出格式时，基于当前输入自动刷新输出。
   useEffect(() => {
-    if (!autoEncode) {
-      if (autoEncodeTimerRef.current) {
-        clearTimeout(autoEncodeTimerRef.current);
-        autoEncodeTimerRef.current = null;
-      }
-      if (!input) setOutput("");
-      prevInputRef.current = input;
-      return;
-    }
-
-    const inputChanged = prevInputRef.current !== input;
-    prevInputRef.current = input;
-
-    if (inputChanged) {
-      if (autoEncodeTimerRef.current) {
-        clearTimeout(autoEncodeTimerRef.current);
-        autoEncodeTimerRef.current = null;
-      }
-      const delay = encodeDebounceMs(input.length);
-      autoEncodeTimerRef.current = setTimeout(() => {
-        autoEncodeTimerRef.current = null;
-        setOutput(encodeOutput(input, outputMode));
-      }, delay);
-    } else {
-      if (autoEncodeTimerRef.current) {
-        clearTimeout(autoEncodeTimerRef.current);
-        autoEncodeTimerRef.current = null;
-      }
-      setOutput(encodeOutput(input, outputMode));
-    }
-
-    return () => {
-      if (autoEncodeTimerRef.current) {
-        clearTimeout(autoEncodeTimerRef.current);
-        autoEncodeTimerRef.current = null;
-      }
-    };
-  }, [input, outputMode, autoEncode]);
-
-  useEffect(() => {
-    if (autoEncode) return;
-    const text = inputRef.current;
-    setOutput(encodeOutput(text, outputMode));
-  }, [outputMode, autoEncode]);
+    if (!input.trim()) return;
+    setOutput(encodeOutput(input, outputMode));
+  }, [outputMode]);
 
   const runEncode = () => {
     setOutput(encodeOutput(input, outputMode));
@@ -394,7 +339,6 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
     setInput("");
     setOutput("");
     setCopyHint(null);
-    setUploadHint(null);
     setOutputEncodeEmptyHint(null);
   };
 
@@ -424,6 +368,38 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
   };
 
   const colClass = cn(toolColumnCardClass, EDITOR_PANEL_HEIGHT_CLASS);
+  const bluePrimaryFlatClass = cn(
+    "translate-y-0 shadow-none border border-[#0369a1] bg-[#0284c7] text-white",
+    "hover:border-[#075985] hover:bg-[#0369a1] hover:text-white hover:shadow-none",
+    "dark:border-[#0ea5e9] dark:bg-[#0284c7] dark:text-white",
+    "dark:hover:border-[#38bdf8] dark:hover:bg-[#0369a1] dark:hover:text-white",
+  );
+  const neutralFlatClass = cn(
+    "translate-y-0 shadow-none border border-[#0369a1] bg-[#0284c7] text-white",
+    "hover:border-[#075985] hover:bg-[#0369a1] hover:text-white hover:shadow-none",
+    "dark:border-[#0ea5e9] dark:bg-[#0284c7] dark:text-white",
+    "dark:hover:border-[#38bdf8] dark:hover:bg-[#0369a1] dark:hover:text-white",
+  );
+  const titleBarButtonTextClass =
+    "h-7 px-2 text-xs font-bold uppercase [&>span:first-child>svg]:size-4";
+  const dangerFlatClass = cn(
+    "translate-y-0 shadow-none border border-[#b91c1c] bg-[#dc2626] text-white",
+    "hover:border-[#991b1b] hover:bg-[#b91c1c] hover:text-white hover:shadow-none",
+    "dark:border-[#ef4444] dark:bg-[#dc2626] dark:text-white",
+    "dark:hover:border-[#f87171] dark:hover:bg-[#b91c1c] dark:hover:text-white",
+  );
+  const successFlatClass = cn(
+    "translate-y-0 shadow-none border border-[#15803d] bg-[#16a34a] text-white",
+    "hover:border-[#166534] hover:bg-[#15803d] hover:text-white hover:shadow-none",
+    "dark:border-[#4ade80] dark:bg-[#16a34a] dark:text-white",
+    "dark:hover:border-[#86efac] dark:hover:bg-[#15803d] dark:hover:text-white",
+  );
+  const saveFlatClass = cn(
+    "translate-y-0 shadow-none border border-[#5b21b6] bg-[#7c3aed] text-white",
+    "hover:border-[#4c1d95] hover:bg-[#6d28d9] hover:text-white hover:shadow-none",
+    "dark:border-[#a78bfa] dark:bg-[#7c3aed] dark:text-white",
+    "dark:hover:border-[#c4b5fd] dark:hover:bg-[#6d28d9] dark:hover:text-white",
+  );
 
   return (
     <div className="grid grid-cols-2 gap-5">
@@ -434,26 +410,9 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
             <span className="min-w-0 truncate">{copy.inputColumnTitle}</span>
           </h2>
           <div className={cn(toolSectionTitleActionsClass, "gap-x-2 gap-y-2")}>
-            <TextFileUploadButton
-              label={copy.uploadTextFile}
-              title={copy.uploadTextFileTooltip}
-              onTextLoaded={(text) => {
-                setInput(text);
-                setUploadHint(null);
-              }}
-              onInvalid={() => {
-                setUploadHint(copy.uploadFileRejectNotText);
-                window.setTimeout(() => setUploadHint(null), 5000);
-              }}
-            />
-            <ToolAutoEncodeLiftSwitch
-              checked={autoEncode}
-              onChange={setAutoEncode}
-              label={copy.autoEncode}
-            />
             <ToolTitleBarTextButton
               variant="primary"
-              className={toolBase64SoftPrimaryClass}
+              className={cn(bluePrimaryFlatClass, titleBarButtonTextClass, "disabled:opacity-45")}
               icon={<IconEncode className="opacity-95" />}
               onClick={onEncodeButtonClick}
             >
@@ -461,6 +420,7 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
             </ToolTitleBarTextButton>
             <ToolTitleBarTextButton
               variant="outline"
+              className={cn(dangerFlatClass, titleBarButtonTextClass)}
               icon={<IconTrash />}
               onClick={clearAll}
             >
@@ -468,14 +428,6 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
             </ToolTitleBarTextButton>
           </div>
         </div>
-        {uploadHint ? (
-          <p
-            className="border-b border-red-200 bg-red-50 px-4 py-1.5 text-xs text-red-800 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200"
-            role="alert"
-          >
-            {uploadHint}
-          </p>
-        ) : null}
         <div className="flex min-h-0 flex-1 flex-col bg-[#f3f4f6] dark:bg-zinc-900">
           <div className="flex min-h-0 flex-1 flex-col">
             <LineNumberedField
@@ -504,6 +456,7 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
             <div className="relative inline-flex">
               <ToolTitleBarTextButton
                 variant="outline"
+                className={cn(successFlatClass, titleBarButtonTextClass)}
                 disabled={!output}
                 icon={<IconClipboard />}
                 onClick={copyOutput}
@@ -525,6 +478,7 @@ export function TextBase64EncodePanel({ copy }: { copy: Copy }) {
             </div>
             <ToolTitleBarTextButton
               variant="outline"
+              className={cn(saveFlatClass, titleBarButtonTextClass)}
               disabled={!output}
               icon={<IconArrowDownTray />}
               onClick={saveAs}

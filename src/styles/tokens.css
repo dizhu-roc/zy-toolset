@@ -3,22 +3,22 @@
  */
 
 :root {
-  /* 松石绿（W2）：白底 + 青绿强调 */
+  /* 青蓝专业（W6）：白底 + 青蓝强调 */
   --palette-canvas: #ffffff;
   --palette-main-bg: #ffffff;
-  --palette-tool-card-border: #c7d1dd;
+  --palette-tool-card-border: #c5d4df;
   --palette-surface: #ffffff;
   --palette-surface-raised: #ffffff;
-  --palette-border: #dde3ea;
-  --palette-border-strong: #c7d1dd;
+  --palette-border: #dce6ee;
+  --palette-border-strong: #c5d4df;
 
-  --palette-text: #16324f;
-  --palette-text-secondary: #2f4a66;
-  --palette-text-muted: #5b7086;
+  --palette-text: #0b2239;
+  --palette-text-secondary: #2a4a67;
+  --palette-text-muted: #4f6b84;
 
-  --palette-accent: #0f766e;
-  --palette-accent-hover: #0b5d57;
-  --palette-accent-muted: #ccfbf1;
+  --palette-accent: #0284c7;
+  --palette-accent-hover: #0369a1;
+  --palette-accent-muted: #e0f2fe;
 
   --palette-danger: #a42020;
   --palette-danger-surface: #fcefeb;
@@ -49,29 +49,29 @@
   /* 顶栏 / main / 页脚统一最大内容宽（1280px @ 16px root） */
   --measure-content: 80rem;
 
-  --palette-footer-bg: #0f2a3d;
-  --palette-footer-border: #1f3c51;
-  --palette-footer-text: #f3fbfd;
-  --palette-footer-text-muted: #9eb6c8;
+  --palette-footer-bg: #0a2437;
+  --palette-footer-border: #1d405b;
+  --palette-footer-text: #eef7fd;
+  --palette-footer-text-muted: #9ab6cc;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --palette-canvas: #ffffff;
     --palette-main-bg: #ffffff;
-    --palette-tool-card-border: #2b4553;
-    --palette-surface: #102a38;
-    --palette-surface-raised: #153546;
-    --palette-border: #2b4553;
-    --palette-border-strong: #3a5f71;
+    --palette-tool-card-border: #2a455a;
+    --palette-surface: #0f2536;
+    --palette-surface-raised: #153247;
+    --palette-border: #2a455a;
+    --palette-border-strong: #3a5f79;
 
-    --palette-text: #e8f3f8;
-    --palette-text-secondary: #c4d8e3;
-    --palette-text-muted: #8ba7b8;
+    --palette-text: #e7f2fb;
+    --palette-text-secondary: #c3d7e8;
+    --palette-text-muted: #88a6bd;
 
-    --palette-accent: #2dd4bf;
-    --palette-accent-hover: #5eead4;
-    --palette-accent-muted: #1e3f4e;
+    --palette-accent: #38bdf8;
+    --palette-accent-hover: #7dd3fc;
+    --palette-accent-muted: #173a51;
 
     --palette-danger: #e07070;
     --palette-danger-surface: #3a2222;
@@ -82,9 +82,9 @@
     --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.35);
     --shadow-md: 0 4px 16px rgb(0 0 0 / 0.45);
 
-    --palette-footer-bg: #081a25;
-    --palette-footer-border: #153546;
-    --palette-footer-text: #e8f3f8;
-    --palette-footer-text-muted: #8ba7b8;
+    --palette-footer-bg: #071a29;
+    --palette-footer-border: #153247;
+    --palette-footer-text: #e7f2fb;
+    --palette-footer-text-muted: #88a6bd;
   }
 }
