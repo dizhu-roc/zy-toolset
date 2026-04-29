@@ -15,10 +15,6 @@ import {
 } from "@/components/tools/base64/base64-text-column-icons";
 import { LineNumberedField } from "@/components/tools/base64/line-numbered-field";
 import { TextFileUploadButton } from "@/components/tools/base64/text-file-upload-button";
-import {
-  toolBase64SoftPrimaryClass,
-  ToolBarAutoLiftSwitch,
-} from "@/components/ui/tool-auto-encode-lift-switch";
 import { ToolTitleBarTextButton } from "@/components/ui/tool-title-bar-text-button";
 import {
   copyResultBubbleClassName,
@@ -117,8 +113,10 @@ function IconArrowDownTray({ className }: { className?: string }) {
 
 function IconDecode({ className }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="M8 5v14l11-7z" transform="rotate(180 12 12)" />
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
+      <path d="m15 8 4 4-4 4" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+      <path d="m9 8-4 4 4 4" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M12 6 14 18" strokeWidth={2} strokeLinecap="round" />
     </svg>
   );
 }
@@ -131,7 +129,6 @@ export function TextBase64DecodePanel({ copy }: { copy: PageCopy }) {
   const [outputFailureText, setOutputFailureText] = useState<string | null>(null);
   const [rawBytes, setRawBytes] = useState<Uint8Array | null>(null);
   const [rawMime, setRawMime] = useState("application/octet-stream");
-  const [autoDecode, setAutoDecode] = useState(true);
   const [copyHint, setCopyHint] = useState<string | null>(null);
   const [uploadHint, setUploadHint] = useState<string | null>(null);
   /** 空输入时点击 Decode，在输出区顶条展示（与 text-encode 一致） */
@@ -201,23 +198,6 @@ export function TextBase64DecodePanel({ copy }: { copy: PageCopy }) {
     [input, copy],
   );
 
-  const runDecodeRef = useRef(runDecode);
-  runDecodeRef.current = runDecode;
-
-  useEffect(() => {
-    if (!autoDecode) return;
-    const t = input.trim();
-    if (!t) {
-      setOutput("");
-      setOutputFailureText(null);
-      setOutputDecodeEmptyHint(null);
-      setRawBytes(null);
-      setUploadHint(null);
-      return;
-    }
-    runDecodeRef.current("auto");
-  }, [input, autoDecode]);
-
   const manualDecode = () => {
     runDecode("manual");
   };
@@ -261,6 +241,44 @@ export function TextBase64DecodePanel({ copy }: { copy: PageCopy }) {
   };
 
   const colClass = cn(toolColumnCardClass, EDITOR_PANEL_HEIGHT_CLASS);
+  const bluePrimaryFlatClass = cn(
+    "translate-y-0 shadow-none border border-[#0369a1] bg-[#0284c7] text-white",
+    "hover:border-[#075985] hover:bg-[#0369a1] hover:text-white hover:shadow-none",
+    "dark:border-[#0ea5e9] dark:bg-[#0284c7] dark:text-white",
+    "dark:hover:border-[#38bdf8] dark:hover:bg-[#0369a1] dark:hover:text-white",
+  );
+  const neutralFlatClass = cn(
+    "translate-y-0 shadow-none border border-[#0369a1] bg-[#0284c7] text-white",
+    "hover:border-[#075985] hover:bg-[#0369a1] hover:text-white hover:shadow-none",
+    "dark:border-[#0ea5e9] dark:bg-[#0284c7] dark:text-white",
+    "dark:hover:border-[#38bdf8] dark:hover:bg-[#0369a1] dark:hover:text-white",
+  );
+  const titleBarButtonTextClass =
+    "h-7 px-2 text-xs font-bold uppercase [&>span:first-child>svg]:size-4";
+  const dangerFlatClass = cn(
+    "translate-y-0 shadow-none border border-[#b91c1c] bg-[#dc2626] text-white",
+    "hover:border-[#991b1b] hover:bg-[#b91c1c] hover:text-white hover:shadow-none",
+    "dark:border-[#ef4444] dark:bg-[#dc2626] dark:text-white",
+    "dark:hover:border-[#f87171] dark:hover:bg-[#b91c1c] dark:hover:text-white",
+  );
+  const successFlatClass = cn(
+    "translate-y-0 shadow-none border border-[#15803d] bg-[#16a34a] text-white",
+    "hover:border-[#166534] hover:bg-[#15803d] hover:text-white hover:shadow-none",
+    "dark:border-[#4ade80] dark:bg-[#16a34a] dark:text-white",
+    "dark:hover:border-[#86efac] dark:hover:bg-[#15803d] dark:hover:text-white",
+  );
+  const saveFlatClass = cn(
+    "translate-y-0 shadow-none border border-[#5b21b6] bg-[#7c3aed] text-white",
+    "hover:border-[#4c1d95] hover:bg-[#6d28d9] hover:text-white hover:shadow-none",
+    "dark:border-[#a78bfa] dark:bg-[#7c3aed] dark:text-white",
+    "dark:hover:border-[#c4b5fd] dark:hover:bg-[#6d28d9] dark:hover:text-white",
+  );
+  const uploadFlatClass = cn(
+    "translate-y-0 shadow-none border border-[#9a3412] bg-[#ea580c] text-white",
+    "hover:border-[#7c2d12] hover:bg-[#c2410c] hover:text-white hover:shadow-none",
+    "dark:border-[#fb923c] dark:bg-[#ea580c] dark:text-white",
+    "dark:hover:border-[#fdba74] dark:hover:bg-[#c2410c] dark:hover:text-white",
+  );
 
   return (
     <div className="flex flex-col gap-4">
@@ -275,6 +293,7 @@ export function TextBase64DecodePanel({ copy }: { copy: PageCopy }) {
               <TextFileUploadButton
                 label={copy.uploadTextFile}
                 title={copy.uploadTextFileTooltip}
+                className={cn(uploadFlatClass, titleBarButtonTextClass)}
                 onTextLoaded={(text) => {
                   setInput(text);
                   setUploadHint(null);
@@ -284,20 +303,20 @@ export function TextBase64DecodePanel({ copy }: { copy: PageCopy }) {
                   window.setTimeout(() => setUploadHint(null), 5000);
                 }}
               />
-              <ToolBarAutoLiftSwitch
-                checked={autoDecode}
-                onChange={setAutoDecode}
-                label={copy.autoDecode}
-              />
               <ToolTitleBarTextButton
                 variant="primary"
-                className={toolBase64SoftPrimaryClass}
+                className={cn(bluePrimaryFlatClass, titleBarButtonTextClass, "disabled:opacity-45")}
                 icon={<IconDecode className="opacity-95" />}
                 onClick={manualDecode}
               >
                 {copy.decodeAction}
               </ToolTitleBarTextButton>
-              <ToolTitleBarTextButton variant="outline" icon={<IconTrash />} onClick={clearAll}>
+              <ToolTitleBarTextButton
+                variant="outline"
+                className={cn(dangerFlatClass, titleBarButtonTextClass)}
+                icon={<IconTrash />}
+                onClick={clearAll}
+              >
                 {copy.clearAll}
               </ToolTitleBarTextButton>
             </div>
@@ -333,6 +352,7 @@ export function TextBase64DecodePanel({ copy }: { copy: PageCopy }) {
               <div className="relative inline-flex">
                 <ToolTitleBarTextButton
                   variant="outline"
+                  className={cn(successFlatClass, titleBarButtonTextClass)}
                   disabled={!output || outputFailureText !== null}
                   icon={<IconClipboard />}
                   onClick={copyOutput}
@@ -354,6 +374,7 @@ export function TextBase64DecodePanel({ copy }: { copy: PageCopy }) {
               </div>
               <ToolTitleBarTextButton
                 variant="outline"
+                className={cn(saveFlatClass, titleBarButtonTextClass)}
                 disabled={!rawBytes}
                 icon={<IconArrowDownTray />}
                 onClick={downloadRaw}
