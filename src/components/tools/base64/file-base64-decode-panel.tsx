@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useId, useMemo, useState } from "react";
 import type { Messages } from "@/i18n/dictionaries";
+import { formatByteSizeHuman } from "@/lib/format-bytes";
 import {
   type FileDecodeErrorKind,
   decodeBase64ToFilePayload,
@@ -12,9 +13,6 @@ import {
 } from "@/lib/file-base64-decode";
 import { tryUtf8Decode } from "@/lib/base64";
 import {
-  toolCheckboxClass,
-  toolChromeTitleBarOutlineButtonClass,
-  toolChromeTitleBarPrimaryButtonClass,
   toolColumnCardClass,
   toolPageCrossLinkClass,
   toolSectionBarTitlePlainClass,
@@ -24,6 +22,11 @@ import {
   toolSectionTitleBarClass,
 } from "@/lib/ui/tool-surface";
 import { cn } from "@/lib/utils";
+import {
+  toolBase64SoftPrimaryClass,
+  ToolBarAutoLiftSwitch,
+} from "@/components/ui/tool-auto-encode-lift-switch";
+import { ToolTitleBarTextButton } from "@/components/ui/tool-title-bar-text-button";
 import { IconColumnSourceText } from "@/components/tools/base64/base64-text-column-icons";
 import { LineNumberedField } from "@/components/tools/base64/line-numbered-field";
 import { TextFileUploadButton } from "@/components/tools/base64/text-file-upload-button";
@@ -269,12 +272,12 @@ export function FileBase64DecodePanel({
           className={cn(panelShellClass, PANEL_FIXED_H, "flex flex-col")}
           aria-labelledby={inputId}
         >
-          <div className={cn(toolSectionTitleBarClass, "items-center")}>
+          <div className={toolSectionTitleBarClass}>
             <h2 id={inputId} className={toolSectionHeadingClass}>
               <IconColumnSourceText className={toolSectionHeadingIconClass} />
               <span className="min-w-0 truncate">{copy.inputColumnTitle}</span>
             </h2>
-            <div className={cn(toolSectionTitleActionsClass, "gap-1.5")}>
+            <div className={cn(toolSectionTitleActionsClass, "gap-x-2 gap-y-2")}>
               <TextFileUploadButton
                 label={copy.uploadTextFile}
                 title={copy.uploadTextFileTooltip}
@@ -285,31 +288,26 @@ export function FileBase64DecodePanel({
                 }}
                 onInvalid={() => setErrorKey("uploadFileRejectNotText")}
               />
-              <label className="flex cursor-pointer items-center gap-1.5 text-xs text-text-secondary">
-                <input
-                  type="checkbox"
-                  className={toolCheckboxClass}
-                  checked={autoDecode}
-                  onChange={(e) => setAutoDecode(e.target.checked)}
-                />
-                <span>{copy.autoDecode}</span>
-              </label>
-              <button
-                type="button"
+              <ToolBarAutoLiftSwitch
+                checked={autoDecode}
+                onChange={setAutoDecode}
+                label={copy.autoDecode}
+              />
+              <ToolTitleBarTextButton
+                variant="primary"
+                className={toolBase64SoftPrimaryClass}
+                icon={<IconDecode className="opacity-95" />}
                 onClick={runPreview}
-                className={cn(toolChromeTitleBarPrimaryButtonClass, "gap-1")}
               >
-                <IconDecode className="size-3 shrink-0 opacity-95" />
                 {copy.decodePreviewAction}
-              </button>
-              <button
-                type="button"
+              </ToolTitleBarTextButton>
+              <ToolTitleBarTextButton
+                variant="outline"
+                icon={<IconTrash />}
                 onClick={clearAll}
-                className={cn(toolChromeTitleBarOutlineButtonClass, "gap-1")}
               >
-                <IconTrash className="size-3 shrink-0" />
                 {copy.clearAll}
-              </button>
+              </ToolTitleBarTextButton>
             </div>
           </div>
           <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-0">
@@ -330,14 +328,93 @@ export function FileBase64DecodePanel({
             <h2 id={previewRegionId} className="sr-only">
               {copy.decodeResultPanelTitle}
             </h2>
-            {errorMessage ? (
-              <p className="m-0 text-sm text-red-600 dark:text-red-400" role="alert">
-                {errorMessage}
-              </p>
-            ) : null}
+
+            <div
+              className={cn(
+                "flex min-h-0 flex-1 flex-col overflow-hidden rounded-md border border-sky-200/70",
+                "bg-[#f0f7fc] dark:border-sky-900/45 dark:bg-sky-950/35",
+              )}
+              role="region"
+              aria-label={copy.previewSectionTitle}
+            >
+              <div className={cn(toolSectionTitleBarClass, "border-sky-200/60 dark:border-sky-900/40")}>
+                <p
+                  className={cn(
+                    toolSectionBarTitlePlainClass,
+                    "flex min-w-0 flex-1 items-center gap-2 text-sky-950 dark:text-sky-100",
+                  )}
+                >
+                  <IconPreview className={toolSectionHeadingIconClass} />
+                  <span className="min-w-0 truncate">{copy.previewSectionTitle}</span>
+                </p>
+                <div className={cn(toolSectionTitleActionsClass, "gap-x-2 gap-y-2")}>
+                  <ToolTitleBarTextButton
+                    variant="primary"
+                    className={toolBase64SoftPrimaryClass}
+                    disabled={!preview}
+                    icon={<IconArrowDownTray />}
+                    onClick={downloadFile}
+                  >
+                    {copy.downloadAction}
+                  </ToolTitleBarTextButton>
+                </div>
+              </div>
+              <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+                {errorMessage ? (
+                  <p
+                    className="m-0 shrink-0 border-b border-sky-200/60 px-3 py-2.5 text-base font-medium leading-snug text-red-600 dark:border-sky-800/50 dark:text-red-400"
+                    role="alert"
+                  >
+                    {errorMessage}
+                  </p>
+                ) : null}
+                <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-0">
+                  {!preview ? (
+                    <div className="flex flex-1 flex-col items-center justify-center gap-2 px-3 py-4 text-center">
+                      <p className="m-0 text-sm font-medium text-sky-950/90 dark:text-sky-100">
+                        {copy.previewSectionEmptyTitle}
+                      </p>
+                      <p className="m-0 max-w-[20rem] text-xs leading-relaxed text-sky-900/75 dark:text-sky-200/80">
+                        {copy.previewSectionEmptyBody}
+                      </p>
+                    </div>
+                  ) : objectUrl && previewMime.startsWith("image/") ? (
+                    // eslint-disable-next-line @next/next/no-img-element -- blob preview
+                    <img src={objectUrl} alt="" className="mx-auto max-h-full max-w-full flex-1 object-contain" />
+                  ) : objectUrl && previewMime.startsWith("video/") ? (
+                    <video
+                      src={objectUrl}
+                      controls
+                      playsInline
+                      className="max-h-full w-full flex-1 object-contain"
+                      preload="metadata"
+                    />
+                  ) : objectUrl && previewMime.startsWith("audio/") ? (
+                    <div className="flex flex-1 items-center justify-center">
+                      <audio src={objectUrl} controls className="w-full max-w-xs" preload="metadata" />
+                    </div>
+                  ) : objectUrl && previewMime === "application/pdf" ? (
+                    <iframe
+                      title={copy.previewPdfTitle}
+                      src={objectUrl}
+                      className="min-h-[12rem] w-full flex-1 border-0"
+                    />
+                  ) : (
+                    <div className="flex flex-1 flex-col items-center justify-center gap-2 px-3 py-4 text-center">
+                      <p className="m-0 text-sm font-medium text-sky-950/90 dark:text-sky-100">
+                        {copy.previewBinaryTitle}
+                      </p>
+                      <p className="m-0 max-w-[20rem] text-xs leading-relaxed text-sky-900/75 dark:text-sky-200/80">
+                        {copy.unknownTypeHint}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
 
             {showTextHint ? (
-              <p className="m-0 rounded-md border border-zinc-200/90 bg-sky-50/60 px-2.5 py-2 text-xs text-text-secondary dark:border-zinc-600 dark:bg-sky-950/30">
+              <p className="m-0 shrink-0 rounded-md border border-zinc-200/90 bg-sky-50/60 px-2.5 py-2 text-xs text-text-secondary dark:border-zinc-600 dark:bg-sky-950/30">
                 {copy.textLikeHintBefore}
                 <Link href={textDecodeHref} className={toolPageCrossLinkClass}>
                   {copy.textLikeHintLink}
@@ -347,23 +424,16 @@ export function FileBase64DecodePanel({
             ) : null}
 
             <div className="shrink-0 overflow-hidden rounded-md border border-zinc-200/90 dark:border-zinc-700/80">
-              <div className={cn(toolSectionTitleBarClass, "justify-between")}>
-                <span className={cn(toolSectionBarTitlePlainClass, "flex min-w-0 items-center gap-2")}>
+              <div className={toolSectionTitleBarClass}>
+                <span
+                  className={cn(
+                    toolSectionBarTitlePlainClass,
+                    "flex min-w-0 flex-1 items-center gap-2",
+                  )}
+                >
                   <IconInfo className={toolSectionHeadingIconClass} />
                   <span className="min-w-0 truncate">{copy.fileInfoBlockTitle}</span>
                 </span>
-                <button
-                  type="button"
-                  onClick={downloadFile}
-                  disabled={!preview}
-                  className={cn(
-                    toolChromeTitleBarPrimaryButtonClass,
-                    "gap-1 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40",
-                  )}
-                >
-                  <IconArrowDownTray className="size-3.5 shrink-0" />
-                  {copy.downloadAction}
-                </button>
               </div>
               <dl className="m-0 grid grid-cols-[auto_minmax(0,1fr)] gap-x-2 gap-y-2 bg-white px-3 py-4 text-xs dark:bg-zinc-950">
                 <dt className="m-0 self-center text-text-muted">{copy.metaFilenameLabel}</dt>
@@ -387,67 +457,9 @@ export function FileBase64DecodePanel({
                 </dd>
                 <dt className="m-0 text-text-muted">{copy.metaSizeLabel}</dt>
                 <dd className="m-0 font-mono tabular-nums text-text">
-                  {preview ? `${preview.bytes.length} B` : "--"}
+                  {preview ? formatByteSizeHuman(preview.bytes.length) : "--"}
                 </dd>
               </dl>
-            </div>
-
-            <div
-              className={cn(
-                "flex min-h-0 flex-1 flex-col overflow-hidden rounded-md border border-sky-200/70",
-                "bg-[#f0f7fc] dark:border-sky-900/45 dark:bg-sky-950/35",
-              )}
-              role="region"
-              aria-label={copy.previewSectionTitle}
-            >
-              <div className={cn(toolSectionTitleBarClass, "border-sky-200/60 dark:border-sky-900/40")}>
-                <p className={cn(toolSectionBarTitlePlainClass, "flex min-w-0 items-center gap-2 text-sky-950 dark:text-sky-100")}>
-                  <IconPreview className={toolSectionHeadingIconClass} />
-                  <span className="min-w-0 truncate">{copy.previewSectionTitle}</span>
-                </p>
-              </div>
-              <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-0">
-                {!preview ? (
-                  <div className="flex flex-1 flex-col items-center justify-center gap-2 text-center">
-                    <p className="m-0 text-sm font-medium text-sky-950/90 dark:text-sky-100">
-                      {copy.previewSectionEmptyTitle}
-                    </p>
-                    <p className="m-0 max-w-[20rem] text-xs leading-relaxed text-sky-900/75 dark:text-sky-200/80">
-                      {copy.previewSectionEmptyBody}
-                    </p>
-                  </div>
-                ) : objectUrl && previewMime.startsWith("image/") ? (
-                  // eslint-disable-next-line @next/next/no-img-element -- blob preview
-                  <img src={objectUrl} alt="" className="mx-auto max-h-full max-w-full flex-1 object-contain" />
-                ) : objectUrl && previewMime.startsWith("video/") ? (
-                  <video
-                    src={objectUrl}
-                    controls
-                    playsInline
-                    className="max-h-full w-full flex-1 object-contain"
-                    preload="metadata"
-                  />
-                ) : objectUrl && previewMime.startsWith("audio/") ? (
-                  <div className="flex flex-1 items-center justify-center">
-                    <audio src={objectUrl} controls className="w-full max-w-xs" preload="metadata" />
-                  </div>
-                ) : objectUrl && previewMime === "application/pdf" ? (
-                  <iframe
-                    title={copy.previewPdfTitle}
-                    src={objectUrl}
-                    className="min-h-[12rem] w-full flex-1 border-0"
-                  />
-                ) : (
-                  <div className="flex flex-1 flex-col items-center justify-center gap-2 text-center">
-                    <p className="m-0 text-sm font-medium text-sky-950/90 dark:text-sky-100">
-                      {copy.previewBinaryTitle}
-                    </p>
-                    <p className="m-0 max-w-[20rem] text-xs leading-relaxed text-sky-900/75 dark:text-sky-200/80">
-                      {copy.unknownTypeHint}
-                    </p>
-                  </div>
-                )}
-              </div>
             </div>
           </div>
         </section>

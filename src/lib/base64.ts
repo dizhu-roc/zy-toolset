@@ -81,6 +81,9 @@ export function extensionForMime(mime: string): string {
     "audio/mpeg": ".mp3",
     "audio/wav": ".wav",
     "video/mp4": ".mp4",
+    "application/zip": ".zip",
+    "application/gzip": ".gz",
+    "application/x-gzip": ".gz",
     "application/octet-stream": ".bin",
   };
   return map[m] ?? ".bin";

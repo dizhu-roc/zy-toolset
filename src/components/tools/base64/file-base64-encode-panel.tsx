@@ -7,12 +7,14 @@ import { cn } from "@/lib/utils";
 import { IconColumnBase64Text } from "@/components/tools/base64/base64-text-column-icons";
 import { LineNumberedField } from "@/components/tools/base64/line-numbered-field";
 import { isPlausibleTextUpload } from "@/components/tools/base64/text-file-upload-button";
+import {
+  toolBase64SoftPrimaryClass,
+  ToolBarAutoLiftSwitch,
+} from "@/components/ui/tool-auto-encode-lift-switch";
 import { ToolTitleBarTextButton } from "@/components/ui/tool-title-bar-text-button";
 import {
   copyResultBubbleClassName,
-  toolCheckboxClass,
   toolChromeTitleBarOutlineButtonClass,
-  toolChromeTitleBarPrimaryButtonClass,
   toolColumnCardFullBleedClass,
   toolSectionBarTitlePlainClass,
   toolSectionHeadingClass,
@@ -26,7 +28,6 @@ const PREVIEW_TEXT_BYTES = 64 * 1024;
 const HEAVY_FILE_BYTES = 2 * 1024 * 1024;
 
 const outputColClass = toolColumnCardFullBleedClass;
-const panelHeaderClass = cn(toolSectionTitleBarClass, "h-11 min-h-11 flex-nowrap");
 
 type Copy = Messages["tools"]["base64FileEncode"];
 
@@ -377,18 +378,17 @@ function DataUrlSwitch({
       disabled={disabled}
       onClick={() => onChange(!checked)}
       className={cn(
-        "inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md border px-2",
-        "border-zinc-200 bg-white text-text-secondary dark:border-zinc-600 dark:bg-zinc-900",
-        "hover:border-zinc-300 dark:hover:border-zinc-500",
-        "disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:border-zinc-200 dark:disabled:hover:border-zinc-600",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25",
+        toolChromeTitleBarOutlineButtonClass,
+        "min-w-0 max-w-[min(100%,10rem)] shrink-0 justify-center gap-1.5 px-2",
       )}
     >
-      <span className="text-[0.7rem] font-medium leading-none">{label}</span>
+      <span className="min-w-0 truncate text-xs font-medium leading-tight text-text-secondary">
+        {label}
+      </span>
       <span
         className={cn(
           "relative inline-flex h-4 w-7 shrink-0 rounded-full transition-colors",
-          checked ? "bg-[#1576BB]" : "bg-zinc-300 dark:bg-zinc-600",
+          checked ? "bg-[#3a9ad8]" : "bg-zinc-300 dark:bg-zinc-600",
         )}
         aria-hidden
       >
@@ -538,40 +538,35 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
           role="region"
           aria-labelledby={inputRegionId}
         >
-          <div className={panelHeaderClass}>
+          <div className={toolSectionTitleBarClass}>
             <h2 id={inputRegionId} className={toolSectionHeadingClass}>
               <IconUploadZone className={toolSectionHeadingIconClass} />
               <span className="min-w-0 truncate">{copy.inputPanelTitle}</span>
             </h2>
-            <div className={cn(toolSectionTitleActionsClass, "gap-1.5 flex-nowrap")}>
-              <label className="flex shrink-0 cursor-pointer items-center gap-1.5 whitespace-nowrap text-xs text-text-secondary">
-                <input
-                  type="checkbox"
-                  className={toolCheckboxClass}
-                  checked={autoEncode}
-                  disabled={isBusy}
-                  onChange={(e) => setAutoEncode(e.target.checked)}
-                />
-                <span>{copy.autoEncode}</span>
-              </label>
-              <button
-                type="button"
+            <div className={cn(toolSectionTitleActionsClass, "gap-x-2 gap-y-2")}>
+              <ToolBarAutoLiftSwitch
+                checked={autoEncode}
+                onChange={setAutoEncode}
+                label={copy.autoEncode}
+                disabled={isBusy}
+              />
+              <ToolTitleBarTextButton
+                variant="primary"
+                className={toolBase64SoftPrimaryClass}
+                disabled={isBusy}
+                icon={<IconEncode className="opacity-95" />}
                 onClick={() => void encode()}
-                disabled={isBusy}
-                className={cn(toolChromeTitleBarPrimaryButtonClass, "gap-1 [&>svg]:size-3.5")}
               >
-                <IconEncode className="opacity-95" />
                 {copy.encodeAction}
-              </button>
-              <button
-                type="button"
-                onClick={clearAll}
+              </ToolTitleBarTextButton>
+              <ToolTitleBarTextButton
+                variant="outline"
                 disabled={isBusy}
-                className={cn(toolChromeTitleBarOutlineButtonClass, "gap-1 [&>svg]:size-3.5")}
+                icon={<IconTrash />}
+                onClick={clearAll}
               >
-                <IconTrash />
                 {copy.clearAll}
-              </button>
+              </ToolTitleBarTextButton>
             </div>
           </div>
           <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 px-3 pb-3 pt-0 sm:px-4 sm:pb-4 sm:pt-0.5">
@@ -753,12 +748,12 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
         </div>
 
         <section className={outputColClass} aria-labelledby={outputId}>
-          <div className={panelHeaderClass}>
+          <div className={toolSectionTitleBarClass}>
             <h2 id={outputId} className={toolSectionHeadingClass}>
               <IconColumnBase64Text className={toolSectionHeadingIconClass} />
               <span className="min-w-0 truncate">{copy.outputColumnTitle}</span>
             </h2>
-            <div className={toolSectionTitleActionsClass}>
+            <div className={cn(toolSectionTitleActionsClass, "gap-x-2 gap-y-2")}>
               <DataUrlSwitch
                 checked={dataUrl}
                 onChange={setDataUrl}
@@ -794,7 +789,7 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
                 icon={<IconArrowDownTray />}
                 onClick={saveAs}
               >
-                Save
+                {copy.saveAs}
               </ToolTitleBarTextButton>
             </div>
           </div>

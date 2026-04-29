@@ -21,18 +21,27 @@ type Props = {
   onChange: (next: boolean) => void;
   label: string;
   className?: string;
+  /** 与标题栏主操作同规范：忙时禁用 */
+  disabled?: boolean;
 };
 
 /**
  * 自动编码：整体式开关（创 6 · 抬起阴影），与 text-encode 标题栏搭配。
  * 单颗 `role="switch"`，内联轨为装饰（aria-hidden）。
  */
-export function ToolAutoEncodeLiftSwitch({ checked, onChange, label, className }: Props) {
+export function ToolAutoEncodeLiftSwitch({
+  checked,
+  onChange,
+  label,
+  className,
+  disabled = false,
+}: Props) {
   return (
     <button
       type="button"
       role="switch"
       aria-checked={checked}
+      disabled={disabled}
       onClick={() => onChange(!checked)}
       className={cn(
         "shrink-0 cursor-pointer",
@@ -49,6 +58,7 @@ export function ToolAutoEncodeLiftSwitch({ checked, onChange, label, className }
         "hover:translate-y-0 hover:shadow-none hover:border-zinc-300 hover:bg-zinc-50 hover:text-text",
         "dark:hover:border-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-50",
         "active:translate-y-0 active:shadow-none",
+        "disabled:pointer-events-none disabled:cursor-not-allowed disabled:translate-y-0 disabled:shadow-none disabled:opacity-40",
         className,
       )}
     >

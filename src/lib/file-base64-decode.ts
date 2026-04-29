@@ -27,6 +27,21 @@ export function estimateDecodedBytesFromInput(input: string): number {
 
 /** 无 Data URL MIME 时，用魔数推断常见类型以便扩展名与预览 */
 function inferMimeFromMagic(bytes: Uint8Array): string | null {
+  // ZIP（含 .zip、.xlsx 等 OOXML）：PK\x03\x04 本地头，或 EOCD 等其它 PK 段
+  if (bytes.length >= 4 && bytes[0] === 0x50 && bytes[1] === 0x4b) {
+    const a = bytes[2];
+    const b = bytes[3];
+    if (
+      (a === 0x03 && b === 0x04) ||
+      (a === 0x05 && b === 0x06) ||
+      (a === 0x07 && b === 0x08)
+    ) {
+      return "application/zip";
+    }
+  }
+  if (bytes.length >= 2 && bytes[0] === 0x1f && bytes[1] === 0x8b) {
+    return "application/gzip";
+  }
   if (bytes.length >= 4 && bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) {
     return "application/pdf";
   }
