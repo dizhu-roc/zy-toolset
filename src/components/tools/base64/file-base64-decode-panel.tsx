@@ -22,10 +22,6 @@ import {
   toolSectionTitleBarClass,
 } from "@/lib/ui/tool-surface";
 import { cn } from "@/lib/utils";
-import {
-  toolBase64SoftPrimaryClass,
-  ToolBarAutoLiftSwitch,
-} from "@/components/ui/tool-auto-encode-lift-switch";
 import { ToolTitleBarTextButton } from "@/components/ui/tool-title-bar-text-button";
 import { IconColumnSourceText } from "@/components/tools/base64/base64-text-column-icons";
 import { LineNumberedField } from "@/components/tools/base64/line-numbered-field";
@@ -138,7 +134,6 @@ export function FileBase64DecodePanel({
     | "uploadFileRejectNotText";
   const [errorKey, setErrorKey] = useState<ErrKey | null>(null);
   const [errorMbToken, setErrorMbToken] = useState<string | null>(null);
-  const [autoDecode, setAutoDecode] = useState(true);
 
   const mbLimit = String(MAX_FILE_DECODE_BYTES / (1024 * 1024));
 
@@ -189,7 +184,6 @@ export function FileBase64DecodePanel({
   };
 
   useEffect(() => {
-    if (!autoDecode) return;
     const t = input.trim();
     if (!t) {
       setPreview(null);
@@ -198,7 +192,7 @@ export function FileBase64DecodePanel({
       return;
     }
     runPreview();
-  }, [autoDecode, clearError, input, runPreview]);
+  }, [clearError, input, runPreview]);
 
   const objectUrl = useMemo(() => {
     if (!preview) return null;
@@ -260,6 +254,27 @@ export function FileBase64DecodePanel({
 
   const previewMime = preview ? mainMime(preview.mime) : "";
 
+  const successFlatClass = cn(
+    "translate-y-0 shadow-none border border-[#15803d] bg-[#16a34a] text-white",
+    "hover:border-[#166534] hover:bg-[#15803d] hover:text-white hover:shadow-none",
+    "dark:border-[#4ade80] dark:bg-[#16a34a] dark:text-white",
+    "dark:hover:border-[#86efac] dark:hover:bg-[#15803d] dark:hover:text-white",
+  );
+  const saveFlatClass = cn(
+    "translate-y-0 shadow-none border border-[#5b21b6] bg-[#7c3aed] text-white",
+    "hover:border-[#4c1d95] hover:bg-[#6d28d9] hover:text-white hover:shadow-none",
+    "dark:border-[#a78bfa] dark:bg-[#7c3aed] dark:text-white",
+    "dark:hover:border-[#c4b5fd] dark:hover:bg-[#6d28d9] dark:hover:text-white",
+  );
+  const titleBarButtonTextClass =
+    "h-7 px-2 text-xs font-bold uppercase [&>span:first-child>svg]:size-4";
+  const dangerFlatClass = cn(
+    "translate-y-0 shadow-none border border-[#b91c1c] bg-[#dc2626] text-white",
+    "hover:border-[#991b1b] hover:bg-[#b91c1c] hover:text-white hover:shadow-none",
+    "dark:border-[#ef4444] dark:bg-[#dc2626] dark:text-white",
+    "dark:hover:border-[#f87171] dark:hover:bg-[#b91c1c] dark:hover:text-white",
+  );
+
   return (
     <div className="space-y-10">
       <div
@@ -277,7 +292,7 @@ export function FileBase64DecodePanel({
               <IconColumnSourceText className={toolSectionHeadingIconClass} />
               <span className="min-w-0 truncate">{copy.inputColumnTitle}</span>
             </h2>
-            <div className={cn(toolSectionTitleActionsClass, "gap-x-2 gap-y-2")}>
+            <div className={cn(toolSectionTitleActionsClass, "gap-2")}>
               <TextFileUploadButton
                 label={copy.uploadTextFile}
                 title={copy.uploadTextFileTooltip}
@@ -288,14 +303,9 @@ export function FileBase64DecodePanel({
                 }}
                 onInvalid={() => setErrorKey("uploadFileRejectNotText")}
               />
-              <ToolBarAutoLiftSwitch
-                checked={autoDecode}
-                onChange={setAutoDecode}
-                label={copy.autoDecode}
-              />
               <ToolTitleBarTextButton
-                variant="primary"
-                className={toolBase64SoftPrimaryClass}
+                variant="outline"
+                className={cn(successFlatClass, titleBarButtonTextClass)}
                 icon={<IconDecode className="opacity-95" />}
                 onClick={runPreview}
               >
@@ -303,6 +313,7 @@ export function FileBase64DecodePanel({
               </ToolTitleBarTextButton>
               <ToolTitleBarTextButton
                 variant="outline"
+                className={cn(dangerFlatClass, titleBarButtonTextClass)}
                 icon={<IconTrash />}
                 onClick={clearAll}
               >
@@ -347,11 +358,15 @@ export function FileBase64DecodePanel({
                   <IconPreview className={toolSectionHeadingIconClass} />
                   <span className="min-w-0 truncate">{copy.previewSectionTitle}</span>
                 </p>
-                <div className={cn(toolSectionTitleActionsClass, "gap-x-2 gap-y-2")}>
+                <div className={cn(toolSectionTitleActionsClass, "gap-2")}>
                   <ToolTitleBarTextButton
-                    variant="primary"
-                    className={toolBase64SoftPrimaryClass}
+                    variant="outline"
                     disabled={!preview}
+                    className={cn(
+                      saveFlatClass,
+                      titleBarButtonTextClass,
+                      "disabled:opacity-40",
+                    )}
                     icon={<IconArrowDownTray />}
                     onClick={downloadFile}
                   >

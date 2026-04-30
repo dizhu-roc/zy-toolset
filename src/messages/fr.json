@@ -185,7 +185,6 @@
       "previewSectionEmptyBody": "Décodez d’abord à gauche. Images, audio, vidéo et PDF s’affichent ici quand c’est possible ; pour le reste, enregistrez avec Télécharger ci-dessus.",
       "inputPlaceholder": "Collez ici du Base64, du Base64URL ou une data:…;base64,…",
       "decodePreviewAction": "Décoder",
-      "autoDecode": "Décodage auto",
       "downloadAction": "Télécharger",
       "clearAll": "Effacer",
       "uploadTextFile": "Importer",

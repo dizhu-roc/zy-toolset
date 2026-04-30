@@ -185,7 +185,6 @@
       "previewSectionEmptyBody": "Decode on the left first. Images, audio, video, and PDFs show here when supported; other types are still fine to save with Download above.",
       "inputPlaceholder": "Paste Base64, Base64URL, or a data:…;base64,… value here.",
       "decodePreviewAction": "Decode",
-      "autoDecode": "Auto-decode",
       "downloadAction": "Download",
       "clearAll": "Clear",
       "uploadTextFile": "Upload",

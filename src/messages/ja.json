@@ -185,7 +185,6 @@
       "previewSectionEmptyBody": "左側で先にデコードしてください。対応していれば画像・音声・動画・PDF がここに表示されます。その他も上のダウンロードで保存できます。",
       "inputPlaceholder": "Base64、Base64URL、または data:…;base64,… を貼り付け。",
       "decodePreviewAction": "デコード",
-      "autoDecode": "自動デコード",
       "downloadAction": "ダウンロード",
       "clearAll": "消去",
       "uploadTextFile": "アップロード",

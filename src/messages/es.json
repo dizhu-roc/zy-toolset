@@ -185,7 +185,6 @@
       "previewSectionEmptyBody": "Primero decodifica a la izquierda. Aquí verás imágenes, audio, vídeo o PDF cuando sea posible; el resto se puede guardar igual con Descargar arriba.",
       "inputPlaceholder": "Pega aquí Base64, Base64URL o data:…;base64,…",
       "decodePreviewAction": "Decodificar",
-      "autoDecode": "Decodificación automática",
       "downloadAction": "Descargar",
       "clearAll": "Borrar",
       "uploadTextFile": "Subir",
