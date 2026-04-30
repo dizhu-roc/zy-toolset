@@ -1,10 +1,21 @@
 "use client";
 
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import type { ChangeEvent, MutableRefObject } from "react";
 import type { Messages } from "@/i18n/dictionaries";
 import { bytesToBase64 } from "@/lib/base64";
 import { cn } from "@/lib/utils";
-import { IconColumnBase64Text } from "@/components/tools/base64/base64-text-column-icons";
+import {
+  IconColumnBase64Text,
+  IconColumnSourceText,
+} from "@/components/tools/base64/base64-text-column-icons";
 import { LineNumberedField } from "@/components/tools/base64/line-numbered-field";
 import { isPlausibleTextUpload } from "@/components/tools/base64/text-file-upload-button";
 import { ToolTitleBarTextButton } from "@/components/ui/tool-title-bar-text-button";
@@ -18,9 +29,21 @@ import {
 } from "@/lib/ui/tool-surface";
 
 const MAX_FILE_BYTES = 8 * 1024 * 1024;
-const MAX_FILE_COUNT = 10;
+/** 静默上限，不在界面展示具体个数 */
+const MAX_FILE_COUNT = 100;
+
+/** items-stretch：换行时同一行/整格高度由最高项决定，上传区用 h-full 吃满 */
+const FILE_LIST_GRID =
+  "grid w-full min-w-0 grid-cols-2 content-start items-stretch gap-3 min-[420px]:grid-cols-3 min-[700px]:grid-cols-4 min-[1024px]:grid-cols-5 sm:gap-4";
+
+const FILE_LIST_ITEM_SHELL =
+  "h-full min-h-[12.5rem] w-full min-w-0 self-stretch";
+
+/** 与 AddFileSlot 内预览区同高，保持两卡对齐 */
+const FILE_CARD_PREVIEW = "h-32 w-full min-h-[8rem] shrink-0";
 
 const outputColClass = toolColumnCardFullBleedClass;
+const uploadSectionClass = toolColumnCardFullBleedClass;
 
 type Copy = Messages["tools"]["base64FileEncode"];
 
@@ -100,6 +123,31 @@ function buildMultiDownloadFilename(): string {
       ? crypto.randomUUID().replace(/-/g, "").slice(0, 8)
       : Math.random().toString(16).slice(2, 10).padEnd(8, "0");
   return `files-base64-${shortId}.txt`;
+}
+
+function formatFileSize(n: number): string {
+  if (n < 1000) {
+    return `${n} B`;
+  }
+  if (n < 1024 * 1024) {
+    return `${(n / 1024).toFixed(n < 10_240 ? 2 : 1)} KB`;
+  }
+  return `${(n / (1024 * 1024)).toFixed(n < 10_485_760 ? 2 : 1)} MB`;
+}
+
+function buildDownloadFilenameForFile(file: File | undefined | null): string {
+  if (!file) {
+    return buildMultiDownloadFilename();
+  }
+  const base = file.name
+    .replace(/\r?\n/g, " ")
+    .replace(/[/\\?*:|"<>]/g, "_")
+    .trim();
+  if (!base) {
+    return `file-base64.txt`;
+  }
+  const noExt = base.replace(/(\.[^./\\]+)+$/, "");
+  return `${noExt || "file"}-base64.txt`;
 }
 
 function DataUrlSwitch({
@@ -222,42 +270,351 @@ function FileTypeGlyph({ mode, className }: { mode: PreviewMode; className?: str
   );
 }
 
-function FileChip({
+function FileMediaOrGlyph({
   file,
-  onRemove,
-  removeAriaLabel,
+  mode,
+  onFallback,
 }: {
   file: File;
+  mode: PreviewMode;
+  onFallback: () => void;
+}) {
+  const [url, setUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (mode === "image" || mode === "video" || mode === "audio") {
+      const u = URL.createObjectURL(file);
+      // 同步自 URL.createObjectURL，需在挂载时写入供渲染使用
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setUrl(u);
+      return () => {
+        URL.revokeObjectURL(u);
+      };
+    }
+  }, [file, mode]);
+
+  if ((mode !== "image" && mode !== "video" && mode !== "audio") || !url) {
+    return (
+      <div className="flex h-full w-full items-center justify-center p-1">
+        <FileTypeGlyph mode={mode} className="size-10 text-accent" />
+      </div>
+    );
+  }
+  if (mode === "image") {
+    return (
+      // 本地 object URL 预览，不适用 next/image
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        key={url}
+        src={url}
+        alt=""
+        className="h-full w-full object-contain"
+        onError={onFallback}
+      />
+    );
+  }
+  if (mode === "video") {
+    return (
+      <video
+        key={url}
+        src={url}
+        className="h-full w-full object-contain"
+        muted
+        playsInline
+        preload="metadata"
+        onError={onFallback}
+      />
+    );
+  }
+  return (
+    <div className="flex h-full w-full items-center justify-center p-1">
+      <audio
+        key={url}
+        src={url}
+        className="w-full max-w-[9rem] scale-90"
+        controls
+        preload="metadata"
+        onError={onFallback}
+      />
+    </div>
+  );
+}
+
+function FileTextPreview({ file, copy }: { file: File; copy: Copy }) {
+  const [textSample, setTextSample] = useState<
+    string | "loading" | "error" | null
+  >("loading");
+
+  useEffect(() => {
+    const part = file.slice(0, 12_000);
+    const r = new FileReader();
+    r.onload = () => {
+      setTextSample(String(r.result ?? "").slice(0, 550));
+    };
+    r.onerror = () => setTextSample("error");
+    r.readAsText(part);
+  }, [file]);
+
+  if (textSample === "loading") {
+    return (
+      <p className="m-0 line-clamp-3 overflow-hidden p-1 text-center text-[9px] leading-snug text-text-muted">
+        {copy.textPreviewLoading}
+      </p>
+    );
+  }
+  if (textSample === "error" || !textSample) {
+    return (
+      <p className="m-0 p-1 text-center text-[9px] text-text-secondary">
+        {textSample === "error" ? copy.textPreviewReadError : "—"}
+      </p>
+    );
+  }
+  return (
+    <p
+      className="m-0 line-clamp-3 overflow-hidden whitespace-pre-wrap p-1 text-center font-mono text-[8px] leading-tight text-text"
+      title={file.name}
+    >
+      {textSample}
+    </p>
+  );
+}
+
+function IconXMark({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2.2}
+      strokeLinecap="round"
+      aria-hidden
+    >
+      <path d="M18 6 6 18" />
+      <path d="M6 6l12 12" />
+    </svg>
+  );
+}
+
+function FileEntryCard({
+  file,
+  selected,
+  onSelect,
+  onRemove,
+  copy,
+}: {
+  file: File;
+  selected: boolean;
+  onSelect: () => void;
   onRemove: () => void;
-  removeAriaLabel: string;
+  copy: Copy;
 }) {
   const mode = useMemo(() => getPreviewMode(file), [file]);
+  const [mediaAsGlyph, setMediaAsGlyph] = useState(false);
+  const mediaKey = `${file.name}-${file.size}-${file.lastModified}-${mode}`;
+
+  const removeLabel = copy.removeFileAriaLabel.replace("{name}", file.name);
+
+  function previewBody() {
+    if (mode === "text") {
+      return <FileTextPreview key={mediaKey} file={file} copy={copy} />;
+    }
+    if (mediaAsGlyph) {
+      return (
+        <FileTypeGlyph mode={mode} className="size-10 shrink-0 text-accent" />
+      );
+    }
+    if (mode === "image" || mode === "video" || mode === "audio") {
+      return (
+        <FileMediaOrGlyph
+          key={mediaKey + String(mediaAsGlyph)}
+          file={file}
+          mode={mode}
+          onFallback={() => setMediaAsGlyph(true)}
+        />
+      );
+    }
+    return <FileTypeGlyph mode={mode} className="size-10 shrink-0 text-accent" />;
+  }
+
   return (
     <div
       className={cn(
-        "inline-flex min-w-0 max-w-full items-center gap-1.5 rounded-md border border-border",
-        "bg-surface-raised px-2 py-1.5",
+        "relative box-border flex w-full min-w-0 flex-col overflow-hidden rounded-lg border-2 bg-surface-raised p-2.5 text-left shadow-sm",
+        FILE_LIST_ITEM_SHELL,
+        "transition sm:p-3",
+        selected
+          ? "z-[1] border-zinc-600 dark:border-zinc-500"
+          : "border-zinc-200/90 dark:border-zinc-600/60 hover:border-zinc-400/80 dark:hover:border-zinc-500/80",
       )}
-      onClick={(e) => e.stopPropagation()}
     >
-      <FileTypeGlyph
-        mode={mode}
-        className="size-4 shrink-0 text-accent"
-      />
-      <span className="min-w-0 max-w-[10rem] truncate text-xs font-medium text-text sm:max-w-[14rem]" title={file.name}>
-        {file.name}
-      </span>
       <button
         type="button"
-        className="ml-0.5 shrink-0 rounded border-0 bg-transparent p-0.5 text-text-muted transition-colors hover:text-text"
-        aria-label={removeAriaLabel}
-        onClick={onRemove}
+        className="absolute right-1.5 top-1.5 z-20 flex size-7 cursor-pointer items-center justify-center rounded-full border border-zinc-300/90 bg-white/95 text-text shadow-sm transition hover:bg-zinc-100/95 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:border-zinc-600 dark:bg-zinc-800/95 dark:hover:bg-zinc-700"
+        aria-label={removeLabel}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          onRemove();
+        }}
       >
-        <span className="sr-only">{removeAriaLabel}</span>
-        <svg className="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
-          <path d="M18 6 6 18M6 6l12 12" strokeWidth={2} strokeLinecap="round" />
-        </svg>
+        <span className="sr-only">{removeLabel}</span>
+        <IconXMark className="size-3.5" />
       </button>
+      <button
+        type="button"
+        className="flex w-full min-h-0 min-w-0 flex-1 flex-col p-0 pr-1 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/25 sm:pr-0"
+        onClick={onSelect}
+        aria-pressed={selected}
+        aria-label={copy.fileCardSelectAriaLabel.replace("{name}", file.name)}
+      >
+        <div
+          className={cn(
+            FILE_CARD_PREVIEW,
+            "flex cursor-pointer items-center justify-center overflow-hidden rounded-md bg-zinc-100 dark:bg-zinc-800/90",
+          )}
+        >
+          {previewBody()}
+        </div>
+        <div className="mt-2.5 space-y-2 text-left text-[10px] sm:text-xs">
+          <div className="flex min-w-0 items-baseline gap-1.5">
+            <span className="shrink-0 font-medium text-text-secondary">
+              {copy.fileCardLabelName}
+            </span>
+            <span
+              className="min-w-0 flex-1 truncate text-text"
+              title={file.name}
+            >
+              {file.name}
+            </span>
+          </div>
+          <div className="flex min-w-0 items-baseline gap-1.5">
+            <span className="shrink-0 font-medium text-text-secondary">
+              {copy.fileCardLabelSize}
+            </span>
+            <span
+              className="min-w-0 flex-1 truncate text-text tabular-nums"
+              title={formatFileSize(file.size)}
+            >
+              {formatFileSize(file.size)}
+            </span>
+          </div>
+        </div>
+      </button>
+    </div>
+  );
+}
+
+function AddFileSlot({
+  fileInputId,
+  copy,
+  isBusy,
+  canAdd,
+  dragOver,
+  onPick,
+  setDragOver,
+  dragDepthRef,
+  onDropList,
+}: {
+  fileInputId: string;
+  copy: Copy;
+  isBusy: boolean;
+  canAdd: boolean;
+  dragOver: boolean;
+  onPick: () => void;
+  setDragOver: (v: boolean) => void;
+  dragDepthRef: MutableRefObject<number>;
+  onDropList: (list: File[]) => void;
+}) {
+  if (!canAdd) {
+    return null;
+  }
+  const active = dragOver;
+  return (
+    <div
+      role="presentation"
+      className={cn(
+        "flex w-full min-w-0 flex-col overflow-hidden rounded-xl border-2 border-dashed p-0 text-left text-text-secondary",
+        FILE_LIST_ITEM_SHELL,
+        "border-sky-400/55 bg-sky-50/60 dark:border-sky-500/40 dark:bg-sky-950/20",
+        active
+          ? "ring-2 ring-sky-400/35 ring-offset-0 dark:ring-sky-500/30"
+          : "hover:border-sky-500/70",
+      )}
+      tabIndex={isBusy ? -1 : 0}
+      onClick={() => {
+        if (isBusy) return;
+        onPick();
+      }}
+      onKeyDown={(e) => {
+        if (isBusy) return;
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onPick();
+        }
+      }}
+      onDragEnter={(e) => {
+        if (isBusy) return;
+        e.preventDefault();
+        e.stopPropagation();
+        dragDepthRef.current += 1;
+        setDragOver(true);
+      }}
+      onDragLeave={(e) => {
+        if (isBusy) return;
+        e.preventDefault();
+        e.stopPropagation();
+        dragDepthRef.current -= 1;
+        if (dragDepthRef.current <= 0) {
+          dragDepthRef.current = 0;
+          setDragOver(false);
+        }
+      }}
+      onDragOver={(e) => {
+        if (isBusy) return;
+        e.preventDefault();
+        e.stopPropagation();
+        e.dataTransfer.dropEffect = "copy";
+      }}
+      onDrop={(e) => {
+        if (isBusy) return;
+        e.preventDefault();
+        e.stopPropagation();
+        dragDepthRef.current = 0;
+        setDragOver(false);
+        const dropped = e.dataTransfer.files;
+        if (dropped && dropped.length > 0) {
+          onDropList(Array.from(dropped));
+        }
+      }}
+    >
+      <label
+        htmlFor={fileInputId}
+        className={cn(
+          "flex h-full w-full min-h-0 min-w-0 flex-1 flex-col justify-center gap-2.5 p-3 min-[400px]:flex-row min-[400px]:items-center min-[400px]:gap-3",
+          isBusy && "pointer-events-none opacity-50",
+          !isBusy && "cursor-pointer",
+        )}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div
+          className={cn(
+            "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-sky-200/80 bg-white text-sky-600 min-[400px]:self-center sm:h-11 sm:w-11",
+            "dark:border-sky-500/30 dark:bg-zinc-900/80 dark:text-sky-400/90",
+            active && "bg-sky-100/80 dark:bg-sky-900/30",
+          )}
+        >
+          <IconUploadZone className="size-5 sm:size-6" />
+        </div>
+        <div className="min-w-0 flex-1 self-stretch text-left min-[400px]:flex min-[400px]:flex-col min-[400px]:justify-center">
+          <p className="m-0 text-sm font-semibold leading-snug text-text">
+            {copy.dropZoneReplace}
+          </p>
+          <p className="m-0 mt-1.5 text-[11px] leading-relaxed text-text-secondary min-[400px]:mt-1.5 sm:text-xs">
+            {copy.dropZoneHint}
+          </p>
+        </div>
+      </label>
     </div>
   );
 }
@@ -330,6 +687,7 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
   const dragDepthRef = useRef(0);
 
   const [files, setFiles] = useState<File[]>([]);
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const [out, setOut] = useState("");
   const [dataUrl, setDataUrl] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -337,8 +695,8 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
   const [dragOver, setDragOver] = useState(false);
   const [isEncoding, setIsEncoding] = useState(false);
 
-  const nLabel = String(MAX_FILE_COUNT);
   const isBusy = isEncoding;
+  const canAddMore = files.length < MAX_FILE_COUNT;
 
   const addFilesFromList = useCallback(
     (list: FileList | File[] | null) => {
@@ -364,6 +722,9 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
           if (f.size > MAX_FILE_BYTES) continue;
           next.push(f);
         }
+        if (next.length > prev.length) {
+          setSelectedIndex(next.length - 1);
+        }
         return next;
       });
     },
@@ -372,7 +733,7 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
 
   const onPick = () => inputRef.current?.click();
 
-  const onFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.files;
     const picked = raw && raw.length > 0 ? Array.from(raw) : [];
     e.target.value = "";
@@ -382,11 +743,27 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
   };
 
   const removeAt = (index: number) => {
-    setFiles((prev) => prev.filter((_, i) => i !== index));
+    setFiles((prev) => {
+      const next = prev.filter((_, i) => i !== index);
+      setSelectedIndex((sel) => {
+        if (next.length === 0) {
+          return 0;
+        }
+        if (index < sel) {
+          return sel - 1;
+        }
+        if (index === sel) {
+          return Math.min(sel, next.length - 1);
+        }
+        return sel;
+      });
+      return next;
+    });
   };
 
   const clearAll = () => {
     setFiles([]);
+    setSelectedIndex(0);
     dragDepthRef.current = 0;
     setDragOver(false);
     if (inputRef.current) inputRef.current.value = "";
@@ -396,10 +773,26 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
     setIsEncoding(false);
   };
 
+  const selectedFile =
+    files.length > 0
+      ? files[Math.min(Math.max(0, selectedIndex), files.length - 1)]
+      : null;
+
+  // 无选中/切换文件时需清空或重算 out，并异步读取 File
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (files.length === 0) {
       setOut("");
       setIsEncoding(false);
+      return;
+    }
+    if (!selectedFile) {
+      setOut("");
+      setIsEncoding(false);
+      return;
+    }
+    if (selectedFile.size > MAX_FILE_BYTES) {
+      setOut("");
       return;
     }
     let cancelled = false;
@@ -408,28 +801,15 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
       setError(null);
       setCopyHint(null);
       try {
-        const parts: string[] = [];
-        for (const file of files) {
+        if (dataUrl) {
+          const s = await readAsDataUrl(selectedFile);
           if (cancelled) return;
-          if (file.size > MAX_FILE_BYTES) {
-            setError(
-              copy.errorTooLarge.replace("{mb}", String(MAX_FILE_BYTES / (1024 * 1024))),
-            );
-            return;
-          }
-          const label = file.name.replace(/\r?\n/g, " ");
-          const marker = copy.outputFileMarker.replace("{name}", label);
-          if (dataUrl) {
-            const s = await readAsDataUrl(file);
-            if (cancelled) return;
-            parts.push(`${marker}\n${s}`);
-          } else {
-            const buf = await file.arrayBuffer();
-            if (cancelled) return;
-            parts.push(`${marker}\n${bytesToBase64(new Uint8Array(buf))}`);
-          }
+          setOut(s);
+        } else {
+          const buf = await selectedFile.arrayBuffer();
+          if (cancelled) return;
+          setOut(bytesToBase64(new Uint8Array(buf)));
         }
-        if (!cancelled) setOut(parts.join("\n\n"));
       } catch {
         if (!cancelled) setError(copy.errorRead);
       } finally {
@@ -440,7 +820,8 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
       cancelled = true;
       setIsEncoding(false);
     };
-  }, [files, dataUrl, copy.errorTooLarge, copy.errorRead, copy.outputFileMarker]);
+  }, [files, selectedFile, dataUrl, selectedIndex, copy.errorRead]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const copyOut = async () => {
     if (!out) return;
@@ -458,7 +839,7 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
 
   const saveAs = () => {
     if (!out) return;
-    const name = buildMultiDownloadFilename();
+    const name = buildDownloadFilenameForFile(selectedFile ?? null);
     const blob = new Blob([out], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -482,9 +863,11 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
   );
   const titleBarButtonTextClass =
     "h-7 px-2 text-xs font-bold uppercase [&>span:first-child>svg]:size-4";
-  const dangerInlineClass = cn(
-    "h-7 rounded-md border border-[#b91c1c] bg-[#dc2626] px-2 text-xs font-bold text-white uppercase",
-    "hover:bg-[#b91c1c] disabled:cursor-not-allowed disabled:opacity-40",
+  const dangerFlatClass = cn(
+    "translate-y-0 shadow-none border border-[#b91c1c] bg-[#dc2626] text-white",
+    "hover:border-[#991b1b] hover:bg-[#b91c1c] hover:text-white hover:shadow-none",
+    "dark:border-[#ef4444] dark:bg-[#dc2626] dark:text-white",
+    "dark:hover:border-[#f87171] dark:hover:bg-[#b91c1c] dark:hover:text-white",
   );
 
   const busyLabel = copy.encodingBusy;
@@ -502,143 +885,178 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
       />
 
       <section
-        className="w-full min-w-0 rounded-lg border border-zinc-200/90 bg-main-bg p-3 sm:p-4 dark:border-zinc-600/50"
+        className={cn(uploadSectionClass, "w-full min-w-0")}
         role="region"
         aria-labelledby={uploadRegionId}
       >
-        <div className="mb-3 flex min-w-0 items-center justify-between gap-2">
-          <h2 id={uploadRegionId} className="m-0 text-sm font-semibold text-text">
-            {copy.inputColumnTitle}
+        <div className={toolSectionTitleBarClass}>
+          <h2 id={uploadRegionId} className={toolSectionHeadingClass}>
+            <IconColumnSourceText className={toolSectionHeadingIconClass} />
+            <span className="min-w-0 truncate">{copy.inputColumnTitle}</span>
           </h2>
           {files.length > 0 ? (
-            <button
-              type="button"
-              className={cn(dangerInlineClass, "shrink-0")}
-              onClick={clearAll}
-              disabled={isBusy}
-            >
-              <span className="inline-flex items-center gap-1">
-                <IconTrash className="size-3" />
+            <div className={toolSectionTitleActionsClass}>
+              <ToolTitleBarTextButton
+                variant="outline"
+                className={cn(dangerFlatClass, titleBarButtonTextClass, "disabled:opacity-40")}
+                icon={<IconTrash />}
+                onClick={clearAll}
+                disabled={isBusy}
+              >
                 {copy.clearAll}
-              </span>
-            </button>
+              </ToolTitleBarTextButton>
+            </div>
           ) : null}
         </div>
-        <div
-          role="presentation"
-          tabIndex={isBusy || files.length >= MAX_FILE_COUNT ? -1 : 0}
-          onClick={() => {
-            if (isBusy) return;
-            if (files.length >= MAX_FILE_COUNT) return;
-            onPick();
-          }}
-          onKeyDown={(e) => {
-            if (isBusy) return;
-            if (files.length >= MAX_FILE_COUNT) return;
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              onPick();
-            }
-          }}
-          onDragEnter={(e) => {
-            if (isBusy) return;
-            e.preventDefault();
-            e.stopPropagation();
-            dragDepthRef.current += 1;
-            setDragOver(true);
-          }}
-          onDragLeave={(e) => {
-            if (isBusy) return;
-            e.preventDefault();
-            e.stopPropagation();
-            dragDepthRef.current -= 1;
-            if (dragDepthRef.current <= 0) {
-              dragDepthRef.current = 0;
-              setDragOver(false);
-            }
-          }}
-          onDragOver={(e) => {
-            if (isBusy) return;
-            e.preventDefault();
-            e.stopPropagation();
-            e.dataTransfer.dropEffect = "copy";
-          }}
-          onDrop={(e) => {
-            if (isBusy) return;
-            e.preventDefault();
-            e.stopPropagation();
-            dragDepthRef.current = 0;
-            setDragOver(false);
-            const dropped = e.dataTransfer.files;
-            if (dropped && dropped.length > 0) {
-              addFilesFromList(Array.from(dropped));
-            }
-          }}
-          className={cn(
-            "w-full min-h-[4.5rem] rounded-lg border-2 border-dashed px-3 py-3 transition-colors sm:px-4 sm:py-4",
-            "outline-none focus-within:ring-2 focus-within:ring-accent/25",
-            isBusy && "pointer-events-none opacity-60",
-            !isBusy && files.length < MAX_FILE_COUNT && "cursor-pointer",
-            dragOver
-              ? "border-accent bg-accent-muted/30"
-              : "border-zinc-300 dark:border-zinc-600",
-          )}
-        >
+        <div className="m-2 p-3 sm:m-3 sm:p-4">
           {files.length === 0 ? (
-            <label
-              htmlFor={fileInputId}
-              className="flex min-h-[4.5rem] w-full min-w-0 cursor-pointer flex-col items-center justify-center gap-2 text-center sm:flex-row sm:gap-4 sm:text-left"
-              onClick={(e) => e.stopPropagation()}
+            <div
+              role="presentation"
+              tabIndex={isBusy || !canAddMore ? -1 : 0}
+              onClick={() => {
+                if (isBusy) return;
+                if (!canAddMore) return;
+                onPick();
+              }}
+              onKeyDown={(e) => {
+                if (isBusy) return;
+                if (!canAddMore) return;
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  onPick();
+                }
+              }}
+              onDragEnter={(e) => {
+                if (isBusy) return;
+                e.preventDefault();
+                e.stopPropagation();
+                dragDepthRef.current += 1;
+                setDragOver(true);
+              }}
+              onDragLeave={(e) => {
+                if (isBusy) return;
+                e.preventDefault();
+                e.stopPropagation();
+                dragDepthRef.current -= 1;
+                if (dragDepthRef.current <= 0) {
+                  dragDepthRef.current = 0;
+                  setDragOver(false);
+                }
+              }}
+              onDragOver={(e) => {
+                if (isBusy) return;
+                e.preventDefault();
+                e.stopPropagation();
+                e.dataTransfer.dropEffect = "copy";
+              }}
+              onDrop={(e) => {
+                if (isBusy) return;
+                e.preventDefault();
+                e.stopPropagation();
+                dragDepthRef.current = 0;
+                setDragOver(false);
+                const dropped = e.dataTransfer.files;
+                if (dropped && dropped.length > 0) {
+                  addFilesFromList(Array.from(dropped));
+                }
+              }}
+              className={cn(
+                "w-full min-h-40 rounded-lg border-2 border-dashed px-3 py-3 transition-colors sm:min-h-44 sm:px-4 sm:py-4",
+                "outline-none focus-within:ring-2 focus-within:ring-accent/25",
+                isBusy && "pointer-events-none opacity-60",
+                !isBusy && "cursor-pointer",
+                dragOver
+                  ? "border-accent bg-accent-muted/30"
+                  : "border-zinc-300 dark:border-zinc-600",
+              )}
             >
-              <IconUploadZone className="size-8 shrink-0 text-zinc-500 dark:text-zinc-400" />
-              <div className="min-w-0 flex-1">
-                <p className="m-0 text-sm text-text">
-                  {copy.dropZoneHint.replace("{n}", nLabel)}
-                </p>
-                <p className="m-0 mt-1 text-[11px] leading-relaxed text-text-secondary">
-                  {copy.uploadZoneFormatsLine}
-                </p>
-                <p className="m-0 mt-1 text-[11px] text-text-muted">
-                  {copy.uploadMaxFilesLine.replace("{n}", nLabel)}
-                </p>
-              </div>
-            </label>
+              <label
+                htmlFor={fileInputId}
+                className="flex min-h-[10rem] w-full min-w-0 cursor-pointer flex-col items-center justify-center gap-2 text-center sm:flex-row sm:gap-4 sm:text-left sm:min-h-[11rem]"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <IconUploadZone className="size-8 shrink-0 text-zinc-500 dark:text-zinc-400" />
+                <div className="min-w-0 flex-1">
+                  <p className="m-0 text-sm text-text">
+                    {copy.dropZoneHint}
+                  </p>
+                  <p className="m-0 mt-1 text-[11px] leading-relaxed text-text-secondary">
+                    {copy.uploadZoneFormatsLine}
+                  </p>
+                </div>
+              </label>
+            </div>
           ) : (
-            <div className="flex w-full min-w-0 flex-wrap items-center gap-2 sm:min-h-10">
+            <div
+              className={cn(
+                FILE_LIST_GRID,
+                "min-h-0 items-stretch",
+              )}
+            >
               {files.map((f, i) => (
-                <FileChip
+                <FileEntryCard
                   key={`${f.name}-${f.size}-${f.lastModified}-${i}`}
                   file={f}
-                  onRemove={() => removeAt(i)}
-                  removeAriaLabel={copy.removeFileAriaLabel.replace("{name}", f.name)}
+                  copy={copy}
+                  selected={i === selectedIndex}
+                  onSelect={() => {
+                    setSelectedIndex(i);
+                  }}
+                  onRemove={() => {
+                    removeAt(i);
+                  }}
                 />
               ))}
-              {files.length < MAX_FILE_COUNT ? (
-                <label
-                  htmlFor={fileInputId}
-                  className="ml-auto min-w-0 flex-1 cursor-pointer text-right text-sm leading-snug text-text-secondary select-none hover:text-text"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  {copy.dropZoneHint.replace("{n}", nLabel)}
-                </label>
-              ) : null}
+              <AddFileSlot
+                fileInputId={fileInputId}
+                copy={copy}
+                isBusy={isBusy}
+                canAdd={canAddMore}
+                dragOver={dragOver}
+                onPick={onPick}
+                setDragOver={setDragOver}
+                dragDepthRef={dragDepthRef}
+                onDropList={(list) => {
+                  addFilesFromList(list);
+                }}
+              />
             </div>
           )}
+          {error ? (
+            <p className="mt-2 text-sm text-red-600 dark:text-red-400" role="alert">
+              {error}
+            </p>
+          ) : null}
         </div>
-        {error ? (
-          <p className="mt-3 text-sm text-red-600 dark:text-red-400" role="alert">
-            {error}
-          </p>
-        ) : null}
       </section>
 
       <section className={outputColClass} aria-labelledby={outputId}>
-        <div className={toolSectionTitleBarClass}>
-          <h2 id={outputId} className={toolSectionHeadingClass}>
+        <div
+          className={cn(
+            toolSectionTitleBarClass,
+            "grid w-full min-w-0 grid-cols-3 items-center gap-2",
+          )}
+        >
+          <div className="flex min-w-0 items-center justify-start">
             <IconColumnBase64Text className={toolSectionHeadingIconClass} />
-            <span className="min-w-0 truncate">{copy.outputColumnTitle}</span>
+          </div>
+          <h2
+            id={outputId}
+            className="m-0 min-w-0 justify-self-center self-center text-center text-sm font-semibold leading-tight text-text"
+          >
+            <span
+              className="block w-full min-w-0 max-w-full truncate"
+              title={selectedFile ? selectedFile.name : copy.outputColumnTitle}
+            >
+              {selectedFile ? selectedFile.name : copy.outputColumnTitle}
+            </span>
           </h2>
-          <div className={cn(toolSectionTitleActionsClass, "gap-x-2 gap-y-2")}>
+          <div
+            className={cn(
+              toolSectionTitleActionsClass,
+              "col-start-3 w-full min-w-0 items-center justify-end gap-2",
+            )}
+          >
             <DataUrlSwitch
               checked={dataUrl}
               onChange={setDataUrl}
@@ -691,7 +1109,11 @@ export function FileBase64EncodePanel({ copy }: { copy: Copy }) {
             readOnly
             showGutter={false}
             placeholder={isEncoding ? busyLabel : copy.outputPlaceholder}
-            ariaLabel={copy.outputColumnTitle}
+            ariaLabel={
+              selectedFile
+                ? `${copy.outputColumnTitle} — ${selectedFile.name}`
+                : copy.outputColumnTitle
+            }
             className="min-h-[16rem] bg-[#f3f4f6] dark:bg-zinc-900"
             textClassName="text-sm leading-6"
             textareaRef={outputTextareaRef}

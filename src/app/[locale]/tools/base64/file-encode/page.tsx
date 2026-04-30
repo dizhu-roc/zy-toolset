@@ -35,7 +35,6 @@ export default async function Base64FileEncodePage({ params }: Props) {
   const privacyHref = hrefForLocale(locale, "privacy");
   const p = t.tools.base64FileEncode;
   const maxFileMb = "8";
-  const maxFileCount = "10";
 
   return (
     <ToolPageLayout
@@ -49,8 +48,6 @@ export default async function Base64FileEncodePage({ params }: Props) {
           <p className="m-0">{p.pageDescription}</p>
           <p className="m-0 text-xs text-text-muted leading-relaxed">
             {p.uploadZoneSizeLine.replace("{mb}", maxFileMb)}
-            {" "}
-            {p.uploadMaxFilesLine.replace("{n}", maxFileCount)}
           </p>
           <p className="m-0 mt-1 text-xs text-text-muted leading-relaxed">
             {p.pageReferenceLine}
