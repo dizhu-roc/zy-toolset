@@ -111,7 +111,6 @@
       "metaDescription": "Encodez un fichier local en Base64 ou Data URL dans le navigateur, sans envoi serveur.",
       "pageTitle": "Fichier vers Base64",
       "pageDescription": "Fichier local → Base64 ou data: URL, uniquement dans cet onglet.",
-      "pageReferenceLine": "Référence : https://www.abtool.cn/filetobase64",
       "pageDescriptionHintBefore": "Texte UTF-8 : ",
       "textEncodeLinkLabel": "Texte vers Base64",
       "pageDescriptionHintAfter": ".",

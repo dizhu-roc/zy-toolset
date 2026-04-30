@@ -49,9 +49,6 @@ export default async function Base64FileEncodePage({ params }: Props) {
           <p className="m-0 text-xs text-text-muted leading-relaxed">
             {p.uploadZoneSizeLine.replace("{mb}", maxFileMb)}
           </p>
-          <p className="m-0 mt-1 text-xs text-text-muted leading-relaxed">
-            {p.pageReferenceLine}
-          </p>
         </>
       }
       ancillary={

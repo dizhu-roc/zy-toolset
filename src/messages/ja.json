@@ -111,7 +111,6 @@
       "metaDescription": "ローカルファイルを Base64 / Data URL に。ブラウザ内のみ、送信しません。",
       "pageTitle": "ファイルを Base64 に",
       "pageDescription": "端末のファイルを Base64 または Data URL へ。処理はこのタブのみ。",
-      "pageReferenceLine": "参考: https://www.abtool.cn/filetobase64",
       "pageDescriptionHintBefore": "プレーンテキストは ",
       "textEncodeLinkLabel": "テキストを Base64 に",
       "pageDescriptionHintAfter": " を使用してください。",

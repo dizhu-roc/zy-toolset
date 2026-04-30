@@ -111,7 +111,6 @@
       "metaDescription": "Codifica archivos locales a Base64 o Data URL en el navegador, sin subidas.",
       "pageTitle": "Archivo a Base64",
       "pageDescription": "Convierte un archivo local a Base64 o data: URL; solo en esta pestaña.",
-      "pageReferenceLine": "Referencia: https://www.abtool.cn/filetobase64",
       "pageDescriptionHintBefore": "Texto UTF-8: ",
       "textEncodeLinkLabel": "Texto a Base64",
       "pageDescriptionHintAfter": ".",

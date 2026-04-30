@@ -111,7 +111,6 @@
       "metaDescription": "Encode local files to Base64 or a Data URL in the browser. Client-side only; no upload.",
       "pageTitle": "File to Base64",
       "pageDescription": "Local file → Base64 or a data: URL, processed in this tab only.",
-      "pageReferenceLine": "Reference: https://www.abtool.cn/filetobase64",
       "pageDescriptionHintBefore": "For UTF-8 text input, use ",
       "textEncodeLinkLabel": "Text to Base64",
       "pageDescriptionHintAfter": ".",

@@ -111,7 +111,6 @@
       "metaDescription": "在浏览器将本地文件编码为 Base64 或 Data URL，不上传。",
       "pageTitle": "文件转 Base64",
       "pageDescription": "本机文件转 Base64 或 Data URL，仅在本页处理。",
-      "pageReferenceLine": "参考自：https://www.abtool.cn/filetobase64",
       "pageDescriptionHintBefore": "纯文本请用 ",
       "textEncodeLinkLabel": "文本转 Base64",
       "pageDescriptionHintAfter": "。",
